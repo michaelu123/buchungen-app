@@ -1,0 +1,26 @@
+C:\Users\Michael\AppData\Roaming\Composer\vendor\bin\laravel new buchungen-app
+
+php artisan boost:install
+composer require filament/filament:"^5.0"
+php artisan filament:install --panels
+php artisan make:filament-user
+
+starte xdebug
+npm run dev
+# new herd site, open /admin in browser
+
+composer require barryvdh/laravel-debugbar --dev 
+composer require --dev barryvdh/laravel-ide-helper
+php artisan ide-helper:generate
+php artisan ide-helper:meta 
+#und composer.json post-update-cmd erweitern
+
+
+php artisan make:model TechnikKurs -m
+php artisan make:model TechnikBuchung -m
+php artisan migrate
+
+php artisan make:filament-resource TechnikKurs --generate
+php artisan make:filament-resource TechnikBuchung --generate
+
+php artisan make:livewire pages::technik.create 
