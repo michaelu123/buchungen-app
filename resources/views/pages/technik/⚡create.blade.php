@@ -77,6 +77,13 @@ new class extends Component implements HasSchemas {
                     ->required(),
                 TextInput::make('iban')
                     ->belowLabel("Bitte gib die IBAN des Kontos an, von dem die Lastschrift erfolgen soll.")
+                    ->rules([
+                        fn(): Closure => function ($attribute, $value, Closure $fail) {
+                            if (!TechnikBuchung::test_iban($value)) {
+                                $fail('Die IBAN ist ungültig.');
+                            }
+                        },
+                    ])
                     ->required(),
                 Toggle::make('lastschriftok')
                     ->belowLabel("Bitte bestätige, dass die Lastschrift von dem angegebenen Konto genehmigt ist. Ohne diese Genehmigung können wir Deine Anmeldung nicht bearbeiten.")

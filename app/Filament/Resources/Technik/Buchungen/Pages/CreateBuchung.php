@@ -4,21 +4,21 @@ namespace App\Filament\Resources\Technik\Buchungen\Pages;
 
 use Illuminate\Database\Eloquent\Model;
 use Filament\Resources\Pages\CreateRecord;
-use App\Models\TechnikKurs;
-use App\Models\TechnikBuchung;
-use App\Filament\Resources\Technik\Buchungen\TechnikBuchungResource;
+use App\Models\Technik\Kurs;
+use App\Models\Technik\Buchung;
+use App\Filament\Resources\Technik\Buchungen\BuchungResource;
 
-class CreateTechnikBuchung extends CreateRecord
+class CreateBuchung extends CreateRecord
 {
-    protected static string $resource = TechnikBuchungResource::class;
+    protected static string $resource = BuchungResource::class;
 
     protected function handleRecordCreation(array $data): Model
     {
         $kursnummer = $data['kursnummer'];
         $res = null;
-        $buchungenCount = TechnikBuchung::where('kursnummer', $kursnummer)
+        $buchungenCount = Buchung::where('kursnummer', $kursnummer)
             ->whereNull("notiz")->count();
-        $kurs = TechnikKurs::where('nummer', $kursnummer)->first();
+        $kurs = Kurs::where('nummer', $kursnummer)->first();
         if ($kurs && $kurs->restplätze > 0) {
             $kurs->restplätze = $kurs->kursplätze - $buchungenCount - 1;
         }
@@ -27,12 +27,12 @@ class CreateTechnikBuchung extends CreateRecord
             throw new \Exception('Keine verfügbaren Plätze für diesen Kurs.');
         }
         $kurs->save();
-        $buchung = TechnikBuchung::create($data);
+        $buchung = Buchung::create($data);
         $this->check($buchung);
         return $buchung;
     }
 
-    protected function check(TechnikBuchung $buchung): void
+    protected function check(Buchung $buchung): void
     {
         $buchung->checkIban();
         $buchung->checkLastschriftOk();

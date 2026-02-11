@@ -5,13 +5,15 @@ namespace App\Filament\Resources\Technik\Buchungen\Tables;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Support\Icons\Heroicon;
 use Filament\Actions\EditAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\Action;
+use App\Models\Technik\Buchung;
 
-class TechnikBuchungTable
+class BuchungTable
 {
     public static function configure(Table $table): Table
     {
@@ -79,7 +81,11 @@ class TechnikBuchungTable
             ->recordActions([
                 EditAction::make(),
                 DeleteAction::make(),
-                Action::make("handle"),
+                Action::make("Prüfen")
+                    ->tableIcon(Heroicon::OutlinedCheckCircle)
+                    ->action(function (Buchung $record) {
+                        $record->check();
+                    }),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

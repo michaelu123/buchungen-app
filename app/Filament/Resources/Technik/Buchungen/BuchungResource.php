@@ -8,16 +8,16 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use BackedEnum;
-use App\Models\TechnikBuchung;
-use App\Filament\Resources\Technik\Buchungen\Tables\TechnikBuchungTable;
-use App\Filament\Resources\Technik\Buchungen\Schemas\TechnikBuchungForm;
-use App\Filament\Resources\Technik\Buchungen\Pages\ListTechnikBuchungen;
-use App\Filament\Resources\Technik\Buchungen\Pages\EditTechnikBuchung;
-use App\Filament\Resources\Technik\Buchungen\Pages\CreateTechnikBuchung;
+use App\Models\Technik\Buchung;
+use App\Filament\Resources\Technik\Buchungen\Tables\BuchungTable;
+use App\Filament\Resources\Technik\Buchungen\Schemas\BuchungForm;
+use App\Filament\Resources\Technik\Buchungen\Pages\ListBuchungen;
+use App\Filament\Resources\Technik\Buchungen\Pages\EditBuchung;
+use App\Filament\Resources\Technik\Buchungen\Pages\CreateBuchung;
 
-class TechnikBuchungResource extends Resource
+class BuchungResource extends Resource
 {
-    protected static ?string $model = TechnikBuchung::class;
+    protected static ?string $model = Buchung::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
     protected static string|UnitEnum|null $navigationGroup = "Technik-Kurse";
@@ -30,12 +30,12 @@ class TechnikBuchungResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return TechnikBuchungForm::configure($schema);
+        return BuchungForm::configure($schema);
     }
 
     public static function table(Table $table): Table
     {
-        return TechnikBuchungTable::configure($table);
+        return BuchungTable::configure($table);
     }
 
     public static function getRelations(): array
@@ -48,9 +48,9 @@ class TechnikBuchungResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListTechnikBuchungen::route('/'),
-            'create' => CreateTechnikBuchung::route('/create'),
-            'edit' => EditTechnikBuchung::route('/{record}/edit'),
+            'index' => ListBuchungen::route('/'),
+            // 'create' => CreateBuchung::route('/create'),
+            'edit' => EditBuchung::route('/{record}/edit'),
         ];
     }
 

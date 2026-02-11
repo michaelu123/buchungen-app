@@ -4,11 +4,11 @@ namespace App\Filament\Resources\Technik\Kurse\Pages;
 
 use Filament\Resources\Pages\ListRecords;
 use Filament\Actions\CreateAction;
-use App\Filament\Resources\Technik\Kurse\TechnikKursResource;
+use App\Filament\Resources\Technik\Kurse\KursResource;
 
-class ListTechnikKurse extends ListRecords
+class ListKurse extends ListRecords
 {
-    protected static string $resource = TechnikKursResource::class;
+    protected static string $resource = KursResource::class;
 
     protected function getHeaderActions(): array
     {

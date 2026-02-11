@@ -9,13 +9,15 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\DatePicker;
-use App\Models\TechnikKurs;
+use Closure;
+use App\Models\Technik\Kurs;
+use App\Models\Technik\Buchung;
 
-class TechnikBuchungForm
+class BuchungForm
 {
     public static function configure(Schema $schema): Schema
     {
-        $arr1 = TechnikKurs::select(["nummer", "titel"])
+        $arr1 = Kurs::select(["nummer", "titel"])
             ->whereNull("notiz")
             ->where("restplätze", ">", 0)
             ->get()->toArray();
@@ -58,6 +60,13 @@ class TechnikBuchungForm
                 TextInput::make('kontoinhaber')
                     ->required(),
                 TextInput::make('iban')
+                    ->rules([
+                        fn(): Closure => function ($attribute, $value, Closure $fail) {
+                            if (!Buchung::test_iban($value)) {
+                                $fail('Die IBAN ist ungültig.');
+                            }
+                        },
+                    ])
                     ->required(),
                 Toggle::make('lastschriftok')
                     ->label('Lastschrift genehmigt (oder Buchung ungültig!)')

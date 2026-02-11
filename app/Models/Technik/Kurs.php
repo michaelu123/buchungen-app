@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Technik;
 
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Model;
 
-class TechnikKurs extends Model
+class Kurs extends Model
 {
     protected $table = "technik_kurse";
     protected $fillable = [
@@ -27,6 +27,6 @@ class TechnikKurs extends Model
 
     public function buchungen(): HasMany
     {
-        return $this->hasMany(TechnikBuchung::class, "kursnummer", "nummer");
+        return $this->hasMany(Buchung::class, "kursnummer", "nummer");
     }
 }

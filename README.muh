@@ -24,3 +24,8 @@ php artisan make:filament-resource TechnikKurs --generate
 php artisan make:filament-resource TechnikBuchung --generate
 
 php artisan make:livewire pages::technik.create 
+php artisan make:mail VerifyEmail
+php artisan make:mail FalscheIban
+
+php artisan make:model EmailVerifikation -m
+php artisan migrate

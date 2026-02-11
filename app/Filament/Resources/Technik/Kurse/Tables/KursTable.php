@@ -9,7 +9,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\BulkActionGroup;
 
-class TechnikKursTable
+class KursTable
 {
     public static function configure(Table $table): Table
     {

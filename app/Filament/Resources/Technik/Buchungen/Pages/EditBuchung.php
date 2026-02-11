@@ -5,11 +5,11 @@ namespace App\Filament\Resources\Technik\Buchungen\Pages;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Actions\DeleteAction;
-use App\Filament\Resources\Technik\Buchungen\TechnikBuchungResource;
+use App\Filament\Resources\Technik\Buchungen\BuchungResource;
 
-class EditTechnikBuchung extends EditRecord
+class EditBuchung extends EditRecord
 {
-    protected static string $resource = TechnikBuchungResource::class;
+    protected static string $resource = BuchungResource::class;
 
     protected function getHeaderActions(): array
     {

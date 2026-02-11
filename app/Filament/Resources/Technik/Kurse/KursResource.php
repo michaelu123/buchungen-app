@@ -8,16 +8,16 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use BackedEnum;
-use App\Models\TechnikKurs;
-use App\Filament\Resources\Technik\Kurse\Tables\TechnikKursTable;
-use App\Filament\Resources\Technik\Kurse\Schemas\TechnikKursForm;
-use App\Filament\Resources\Technik\Kurse\Pages\ListTechnikKurse;
-use App\Filament\Resources\Technik\Kurse\Pages\EditTechnikKurs;
-use App\Filament\Resources\Technik\Kurse\Pages\CreateTechnikKurs;
+use App\Models\Technik\Kurs;
+use App\Filament\Resources\Technik\Kurse\Tables\KursTable;
+use App\Filament\Resources\Technik\Kurse\Schemas\KursForm;
+use App\Filament\Resources\Technik\Kurse\Pages\ListKurse;
+use App\Filament\Resources\Technik\Kurse\Pages\EditKurs;
+use App\Filament\Resources\Technik\Kurse\Pages\CreateKurs;
 
-class TechnikKursResource extends Resource
+class KursResource extends Resource
 {
-    protected static ?string $model = TechnikKurs::class;
+    protected static ?string $model = Kurs::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
@@ -27,12 +27,12 @@ class TechnikKursResource extends Resource
     protected static ?string $slug = 'technikkurse';
     public static function form(Schema $schema): Schema
     {
-        return TechnikKursForm::configure($schema);
+        return KursForm::configure($schema);
     }
 
     public static function table(Table $table): Table
     {
-        return TechnikKursTable::configure($table);
+        return KursTable::configure($table);
     }
 
     public static function getRelations(): array
@@ -45,9 +45,9 @@ class TechnikKursResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListTechnikKurse::route('/'),
-            'create' => CreateTechnikKurs::route('/create'),
-            'edit' => EditTechnikKurs::route('/{record}/edit'),
+            'index' => ListKurse::route('/'),
+            'create' => CreateKurs::route('/create'),
+            'edit' => EditKurs::route('/{record}/edit'),
         ];
     }
 }
