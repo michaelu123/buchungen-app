@@ -8,12 +8,12 @@ use Filament\Notifications\Notification;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
-use App\Models\TechnikKurs;
-use App\Models\TechnikBuchung;
+use App\Models\Technik\Kurs;
+use App\Models\Technik\Buchung;
 
 new class extends Component implements HasSchemas {
     use InteractsWithSchemas;
-    protected static ?string $model = TechnikBuchung::class;
+    protected static ?string $model = Buchung::class;
     public array $data = [];
 
     public function mount(): void
@@ -24,7 +24,7 @@ new class extends Component implements HasSchemas {
 
     public function form(Schema $schema): Schema
     {
-        $arr1 = TechnikKurs::select(["nummer", "titel"])
+        $arr1 = Kurs::select(["nummer", "titel"])
             ->whereNull("notiz")
             ->where("restplätze", ">", 0)
             ->get()->toArray();
@@ -35,19 +35,19 @@ new class extends Component implements HasSchemas {
             // ->inlineLabel()
             ->components([
                 TextInput::make('email')
-                    ->belowLabel("Die Bestätigung der Buchung erfolgt per E-Mail. Bitte gib eine gültige E-Mail-Adresse an.")
+                    ->belowLabel("Die Bestätigung der Buchung erfolgt per E-Mail. Bitte geben Sie eine gültige E-Mail-Adresse an.")
                     ->email()
                     ->autofocus()
                     ->required(),
                 TextInput::make('mitgliedsnummer')
-                    ->belowLabel("Falls Du ADFC-Mitglied bist, bitte hier die Mitgliedsnummer angeben, für den ermäßigten Preis. Sonst leer lassen.")
+                    ->belowLabel("Falls Sie ADFC-Mitglied sind, bitte hier die Mitgliedsnummer angeben, für den ermäßigten Preis. Sonst leer lassen.")
                     ->rules("digits:8")
                 // ->validationMessages([
                 //     'decimal' => 'Die Mitgliedsnummer besteht aus 8 Ziffern.',
                 //])
                 ,
                 Select::make('kursnummer')
-                    ->belowLabel("Bitte wähle den Kurs, für den Du dich anmelden möchtest.")
+                    ->belowLabel("Bitte wählen Sie den Kurs, für den Sie sich anmelden möchten.")
                     ->label("Kursname")
                     ->options(
                         $arr2,
@@ -68,25 +68,25 @@ new class extends Component implements HasSchemas {
                     ->label('Straße und Hausnummer')
                     ->required(),
                 TextInput::make('telefonnr')
-                    ->belowLabel("Bitte gib eine Telefonnummer an, unter der wir Dich erreichen können, falls es Rückfragen zu Deiner Anmeldung gibt.")
+                    ->belowLabel("Bitte geben Sie eine Telefonnummer an, unter der wir Sie erreichen können, falls es Rückfragen zu Ihrer Anmeldung gibt.")
                     ->label('Telefon')
                     ->tel()
                     ->required(),
                 TextInput::make('kontoinhaber')
-                    ->belowLabel("Bitte gib den Namen des Kontoinhabers an, von dem die Lastschrift erfolgen soll.")
+                    ->belowLabel("Bitte geben Sie den Namen des Kontoinhabers an, von dem die Lastschrift erfolgen soll.")
                     ->required(),
                 TextInput::make('iban')
-                    ->belowLabel("Bitte gib die IBAN des Kontos an, von dem die Lastschrift erfolgen soll.")
+                    ->belowLabel("Bitte geben Sie die IBAN des Kontos an, von dem die Lastschrift erfolgen soll.")
                     ->rules([
                         fn(): Closure => function ($attribute, $value, Closure $fail) {
-                            if (!TechnikBuchung::test_iban($value)) {
+                            if (!Buchung::test_iban($value)) {
                                 $fail('Die IBAN ist ungültig.');
                             }
                         },
                     ])
                     ->required(),
                 Toggle::make('lastschriftok')
-                    ->belowLabel("Bitte bestätige, dass die Lastschrift von dem angegebenen Konto genehmigt ist. Ohne diese Genehmigung können wir Deine Anmeldung nicht bearbeiten.")
+                    ->belowLabel("Bitte bestätigen Sie, dass die Lastschrift von dem angegebenen Konto genehmigt ist. Ohne diese Genehmigung können wir Deine Anmeldung nicht bearbeiten.")
                     ->label('Lastschrift genehmigt')
                     ->default(true)
                     ->required(),
@@ -95,12 +95,8 @@ new class extends Component implements HasSchemas {
 
     public function create(): void
     {
-        TechnikBuchung::create($this->form->getState());
-        Notification::make()
-            ->title('TechnikBuchung created successfully')
-            ->success()
-            ->send();
-        redirect()->route('buchung.ok')->with('msg', "Du erhältst in Kürze eine Bestätigung per E-Mail.");
+        Buchung::createBuchung($this->form->getState());
+        redirect()->route('buchung.ok')->with('msg', "Sie erhalten in Kürze eine E-Mail.");
     }
 }
 ?>
@@ -112,11 +108,11 @@ new class extends Component implements HasSchemas {
     </x-slot>
     <div>
         <p class="mb-10">
-            Mit diesem Formular kannst Du Dich für einen Technikkurs des ADFC München anmelden. Wir brauchen Deine
-            Email-Adresse für die Bestätigungs-Mails. Die Kursgebühr wird per Lastschrift eingezogen. Halte dafür bitte
-            auch Deine
-            IBAN-Kontonummer bereit.
-            Die Kurse kosten 20€ für Nicht-ADFC-Mitglieder, 10€ für ADFC-Mitglieder. Du findest die Kurse auch in
+            Mit diesem Formular können Sie sich für einen Technikkurs des ADFC München anmelden. Wir brauchen Ihre
+            Email-Adresse für die Bestätigungs-Mails. Die Kursgebühr wird per Lastschrift eingezogen. Halten Sie dafür
+            bitte
+            Ihre IBAN-Kontonummer bereit.
+            Die Kurse kosten 20€ für Nicht-ADFC-Mitglieder, 10€ für ADFC-Mitglieder. Sie finden die Kurse auch in
             unserem
             <a class="underline text-blue-600 hover:text-blue-800 visited:text-purple-600" target="_blank"
                 href="https://touren-termine.adfc.de/suche?fromNow=true&eventType=Termin&includedTags=11&latLng=48.1351253%2C11.5819806&place=M%C3%BCnchen">

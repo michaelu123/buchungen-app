@@ -1,25 +1,27 @@
 <?php
 
-namespace App\Mail;
+namespace App\Mail\Technik;
 
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Mail\Mailables\Content;
-use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Bus\Queueable;
+use App\Models\Technik\Kurs;
+use App\Models\Technik\Buchung;
 
-class VerifyEmail extends Mailable
+class Bestätigung extends Mailable
 {
     use Queueable, SerializesModels;
-    public string $emailb64;
 
+    public string $anrede;
     /**
      * Create a new message instance.
      */
-    public function __construct(public string $email)
+    public function __construct(public Kurs $kurs, public Buchung $buchung)
     {
-        $this->emailb64 = base64_encode($email);
+        $this->anrede = "Liebe(r) " . $buchung->anrede . " " . $buchung->vorname . " " . $buchung->nachname;
     }
 
     /**
@@ -28,8 +30,7 @@ class VerifyEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: new Address("technik_anmeldungen@adfc-muenchen.de"),
-            subject: 'Email verifizieren',
+            subject: 'Kursanmeldung bestätigt',
         );
     }
 
@@ -39,7 +40,7 @@ class VerifyEmail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'mail.verifyemail',
+            view: 'mail.technik.bestätigung',
         );
     }
 

@@ -11,6 +11,8 @@ Route::view('dashboard', 'dashboard')
     ->name('dashboard');
 
 Route::livewire("buchung/ok", "pages::buchung.ok")->name("buchung.ok");
+Route::livewire("emailverifikation/{emailb64}", "pages::buchung.emailverifikation")->name("emailverifikation");
+
 Route::livewire("tkbuchung", "pages::technik.create")->name("tkbuchung");
 
 require __DIR__ . '/settings.php';

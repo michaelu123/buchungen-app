@@ -16,7 +16,8 @@ class KursForm
                 TextInput::make('notiz'),
                 TextInput::make('nummer')
                     ->required()
-                    ->unique(ignoreRecord: true),
+                    ->unique(ignoreRecord: true)
+                    ->disabledOn("edit"),
                 TextInput::make('titel')
                     ->required(),
                 DatePicker::make('datum')

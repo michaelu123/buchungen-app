@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Technik\Buchungen\Pages;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Actions\DeleteAction;
+use App\Models\Technik\Buchung;
 use App\Filament\Resources\Technik\Buchungen\BuchungResource;
 
 class EditBuchung extends EditRecord
@@ -14,7 +15,16 @@ class EditBuchung extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            DeleteAction::make(),
+            DeleteAction::make()->after(function (DeleteAction $action) {
+                Buchung::checkRestplätze();
+            }),
         ];
+    }
+
+    protected function handleRecordUpdate(Model $record, array $data): Model
+    {
+        $buchung = parent::handleRecordUpdate($record, $data);
+        Buchung::checkRestplätze();
+        return $buchung;
     }
 }

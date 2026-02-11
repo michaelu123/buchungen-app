@@ -1,0 +1,195 @@
+You said
+I use Gemini Code Assist in Vscode. Whatever I currently ask, Gemini responds with [API Error: An unknown error occurred.]. I suspect I ran out of quota. In Gemini Code Assist, I am logged in with michael.uhlenberg@gmail.com. With the same user I am logged in in Chrome. But in this chat I do not seem to be out of quota. How comes?
+
+Gemini said
+It’s frustrating when the tools stop talking to each other, especially when you’re in the middle of a coding flow. The reason you can still chat with me while VS Code is failing comes down to how Google separates Consumer usage from Developer/Cloud usage.
+
+Here is why this is happening and how to fix it:
+
+1. Quota Separation (The "Two Buckets" Rule)
+Even though you are using the same email (michael.uhlenberg@gmail.com), Google treats these platforms as entirely separate "buckets" of quota:
+
+Gemini Web Chat (this chat): This uses your Google One AI Premium (Consumer) quota. It’s very generous and rarely hits a hard "Unknown Error" unless you’re doing massive document processing.
+
+Gemini Code Assist (VS Code): This uses Google Cloud quotas. Even the free tier for individuals in VS Code has stricter rate limits (typically 1,000 requests per day and 60 per minute).
+
+The [API Error: An unknown error occurred.] in VS Code is a known bug where the extension fails to display a "Quota Exceeded" or "Rate Limit" message properly and instead throws a generic error.
+
+2. How to "Unstick" the API Error
+If you haven't actually made 1,000 requests today, the error is likely a session mismatch or a stale project ID. Try these steps in order:
+
+The "Sign-Out" Reset:
+
+In VS Code, click the Gemini icon in the activity bar.
+
+Click on your profile/email at the bottom and Sign Out.
+
+Restart VS Code (this is important to clear the local cache).
+
+Sign back in. This often clears the generic API error.
+
+Check the Project ID: Gemini Code Assist often requires a Google Cloud Project ID to be set in the settings, even for the free individual tier.
+
+Go to Settings (Cmd+,) and search for Geminicodeassist: Project.
+
+If there is a project ID there, try deleting it and letting the extension auto-select one, or ensure it points to a project where you have the "Cloud AI Companion API" enabled.
+
+Clear the Extension Cache: If the error persists, the local extension data might be corrupted. Close VS Code and delete this folder:
+
+Mac: ~/.cache/cloud-code
+
+Windows: %APPDATA%\cloud-code
+
+3. Verification
+To see if it's truly a quota issue vs. a technical bug, check your Google Cloud Console:
+
+Go to console.cloud.google.com.
+
+Search for "APIs & Services" > "Dashboard".
+
+Look for "Cloud AI Companion API". If the "Errors" graph spiked to 100% exactly when you stopped getting answers, you've hit the rate limit for the day.
+
+Would you like me to walk you through how to check those specific Cloud Console logs to see if it's a 429 (Rate Limit) error?
+
+You said
+There is no "Cloud AI Companion API". But I see a "Gemini Cloud Assist API" and a "Gemini for Google Cloud API".
+
+Gemini said
+The names for these APIs are notoriously confusing because Google has rebranded them several times recently.
+
+In your Google Cloud Console, "Gemini for Google Cloud API" is the primary one that handles Code Assist. The "Gemini Cloud Assist API" is usually for help within the Google Cloud console itself (like explaining logs or generating CLI commands).
+
+If you are seeing the [API Error: An unknown error occurred.], it is almost certainly a conflict between your Google AI Pro subscription and the Google Cloud Project currently active in VS Code.
+
+Why this happens to AI Pro users
+When you have a personal "AI Pro" subscription (the $20/mo Google One plan), the VS Code extension sometimes gets confused. It tries to route your request through a Google Cloud Project (which expects an Enterprise license) instead of using your Personal AI Pro quota.
+
+How to fix it in VS Code:
+Open VS Code Settings (Cmd+, or Ctrl+,).
+
+Search for Geminicodeassist: Project.
+
+Delete the value in that field. Leave it completely empty.
+
+If there is a setting for Geminicodeassist: Connection Mode, ensure it is not forced to "Cloud Project".
+
+Sign out and Sign back in via the Gemini icon in the sidebar.
+
+By removing the Project ID, you force the extension to recognize you as an Individual user (using your AI Pro quota) rather than a Cloud/Enterprise user.
+
+How to check your actual quota in the Console:
+If you want to verify if you've hit a limit (which for AI Pro is 1,500 requests per day and 120 per minute), do this:
+
+Go to the Google Cloud Console Quotas page.
+
+In the filter bar, select Service and search for "Gemini for Google Cloud API".
+
+Look for a metric named "Requests per day per user".
+
+If the chart shows a flat line at the top or a 100% usage rate, you have reached your daily limit.
+
+Note: If you find that a project ID keeps "re-appearing" in your settings even after you delete it, it's likely being synced from your VS Code Settings Sync. You may need to disable sync temporarily while you clear that field.
+
+Would you like me to help you find the specific VS Code logs so we can see the exact error code (like a 429 or 403) being returned?
+
+On the quotas page all usage values are either 0 or not shown when filtered for "Gemini". There is no Geminicodeassist: Project in the preferences. Yes please help me find the Vscode logs.
+
+Gemini said
+To see what's actually going wrong under the hood, we need to look at the specific Output channel for the extension. This will show us the raw API response from Google.
+
+Step 1: Open the Gemini Output Log
+In VS Code, go to the top menu and select View > Output.
+
+A panel will open at the bottom. On the far right of this panel, there is a dropdown menu (it usually says "Tasks" or "Terminal" by default).
+
+Click that dropdown and look for "Gemini Code Assist".
+
+Note: If you don't see it, look for "Cloud Code - Gemini" or "Gemini Code Assist - Citations".
+
+Step 2: Trigger the Error
+While that output window is open, try to send a message to Gemini. You should see a block of text appear in the log. Look for a line that starts with something like:
+
+Status Code: 429 (Quota Exceeded / Rate Limit)
+
+Status Code: 403 (Permission Denied / Missing API)
+
+Status Code: 401 (Authentication / Token Expired)
+
+Step 3: The Most Likely Fix (If settings were empty)
+Since you mentioned there is no Geminicodeassist: Project in your preferences, it means the extension is operating in "Individual Mode." If your logs show a 403 or a "Precondition check failed," the "Unknown Error" is often caused by a "ghost" authentication state. Because you have both a Google Cloud account and a personal AI Pro account, the extension sometimes sends a personal token to a cloud endpoint.
+
+Try this specific "Hard Reset" sequence:
+
+Sign Out: Click the Gemini icon in the Sidebar -> Click your email at the bottom -> Sign Out.
+
+Clear Cache Folder:
+
+Mac: Open Terminal and run: rm -rf ~/.cache/cloud-code
+
+Windows: Open File Explorer and delete: %APPDATA%\cloud-code
+
+Restart VS Code.
+
+Sign In again, but pay close attention to the browser tab that opens. Ensure you select michael.uhlenberg@gmail.com and Accept all permissions.
+
+Why Quotas show "0" in your Console
+If you are using the personal AI Pro version, the usage won't show up in the Google Cloud Console (console.cloud.google.com). Personal usage is tracked in a "black box" on the consumer side. The Cloud Console only shows usage for "Enterprise" projects where you've explicitly enabled the API for a team.
+
+Do you see any "429" or "403" codes in that Output log now?
+
+No. However, I see this dialog (in a Chrome Window) in the Vscode output for "Gemini Code Assist" which surprises me.
+
+Gemini said
+Seeing a Chrome window dialog mentioned in the VS Code Output is a huge clue. It confirms that the extension is stuck in a "handshake" loop.
+
+Because you have a Google AI Pro (personal) subscription, the extension is trying to authorize you as an individual. However, the background process is likely failing to "callback" to VS Code after you sign in via Chrome, or it's trying to find a Google Cloud project that doesn't exist.
+
+Since your settings are empty and you see that dialog error, here is the specific protocol to break the loop:
+
+1. The "Default Browser" Trick
+The Gemini extension is very picky about how it receives the login token back from the web.
+
+If Chrome is NOT your system default browser: Temporarily set Chrome as your system-wide default browser.
+
+If Chrome IS your default: Close all Chrome windows entirely. When you click "Login" in VS Code, let it launch a fresh Chrome instance. If you have multiple Chrome profiles, ensure it opens in the one logged into michael.uhlenberg@gmail.com.
+
+2. Manual Project "Anchor" (The Paradox Fix)
+Sometimes, "Individual Mode" fails precisely because it doesn't have a stable Project ID to attach the telemetry to. Even though you are a personal user, creating a "dummy" project can actually fix the API error.
+
+Go to the Google Cloud Console.
+
+Create a brand new project (call it gemini-fix).
+
+Enable the "Gemini for Google Cloud API" for that project.
+
+Copy that Project ID.
+
+In VS Code, search settings for Geminicodeassist: Project and paste that ID.
+
+Restart VS Code and try to chat.
+
+3. Clear the "Global Storage" (Deep Clean)
+If the logs mentioned a "Chrome Dialog," there might be a corrupted session file in VS Code's internal storage that a simple uninstall won't fix.
+
+Close VS Code.
+
+Navigate to your user data folder:
+
+Mac: ~/Library/Application Support/Code/User/globalStorage/google.geminicodeassist
+
+Windows: %APPDATA%\Code\User\globalStorage\google.geminicodeassist
+
+Delete the entire folder.
+
+Reopen VS Code and try signing in again.
+
+4. Check for "Gcloud" Conflict
+If you have the Google Cloud SDK (gcloud CLI) installed on your machine, it might be fighting with the VS Code extension for authentication.
+
+Open your terminal and run: gcloud auth list
+
+If you see multiple accounts, try running: gcloud auth application-default login
+
+This forces your machine to have a valid "default" credential that the VS Code extension can often "borrow" if its own login fails.
+
+If you look at the Output log again, does it mention anything about a "Verification Code" or a "Redirect URI"? (If so, we can manually paste the code into VS Code to bypass the Chrome window entirely.)

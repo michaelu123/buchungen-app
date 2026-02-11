@@ -80,16 +80,26 @@ class BuchungTable
             ])
             ->recordActions([
                 EditAction::make(),
-                DeleteAction::make(),
+                DeleteAction::make()->after(function (DeleteBulkAction $action) {
+                    Buchung::checkRestplätze();
+                }),
                 Action::make("Prüfen")
                     ->tableIcon(Heroicon::OutlinedCheckCircle)
                     ->action(function (Buchung $record) {
                         $record->check();
                     }),
+                Action::make("Bestätigung senden")
+                    ->tableIcon(Heroicon::OutlinedEnvelope)
+                    ->action(function (Buchung $record) {
+                        $record->confirm();
+                    }),
+
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()->after(function (DeleteBulkAction $action) {
+                        Buchung::checkRestplätze();
+                    }),
                 ]),
             ]);
     }

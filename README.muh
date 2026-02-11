@@ -16,12 +16,12 @@ php artisan ide-helper:meta
 #und composer.json post-update-cmd erweitern
 
 
-php artisan make:model TechnikKurs -m
-php artisan make:model TechnikBuchung -m
+php artisan make:model Technik\Kurs -m
+php artisan make:model Technik\Buchung -m
 php artisan migrate
 
-php artisan make:filament-resource TechnikKurs --generate
-php artisan make:filament-resource TechnikBuchung --generate
+php artisan make:filament-resource Technik\Kurs --generate
+php artisan make:filament-resource Technik\Buchung --generate
 
 php artisan make:livewire pages::technik.create 
 php artisan make:mail VerifyEmail
@@ -29,3 +29,32 @@ php artisan make:mail FalscheIban
 
 php artisan make:model EmailVerifikation -m
 php artisan migrate
+
+php artisan make:filament-resource EmailVerifikation --generate
+
+php artisan make:livewire pages::buchung.ok 
+php artisan make:livewire pages::buchung.emailverifikation 
+php artisan make:mail Technik\Bestätigung
+
+php artisan notifications:table
+php artisan migrate
+
+email mit mailhog
+php artisan queue:listen
+
+
+# change REVERB_PORT=8181 in .env and REVERB_SERVER_PORT=8181 in config/reverb.php
+# to test Reverb:
+php artisan make:livewire Sample
+php artisan make:event Test
+in welcome.blade.php sample und @vite, dann http://buchungen-app.test/, unten steht was von sample
+php artisan reverb:start --debug
+php artisan tinker
+  App\Events\Test::dispatch(); 
+
+php artisan vendor:publish --tag=filament-config   # then add reverb
+
+3 Terminals:  1) npm run dev 2) php artisan queue:listen 3) php artisan reverb:start --debug
+
+# nach Änderungen der Konfiguration ? 
+php artisan route:clear;php artisan config:clear 
