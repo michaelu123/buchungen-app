@@ -1,6 +1,7 @@
-<div class="flex flex-col items-center justify-center">
-  <h1 class="text-xl font-bold">Bestätigung Deiner Email-Adresse</h1>
-  <p>Bitte klicke auf diesen Link, um Deine Email zu bestätigen.</p>
-  <a href="{{ route('emailverifikation', ['emailb64' => $emailb64])}}">Bestätigen</a>
+<div>
+  <h1>Bestätigung Ihrer Email-Adresse</h1>
+  <p>Bitte klicken Sie auf
+    <a href="{{ route('emailverifikation', ['emailb64' => $emailb64])}}">diesen Link</a>
+    , um Ihre Email zu bestätigen.
   </p>
 </div>

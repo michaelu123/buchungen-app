@@ -4,10 +4,13 @@ namespace App\Filament\Resources\Technik\Kurse\Tables;
 
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Support\Icons\Heroicon;
 use Filament\Actions\EditAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\Action;
+use App\Models\Technik\Kurs;
 use App\Models\Technik\Buchung;
 
 class KursTable
@@ -51,6 +54,12 @@ class KursTable
             ->recordActions([
                 EditAction::make(),
                 DeleteAction::make(),
+                Action::make("Export")
+                    ->Label("Exportieren")
+                    ->tableIcon(Heroicon::OutlinedDocumentArrowDown)
+                    ->action(function (Kurs $record) {
+                        $record->export();
+                    }),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

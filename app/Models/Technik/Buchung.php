@@ -2,7 +2,6 @@
 
 namespace App\Models\Technik;
 
-use Mockery\Matcher\Not;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;

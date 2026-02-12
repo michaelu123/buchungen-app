@@ -5,6 +5,7 @@ namespace App\Mail\Technik;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Bus\Queueable;
@@ -21,7 +22,7 @@ class Bestätigung extends Mailable
      */
     public function __construct(public Kurs $kurs, public Buchung $buchung)
     {
-        $this->anrede = "Liebe(r) " . $buchung->anrede . " " . $buchung->vorname . " " . $buchung->nachname;
+        $this->anrede = "Liebe(r) " . /*$buchung->anrede .*/ " " . $buchung->vorname . " " . $buchung->nachname;
     }
 
     /**
@@ -31,6 +32,7 @@ class Bestätigung extends Mailable
     {
         return new Envelope(
             subject: 'Kursanmeldung bestätigt',
+            from: new Address("technik_anmeldungen@adfc-muenchen.de"),
         );
     }
 

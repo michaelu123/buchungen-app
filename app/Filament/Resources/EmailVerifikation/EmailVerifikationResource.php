@@ -22,6 +22,7 @@ class EmailVerifikationResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     protected static ?string $recordTitleAttribute = 'email';
+    protected static ?string $pluralModelLabel = 'Email-Verifikationen';
     protected static string|UnitEnum|null $navigationGroup = "Allgemein";
 
     public static function form(Schema $schema): Schema

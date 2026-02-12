@@ -4,12 +4,9 @@ use Livewire\Component;
 use Filament\Schemas\Schema;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
-use Filament\Notifications\Notification;
-use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Radio;
-use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Checkbox;
 use App\Models\Technik\Kurs;
 use App\Models\Technik\Buchung;
@@ -94,10 +91,11 @@ new class extends Component implements HasSchemas {
                         },
                     ])
                     ->required(),
-                Toggle::make('lastschriftok')
-                    ->belowLabel("Bitte bestätigen Sie, dass die Lastschrift von dem angegebenen Konto genehmigt ist. Ohne diese Genehmigung können wir Deine Anmeldung nicht bearbeiten.")
+                Checkbox::make('lastschriftok')
+                    ->belowLabel("Bitte bestätigen Sie, dass die Lastschrift von dem angegebenen Konto genehmigt ist. Ohne diese Genehmigung können wir Ihre Anmeldung nicht bearbeiten.")
                     ->label('Lastschrift genehmigt')
                     ->default(true)
+                    ->accepted()
                     ->required(),
             ])->statePath('data');
     }
