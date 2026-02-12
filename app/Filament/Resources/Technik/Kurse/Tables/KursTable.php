@@ -26,7 +26,7 @@ class KursTable
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('datum')
-                    ->date()
+                    ->date("d.m.Y")
                     ->sortable(),
                 TextColumn::make('kursplätze')
                     ->numeric(),
@@ -37,11 +37,11 @@ class KursTable
                 TextColumn::make('leiter2')
                     ->sortable(),
                 TextColumn::make('created_at')
-                    ->dateTime()
+                    ->dateTime("d.m.Y H:i:s")
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->dateTime("d.m.Y H:i:s")
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])

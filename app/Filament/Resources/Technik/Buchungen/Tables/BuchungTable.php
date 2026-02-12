@@ -20,8 +20,8 @@ class BuchungTable
         return $table
             ->columns([
                 TextColumn::make('created_at')
-                    ->label("Zeitstempel")
-                    ->dateTime()
+                    ->label("Eingegangen am")
+                    ->dateTime("d.m.Y H:i:s")
                     ->sortable(),
                 TextColumn::make('notiz'),
                 TextColumn::make('kursnummer')
@@ -71,7 +71,7 @@ class BuchungTable
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->dateTime("d.m.Y H:i:s")
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])

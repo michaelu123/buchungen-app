@@ -8,6 +8,9 @@ use Filament\Notifications\Notification;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\Checkbox;
 use App\Models\Technik\Kurs;
 use App\Models\Technik\Buchung;
 
@@ -24,12 +27,12 @@ new class extends Component implements HasSchemas {
 
     public function form(Schema $schema): Schema
     {
-        $arr1 = Kurs::select(["nummer", "titel"])
+        $arr1 = Kurs::select(["nummer", "titel", "datum", "restplätze"])
             ->whereNull("notiz")
             ->where("restplätze", ">", 0)
             ->get()->toArray();
         $arr2 = collect($arr1)->mapWithKeys(function (array $item) {
-            return [$item["nummer"] => $item["nummer"] . " - " . $item["titel"]];
+            return [$item["nummer"] => $item["nummer"] . ": " . $item["titel"] . " am " . date("d.m.Y", strtotime($item["datum"])) . ", freie Plätze: " . $item["restplätze"] . ")"];
         })->all();
         return $schema
             // ->inlineLabel()
@@ -46,9 +49,15 @@ new class extends Component implements HasSchemas {
                 //     'decimal' => 'Die Mitgliedsnummer besteht aus 8 Ziffern.',
                 //])
                 ,
-                Select::make('kursnummer')
-                    ->belowLabel("Bitte wählen Sie den Kurs, für den Sie sich anmelden möchten.")
-                    ->label("Kursname")
+                // Select::make('kursnummer')
+                //     ->belowLabel("Bitte wählen Sie den Kurs, für den Sie sich anmelden möchten.")
+                //     ->label("Kursname")
+                //     ->options(
+                //         $arr2,
+                //     )
+                //     ->required(),
+                Radio::make("kursnummer")
+                    ->label("Ich möchte mich für folgenden Kurs anmelden:")
                     ->options(
                         $arr2,
                     )
