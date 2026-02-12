@@ -11,7 +11,7 @@ use BackedEnum;
 use App\Models\EmailVerifikation;
 use App\Filament\Resources\EmailVerifikation\Tables\EmailVerifikationTable;
 use App\Filament\Resources\EmailVerifikation\Schemas\EmailVerifikationForm;
-use App\Filament\Resources\EmailVerifikation\Pages\ListEmailVerifikation;
+use App\Filament\Resources\EmailVerifikation\Pages\ListEmailVerifikations;
 use App\Filament\Resources\EmailVerifikation\Pages\EditEmailVerifikation;
 use App\Filament\Resources\EmailVerifikation\Pages\CreateEmailVerifikation;
 
@@ -45,7 +45,7 @@ class EmailVerifikationResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListEmailVerifikation::route('/'),
+            'index' => ListEmailVerifikations::route('/'),
             'create' => CreateEmailVerifikation::route('/create'),
             'edit' => EditEmailVerifikation::route('/{record}/edit'),
         ];

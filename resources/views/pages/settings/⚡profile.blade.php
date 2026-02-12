@@ -1,13 +1,13 @@
 <?php
 
-use App\Concerns\ProfileValidationRules;
-use App\Models\User;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Validation\Rule;
-use Livewire\Attributes\Computed;
 use Livewire\Component;
+use Livewire\Attributes\Computed;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\User;
+use App\Concerns\ProfileValidationRules;
 
 new class extends Component {
     use ProfileValidationRules;
@@ -29,6 +29,7 @@ new class extends Component {
      */
     public function updateProfileInformation(): void
     {
+        /** @var User $user */
         $user = Auth::user();
 
         $validated = $this->validate($this->profileRules($user->id));
@@ -49,6 +50,7 @@ new class extends Component {
      */
     public function resendVerificationNotification(): void
     {
+        /** @var User $user */
         $user = Auth::user();
 
         if ($user->hasVerifiedEmail()) {
@@ -65,14 +67,20 @@ new class extends Component {
     #[Computed]
     public function hasUnverifiedEmail(): bool
     {
-        return Auth::user() instanceof MustVerifyEmail && ! Auth::user()->hasVerifiedEmail();
+        /** @var User $user */
+        $user = Auth::user();
+
+        return $user instanceof MustVerifyEmail && !$user->hasVerifiedEmail();
     }
 
     #[Computed]
     public function showDeleteUser(): bool
     {
-        return ! Auth::user() instanceof MustVerifyEmail
-            || (Auth::user() instanceof MustVerifyEmail && Auth::user()->hasVerifiedEmail());
+        /** @var User $user */
+        $user = Auth::user();
+
+        return !$user instanceof MustVerifyEmail
+            || ($user instanceof MustVerifyEmail && $user->hasVerifiedEmail());
     }
 }; ?>
 
@@ -99,7 +107,7 @@ new class extends Component {
                         </flux:text>
 
                         @if (session('status') === 'verification-link-sent')
-                            <flux:text class="mt-2 font-medium !dark:text-green-400 !text-green-600">
+                            <flux:text class="mt-2 font-medium !dark:text-green-400 text-green-600!">
                                 {{ __('A new verification link has been sent to your email address.') }}
                             </flux:text>
                         @endif

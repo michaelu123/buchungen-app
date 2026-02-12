@@ -37,7 +37,6 @@ new class extends Component implements HasSchemas {
                 TextInput::make('email')
                     ->belowLabel("Die Bestätigung der Buchung erfolgt per E-Mail. Bitte geben Sie eine gültige E-Mail-Adresse an.")
                     ->email()
-                    ->autofocus()
                     ->required(),
                 TextInput::make('mitgliedsnummer')
                     ->belowLabel("Falls Sie ADFC-Mitglied sind, bitte hier die Mitgliedsnummer angeben, für den ermäßigten Preis. Sonst leer lassen.")
@@ -110,8 +109,10 @@ new class extends Component implements HasSchemas {
 
 <x-filament::section class="max-w-7xl mx-auto items-center justify-center">
     <x-slot name="heading">
-        Anmeldung zu einem Technikkurs
-
+        <div class="flex flex-row justify-between items-center">
+            Anmeldung zu einem Technikkurs
+            <img src="/ADFC_MUENCHEN.PNG" alt="">
+        </div>
     </x-slot>
     <div>
         <p class="mb-10">

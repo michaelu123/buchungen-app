@@ -58,3 +58,6 @@ php artisan vendor:publish --tag=filament-config   # then add reverb
 
 # nach Änderungen der Konfiguration ? 
 php artisan route:clear;php artisan config:clear 
+
+composer require maatwebsite/excel
+php artisan make:export Technik\BuchungenExport --model=Technik\Buchung

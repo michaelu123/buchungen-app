@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Technik\Kurse\Tables;
 
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Maatwebsite\Excel\Facades\Excel;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Support\Icons\Heroicon;
@@ -11,7 +13,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\Action;
 use App\Models\Technik\Kurs;
-use App\Models\Technik\Buchung;
+use App\Exports\Technik\BuchungenExport;
 
 class KursTable
 {
@@ -54,11 +56,11 @@ class KursTable
             ->recordActions([
                 EditAction::make(),
                 DeleteAction::make(),
-                Action::make("Export")
-                    ->Label("Exportieren")
+                Action::make("export")
+                    ->Label("Excel")
                     ->tableIcon(Heroicon::OutlinedDocumentArrowDown)
-                    ->action(function (Kurs $record) {
-                        $record->export();
+                    ->action(function (Kurs $kurs): BinaryFileResponse {
+                        return Excel::download(new BuchungenExport($kurs), $kurs->nummer . ".xlsx");
                     }),
             ])
             ->toolbarActions([

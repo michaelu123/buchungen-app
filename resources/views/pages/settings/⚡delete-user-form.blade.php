@@ -19,7 +19,9 @@ new class extends Component {
             'password' => $this->currentPasswordRules(),
         ]);
 
-        tap(Auth::user(), $logout(...))->delete();
+        /** @var User $user */
+        $user = Auth::user();
+        tap($user, $logout(...))->delete();
 
         $this->redirect('/', navigate: true);
     }
@@ -32,7 +34,8 @@ new class extends Component {
     </div>
 
     <flux:modal.trigger name="confirm-user-deletion">
-        <flux:button variant="danger" x-data="" x-on:click.prevent="$dispatch('open-modal', 'confirm-user-deletion')" data-test="delete-user-button">
+        <flux:button variant="danger" x-data="" x-on:click.prevent="$dispatch('open-modal', 'confirm-user-deletion')"
+            data-test="delete-user-button">
             {{ __('Delete account') }}
         </flux:button>
     </flux:modal.trigger>
