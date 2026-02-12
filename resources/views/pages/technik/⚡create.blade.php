@@ -1,6 +1,7 @@
 <?php
 
 use Livewire\Component;
+use Illuminate\Support\HtmlString;
 use Filament\Schemas\Schema;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
@@ -29,7 +30,7 @@ new class extends Component implements HasSchemas {
             ->where("restplätze", ">", 0)
             ->get()->toArray();
         $arr2 = collect($arr1)->mapWithKeys(function (array $item) {
-            return [$item["nummer"] => $item["nummer"] . ": " . $item["titel"] . " am " . date("d.m.Y", strtotime($item["datum"])) . ", freie Plätze: " . $item["restplätze"] . ")"];
+            return [$item["nummer"] => $item["nummer"] . ": " . $item["titel"] . " am " . date("d.m.Y", strtotime($item["datum"])) . ", freie Plätze: " . $item["restplätze"]];
         })->all();
         return $schema
             // ->inlineLabel()
@@ -53,7 +54,8 @@ new class extends Component implements HasSchemas {
                 //     )
                 //     ->required(),
                 Radio::make("kursnummer")
-                    ->label("Ich möchte mich für folgenden Kurs anmelden:")
+                    ->label("Kurs")
+                    ->belowLabel("Ich möchte mich für folgenden Kurs anmelden:")
                     ->options(
                         $arr2,
                     )
@@ -91,7 +93,44 @@ new class extends Component implements HasSchemas {
                     ])
                     ->required(),
                 Checkbox::make('lastschriftok')
-                    ->belowLabel("Bitte bestätigen Sie, dass die Lastschrift von dem angegebenen Konto genehmigt ist. Ohne diese Genehmigung können wir Ihre Anmeldung nicht bearbeiten.")
+                    ->belowContent(new HtmlString(<<<EOD
+Hiermit ermächtige ich den ADFC München e.V. (Gläubiger-Identifikationsnummer: DE44ZZZ00000793122), den Teilnahmebeitrag 
+aus dieser Anmeldung von meinem o.a. Bankkonto bei Fälligkeit unter Angabe der Mandatsreferenz „ADFC-M-TK“ einzuziehen. 
+Zugleich weise ich mein Kreditinstitut an, vom ADFC München e.V. auf mein Konto gezogene SEPA-Lastschrift einzulösen. 
+Hinweis: Ich kann innerhalb von acht Wochen, beginnend mit dem Belastungsdatum, die Erstattung des belasteten Betrages verlangen. 
+Es gelten dabei die mit meinem Kreditinstitut vereinbarten Bedingungen.
+
+<br><br><strong>Anmeldebedingungen:</strong><br>
+
+Für alle Kurse ist eine Anmeldung erforderlich (online).
+<p>
+- Die Annahme der Kursanmeldung durch den ADFC München e.V. ist erfolgt, wenn sie durch eine Bestätigungsmail schriftlich quittiert wird.
+</p><p>
+- Die Bezahlung erfolgt per Bankeinzug. Die Kursgebühr ist mit Zustandekommen des Vertrags fällig. Die Teilnahme am Kurs ist erst gesichert 
+mit Eingang der Lastschrift auf dem Bankkonto des ADFC München e.V.
+</p><p>
+- Sie können nur durch schriftliche Erklärung (Email an den Absender der Bestätigungsmail) von einem noch nicht begonnenen Kurs zurücktreten. 
+Erfolgt der Rücktritt bis 72 Stunden vor Kursbeginn, erstatten wir die Kursgebühr zurück.
+</p><p>
+- Mit der Anmeldung stimmen Sie unseren Anmeldebedingungen und unserem Hygienekonzept zu und machen sich damit vertraut.
+</p>
+
+<br><strong>Datenschutzerklärung gemäß Art. 13 Datenschutz-Grundverordnung (DSGVO):</strong><br>
+
+Der „Allgemeine Deutsche Fahrrad-Club München e.V.“ speichert die Anmeldedaten nur zur Erfüllung des vereinbarten Schulungsverhältnisses. 
+Verantwortliche Stelle ist der Verein „Allgemeiner Deutscher Fahrrad-Club München e.V., Platenstraße 4, 80336 München. 
+Die in diesem Anmeldeformular erhobenen personenbezogenen Daten Name, Vorname, Postanschrift, E-Mail-Adresse, diverse Telefonnummern 
+und die Bankverbindung (bei einer SEPA-Lastschriftvereinbarung) werden ausschließlich zum Zwecke der Verwaltung und Betreuung der 
+angemeldeten Kursteilnehmer/-innen genutzt.
+
+Die Daten werden an Dritte nur bei Vorliegen einer rechtlichen Verpflichtung übermittelt. Die Nutzung zu Werbezwecken findet nicht statt.
+Die personenbezogenen Daten werden nach Abschluss des Kurses gelöscht, soweit sie nicht entsprechend rechtlicher Vorgaben länger 
+aufbewahrt werden müssen (SEPA-Lastschriftverfahren).
+Jede Kursteilnehmerin bzw. jeder Kursteilnehmer hat im Rahmen der gesetzlichen Vorgaben das Recht auf Auskunft über die personenbezogenen 
+Daten, die zu seiner Person bei der hier genannten verantwortlichen Stelle gespeichert sind, sowie das Recht auf Korrektur fehlerhafter 
+Daten und ein Beschwerderecht beim Bayerischen Landesamt für Datenschutzaufsicht. (Eine ausführliche Erklärung des Vereins 
+unter: https://www.adfc-muenchen.de/datenschutzerklaerung/)
+EOD))
                     ->label('Lastschrift genehmigt')
                     ->default(true)
                     ->accepted()
@@ -131,7 +170,7 @@ new class extends Component implements HasSchemas {
             {{ $this->form }}
 
             <x-filament::button type="submit" class="mt-4">
-                Create
+                Anmelden
             </x-filament::button>
         </form>
 

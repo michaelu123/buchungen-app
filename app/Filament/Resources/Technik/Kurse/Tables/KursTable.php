@@ -13,6 +13,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\Action;
 use App\Models\Technik\Kurs;
+use App\Models\Technik\Buchung;
 use App\Exports\Technik\BuchungenExport;
 
 class KursTable
@@ -67,6 +68,12 @@ class KursTable
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
+                Action::make("update")
+                    ->label("Update Restplätze")
+                    ->tableIcon(Heroicon::OutlinedArrowPath)
+                    ->action(function () {
+                        Buchung::checkRestPlätze();                      // do nothing, just redirect to the create page
+                    })
             ]);
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Technik\Buchungen\Tables;
 
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Maatwebsite\Excel\Facades\Excel;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\IconColumn;
@@ -12,6 +14,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\Action;
 use App\Models\Technik\Buchung;
+use App\Exports\Technik\BuchungenExport;
 
 class BuchungTable
 {
@@ -101,6 +104,13 @@ class BuchungTable
                         Buchung::checkRestplätze();
                     }),
                 ]),
+                Action::make("export")
+                    ->Label("Excel")
+                    ->tableIcon(Heroicon::OutlinedDocumentArrowDown)
+                    ->action(function (): BinaryFileResponse {
+                        return Excel::download(new BuchungenExport(null), "Buchungen.xlsx");
+                    }),
+
             ]);
     }
 }

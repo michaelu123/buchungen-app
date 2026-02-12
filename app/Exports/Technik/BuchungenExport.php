@@ -8,6 +8,7 @@ use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\Exportable;
 use App\Models\Technik\Kurs;
+use App\Models\Technik\Buchung;
 
 class BuchungenExport implements FromCollection, WithMapping, WithHeadings, ShouldAutoSize
 {
@@ -16,18 +17,23 @@ class BuchungenExport implements FromCollection, WithMapping, WithHeadings, Shou
      */
     public function collection()
     {
-        return $this->kurs->buchungen()->whereNull("notiz")->get();
+        if ($this->kurs) {
+            return $this->kurs->buchungen()->get();
+        }
+        return Buchung::all();
     }
 
     use Exportable;
 
-    public function __construct(public Kurs $kurs)
+    public function __construct(public Kurs|null $kurs)
     {
     }
 
     public function map($buchung): array
     {
         return [
+            $buchung->notiz,
+            $buchung->kursnummer,
             $buchung->email,
             $buchung->mitgliedsnummer,
             $buchung->anrede,
@@ -44,6 +50,8 @@ class BuchungenExport implements FromCollection, WithMapping, WithHeadings, Shou
     public function headings(): array
     {
         return [
+            'Notiz',
+            'Kurs',
             'Email',
             'Mitgliedsnummer',
             'Anrede',
@@ -53,7 +61,7 @@ class BuchungenExport implements FromCollection, WithMapping, WithHeadings, Shou
             'Ort',
             'Strasse Nr',
             'Telefonnummer',
-            'verified',
+            'Verifiziert',
         ];
     }
 

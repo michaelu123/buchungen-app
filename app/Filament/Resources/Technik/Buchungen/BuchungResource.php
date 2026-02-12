@@ -49,7 +49,7 @@ class BuchungResource extends Resource
     {
         return [
             'index' => ListBuchungen::route('/'),
-            // 'create' => CreateBuchung::route('/create'),
+            'create' => CreateBuchung::route('/create'),
             'edit' => EditBuchung::route('/{record}/edit'),
         ];
     }

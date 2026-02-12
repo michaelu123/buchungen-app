@@ -81,7 +81,10 @@ class Buchung extends BaseBuchung
             ->whereNull("notiz")
             ->groupBy("kursnummer")
             ->get()->toArray();
-        $kursPlätze = Kurs::select("id", "nummer", "kursplätze", "restplätze")->get()->toArray();
+        $kursPlätze = Kurs::select("id", "nummer", "kursplätze", "restplätze")
+            ->whereNull("notiz")
+            ->get()
+            ->toArray();
         foreach ($kursPlätze as $kurs) {
             $buchungenFound = false;
             foreach ($kursBuchungen as $buchung) {
