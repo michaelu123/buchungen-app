@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\Technik\Kurse;
+namespace App\Filament\Resources\RFSA\Kurse;
 
 use UnitEnum;
 use Filament\Tables\Table;
@@ -8,12 +8,12 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use BackedEnum;
-use App\Models\Technik\Kurs;
-use App\Filament\Resources\Technik\Kurse\Tables\KursTable;
-use App\Filament\Resources\Technik\Kurse\Schemas\KursForm;
-use App\Filament\Resources\Technik\Kurse\Pages\ListKurse;
-use App\Filament\Resources\Technik\Kurse\Pages\EditKurs;
-use App\Filament\Resources\Technik\Kurse\Pages\CreateKurs;
+use App\Models\RFSA\Kurs;
+use App\Filament\Resources\RFSA\Kurse\Tables\KursTable;
+use App\Filament\Resources\RFSA\Kurse\Schemas\KursForm;
+use App\Filament\Resources\RFSA\Kurse\Pages\ListKurse;
+use App\Filament\Resources\RFSA\Kurse\Pages\EditKurs;
+use App\Filament\Resources\RFSA\Kurse\Pages\CreateKurs;
 
 class KursResource extends Resource
 {
@@ -21,10 +21,10 @@ class KursResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
-    protected static string|UnitEnum|null $navigationGroup = "Technik-Kurse";
-    protected static ?string $pluralModelLabel = 'Technik-Kurse';
-    protected static ?string $recordTitleAttribute = 'titel';
-    protected static ?string $slug = 'technikkurse';
+    protected static string|UnitEnum|null $navigationGroup = "RFSA-Kurse";
+    protected static ?string $pluralModelLabel = 'RFSA-Kurse';
+    protected static ?string $recordTitleAttribute = 'nummer';
+    protected static ?string $slug = 'rfsakurse';
     public static function form(Schema $schema): Schema
     {
         return KursForm::configure($schema);

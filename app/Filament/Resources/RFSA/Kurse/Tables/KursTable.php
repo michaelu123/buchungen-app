@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\Technik\Kurse\Tables;
+namespace App\Filament\Resources\RFSA\Kurse\Tables;
 
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Maatwebsite\Excel\Facades\Excel;
@@ -12,9 +12,10 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\Action;
-use App\Models\Technik\Kurs;
-use App\Models\Technik\Buchung;
-use App\Exports\Technik\BuchungenExport;
+use App\Models\RFSA\Kurs;
+use App\Models\RFSA\Buchung;
+use App\Exports\RFSA\BuchungenExport;
+use Carbon\Carbon;
 
 class KursTable
 {
@@ -27,21 +28,18 @@ class KursTable
                     ->label('Nummer')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('titel')
-                    ->label('Titel')
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('datum')
-                    ->date("d.m.Y")
-                    ->sortable(),
+                TextColumn::make('uhrzeit')
+                    ->label("Uhrzeit"),
+                TextColumn::make('kurstermine')
+                    ->label("Kurstermine")
+                    ->state(fn(Kurs $kurs) => $kurs->termine(true)),
+                TextColumn::make('ersatztermine')
+                    ->label("Ersatztermine")
+                    ->state(fn(Kurs $kurs) => $kurs->termine(false)),
                 TextColumn::make('kursplätze')
                     ->numeric(),
                 TextColumn::make('restplätze')
                     ->numeric(),
-                TextColumn::make('leiter')
-                    ->sortable(),
-                TextColumn::make('leiter2')
-                    ->sortable(),
                 TextColumn::make('kommentar')
                     ->searchable()
                     ->limit(30)
@@ -87,3 +85,4 @@ class KursTable
             ]);
     }
 }
+

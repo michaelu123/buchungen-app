@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\Technik\Buchungen\Tables;
+namespace App\Filament\Resources\RFSA\Buchungen\Tables;
 
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Maatwebsite\Excel\Facades\Excel;
@@ -13,8 +13,8 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\Action;
-use App\Models\Technik\Buchung;
-use App\Exports\Technik\BuchungenExport;
+use App\Models\RFSA\Buchung;
+use App\Exports\RFSA\BuchungenExport;
 
 class BuchungTable
 {

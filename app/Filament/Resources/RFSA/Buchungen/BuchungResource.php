@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\Technik\Buchungen;
+namespace App\Filament\Resources\RFSA\Buchungen;
 
 use UnitEnum;
 use Filament\Tables\Table;
@@ -8,23 +8,23 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use BackedEnum;
-use App\Models\Technik\Buchung;
-use App\Filament\Resources\Technik\Buchungen\Tables\BuchungTable;
-use App\Filament\Resources\Technik\Buchungen\Schemas\BuchungForm;
-use App\Filament\Resources\Technik\Buchungen\Pages\ListBuchungen;
-use App\Filament\Resources\Technik\Buchungen\Pages\EditBuchung;
-use App\Filament\Resources\Technik\Buchungen\Pages\CreateBuchung;
+use App\Models\RFSA\Buchung;
+use App\Filament\Resources\RFSA\Buchungen\Tables\BuchungTable;
+use App\Filament\Resources\RFSA\Buchungen\Schemas\BuchungForm;
+use App\Filament\Resources\RFSA\Buchungen\Pages\ListBuchungen;
+use App\Filament\Resources\RFSA\Buchungen\Pages\EditBuchung;
+use App\Filament\Resources\RFSA\Buchungen\Pages\CreateBuchung;
 
 class BuchungResource extends Resource
 {
     protected static ?string $model = Buchung::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
-    protected static string|UnitEnum|null $navigationGroup = "Technik-Kurse";
-    protected static ?string $pluralModelLabel = 'Technik-Buchungen';
+    protected static string|UnitEnum|null $navigationGroup = "RFSA-Kurse";
+    protected static ?string $pluralModelLabel = 'RFSA-Buchungen';
     protected static ?string $modelLabel = 'Buchung'; // ???
     protected static ?string $navigationLabel = 'Buchungen'; // ???
-    protected static ?string $slug = 'technikbuchungen';
+    protected static ?string $slug = 'rfsabuchungen';
 
     protected static ?string $recordTitleAttribute = 'email';
 

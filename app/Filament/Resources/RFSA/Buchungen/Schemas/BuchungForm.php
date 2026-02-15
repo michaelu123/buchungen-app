@@ -1,29 +1,29 @@
 <?php
 
-namespace App\Filament\Resources\Technik\Buchungen\Schemas;
+namespace App\Filament\Resources\RFSA\Buchungen\Schemas;
 
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Textarea;
+use App\Models\RFSA\Kurs;
+use App\Models\RFSA\Buchung;
 use Closure;
-use App\Models\Technik\Kurs;
-use App\Models\Technik\Buchung;
+use Filament\Forms\Components\Textarea;
 
 class BuchungForm
 {
     public static function configure(Schema $schema): Schema
     {
-        $kurse = Kurs::select(["nummer", "titel"])
-            ->whereNull("notiz")
+        $kurse = Kurs::whereNull("notiz")
             ->where("restplätze", ">", 0)
             ->get()
             ->mapWithKeys(function (Kurs $kurs) {
-                return [$kurs["nummer"] => $kurs["nummer"] . ": " . $kurs["titel"]];
+                return [$kurs["nummer"] => $kurs->kursDetails()];
             })
             ->all();
+
         return $schema
             ->components([
                 TextInput::make('notiz'),
@@ -34,9 +34,7 @@ class BuchungForm
                     ->rules("digits:8"),
                 Select::make('kursnummer')
                     ->label("Kursname")
-                    ->options(
-                        $kurse,
-                    )
+                    ->options($kurse)
                     ->required(),
                 Select::make('anrede')
                     ->options(["Herr" => "Herr", "Frau" => "Frau", "" => "Keine Angabe"]),

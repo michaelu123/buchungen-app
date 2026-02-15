@@ -9,8 +9,9 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Checkbox;
-use App\Models\Technik\Kurs;
-use App\Models\Technik\Buchung;
+use App\Models\RFSA\Kurs;
+use App\Models\RFSA\Buchung;
+use Carbon\Carbon;
 
 new class extends Component implements HasSchemas {
     use InteractsWithSchemas;
@@ -25,15 +26,14 @@ new class extends Component implements HasSchemas {
 
     public function form(Schema $schema): Schema
     {
-        $kurse = Kurs::select(["nummer", "titel"])
-            ->whereNull("notiz")
+        $kurse = Kurs::whereNull("notiz")
             ->where("restplätze", ">", 0)
             ->get()
             ->mapWithKeys(function (Kurs $kurs) {
-                return [$kurs["nummer"] => $kurs["nummer"] . ": " . $kurs["titel"] . " am " . date("d.m.Y", strtotime($kurs["datum"])) . ", freie Plätze: " . $kurs["restplätze"]];
-            })
-            ->all();
+                return [$kurs["nummer"] => $kurs->kursDetails() . ", freie Plätze: " . $kurs["restplätze"]];
+            })->all();
         return $schema
+            // ->inlineLabel()
             ->components([
                 TextInput::make('email')
                     ->belowLabel("Die Bestätigung der Buchung erfolgt per E-Mail. Bitte geben Sie eine gültige E-Mail-Adresse an.")
@@ -149,17 +149,17 @@ EOD))
 <x-filament::section class="max-w-7xl mx-auto items-center justify-center">
     <x-slot name="heading">
         <div class="flex flex-row justify-between items-center">
-            <p class="lg:text-5xl text-2xl">Anmeldung zu einem Technikkurs</p>
+            <p class="lg:text-5xl text-2xl">Anmeldung zu einem Kurs der Radfahrschule</p>
             <img src="/ADFC_MUENCHEN.PNG" alt="">
         </div>
     </x-slot>
     <div>
         <p class="mb-10">
-            Mit diesem Formular können Sie sich für einen Technikkurs des ADFC München anmelden. Wir brauchen Ihre
-            Email-Adresse für die Bestätigungs-Mails. Die Kursgebühr wird per Lastschrift eingezogen. Halten Sie dafür
-            bitte
-            Ihre IBAN-Kontonummer bereit.
-            Die Kurse kosten 20€ für Nicht-ADFC-Mitglieder, 10€ für ADFC-Mitglieder. Sie finden die Kurse auch in
+            Mit diesem Formular können Sie sich für einen Kurs der Radfahrschule des ADFC München anmelden. Wir brauchen
+            Ihre
+            Email-Adresse für die Bestätigungs-Mails. Die Kursgebühr von 120€ wird per Lastschrift eingezogen. Halten
+            Sie dafür
+            bitte Ihre IBAN-Kontonummer bereit. Sie finden die Kurse auch in
             unserem
             <a class="underline text-blue-600 hover:text-blue-800 visited:text-purple-600" target="_blank"
                 href="https://touren-termine.adfc.de/suche?fromNow=true&eventType=Termin&includedTags=11&latLng=48.1351253%2C11.5819806&place=M%C3%BCnchen">

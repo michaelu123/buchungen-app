@@ -34,7 +34,7 @@ php artisan make:filament-resource EmailVerifikation --generate
 
 php artisan make:livewire pages::buchung.ok 
 php artisan make:livewire pages::buchung.emailverifikation 
-php artisan make:mail Technik\Bestätigung
+php artisan make:mail Technik\Bestaetigung
 
 php artisan notifications:table
 php artisan migrate
@@ -61,3 +61,11 @@ php artisan route:clear;php artisan config:clear
 
 composer require maatwebsite/excel
 php artisan make:export Technik\BuchungenExport --model=Technik\Buchung
+
+
+php artisan make:migration create_rfsa_buchungen_table --create rfsa_buchungen
+php artisan make:migration create_rfsa_kurse_table --create rfsa_kurse
+php artisan make:migration create_rfsf_buchungen_table --create rfsf_buchungen
+php artisan make:migration create_rfsf_kurse_table --create rfsf_kurse
+php artisan make:migration create_rfsfp_buchungen_table --create rfsfp_buchungen
+php artisan make:migration create_rfsfp_kurse_table --create rfsfp_kurse

@@ -31,6 +31,7 @@ class KursForm
                 TextInput::make('leiter')
                     ->required(),
                 TextInput::make('leiter2'),
+                Textarea::make('kommentar'),
             ]);
     }
 }

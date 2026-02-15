@@ -20,6 +20,7 @@ return new class extends Migration {
             $table->unsignedTinyInteger('restplätze');
             $table->text('leiter');
             $table->text('leiter2')->nullable();
+            $table->text("kommentar")->nullable();
             $table->timestamps();
         });
     }

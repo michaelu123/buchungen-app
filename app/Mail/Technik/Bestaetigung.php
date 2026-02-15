@@ -12,7 +12,7 @@ use Illuminate\Bus\Queueable;
 use App\Models\Technik\Kurs;
 use App\Models\Technik\Buchung;
 
-class Bestätigung extends Mailable
+class Bestaetigung extends Mailable
 {
     use Queueable, SerializesModels;
 

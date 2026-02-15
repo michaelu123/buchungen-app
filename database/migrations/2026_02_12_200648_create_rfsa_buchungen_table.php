@@ -10,7 +10,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('technik_buchungen', function (Blueprint $table) {
+        Schema::create('rfsa_buchungen', function (Blueprint $table) {
             $table->id();
             $table->text('notiz')->nullable();
             $table->string("email");
@@ -39,6 +39,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('technik_buchungen');
+        Schema::dropIfExists('rfsa_buchungen');
     }
 };

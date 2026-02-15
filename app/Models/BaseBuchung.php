@@ -13,6 +13,8 @@ use App\Mail\FalscheIban;
 
 class BaseBuchung extends Model
 {
+    protected bool $confirmAutomatically;
+
     public function checkIban()
     {
         // IBAN is already checked in the frontend, but we want to be sure that no invalid IBAN gets into the database. 
@@ -38,7 +40,7 @@ class BaseBuchung extends Model
             $ev = EmailVerifikation::where("email", $this->email)->first();
             if ($ev && $ev->verified) {
                 $this->update(["verified" => $ev->verified]);
-                if (!$this->notiz) {
+                if (!$this->notiz && $this->confirmAutomatically) {
                     $this->confirm();
                 }
             }
@@ -99,7 +101,9 @@ class BaseBuchung extends Model
         $unverified = static::where('email', $email)->whereNull("verified")->whereNull("notiz")->get();
         $unverified->each(function ($buchung) use ($now) {
             $buchung->update(['verified' => $now]);
-            $buchung->confirm();
+            if (!$this->notiz && $this->confirmAutomatically) {
+                $buchung->confirm();
+            }
         });
     }
 

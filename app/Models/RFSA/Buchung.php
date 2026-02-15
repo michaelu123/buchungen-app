@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Models\Technik;
+namespace App\Models\RFSA;
 
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\BaseBuchung;
-use App\Mail\Technik\Bestaetigung;
+use App\Mail\RFSA\Bestaetigung;
 
 class Buchung extends BaseBuchung
 {
-    protected $table = "technik_buchungen";
+    protected $table = "rfsa_buchungen";
 
     protected $fillable = [
         "notiz",
@@ -36,7 +36,7 @@ class Buchung extends BaseBuchung
 
     public function __construct()
     {
-        $confirmAutomatically = true;
+        $confirmAutomatically = false;
     }
 
     public function kurs(): BelongsTo

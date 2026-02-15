@@ -1,10 +1,11 @@
 <?php
 
-use App\Concerns\PasswordValidationRules;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rules\Password;
-use Illuminate\Validation\ValidationException;
 use Livewire\Component;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Validation\Rules\Password;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+use App\Concerns\PasswordValidationRules;
 
 new class extends Component {
     use PasswordValidationRules;
