@@ -11,6 +11,7 @@ use App\Mail\Technik\Bestaetigung;
 
 class Buchung extends BaseBuchung
 {
+    protected bool $confirmAutomatically = false;
     protected $table = "technik_buchungen";
 
     protected $fillable = [
@@ -33,11 +34,6 @@ class Buchung extends BaseBuchung
         "betrag",
         "kommentar",
     ];
-
-    public function __construct()
-    {
-        $confirmAutomatically = true;
-    }
 
     public function kurs(): BelongsTo
     {
@@ -67,7 +63,7 @@ class Buchung extends BaseBuchung
         return $buchung;
     }
 
-    public function confirm()
+    public function confirm(): void
     {
         if ($this->notiz || !$this->verified || !$this->lastschriftok) {
             Log::info("2confirm");
@@ -79,7 +75,7 @@ class Buchung extends BaseBuchung
         Buchung::notifySuccess("Bestätigung versendet");
     }
 
-    public static function checkRestplätze()
+    public static function checkRestplätze(): void
     {
         Log::info("checkRestplätze");
         $kursBuchungen = Buchung::select("kursnummer", DB::raw("count(*) as count"))
@@ -114,5 +110,9 @@ class Buchung extends BaseBuchung
                 }
             }
         }
+    }
+    public function getFrom(): string
+    {
+        return "technik_anmeldungen@adfc-muenchen.de";
     }
 }

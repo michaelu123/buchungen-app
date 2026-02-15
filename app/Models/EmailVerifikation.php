@@ -22,6 +22,8 @@ class EmailVerifikation extends Model
         } else {
             EmailVerifikation::where('email', $email)->update(['verified' => $now]);
         }
+        // TODO: gezielt verifyEmail aufrufen, wie?
         \App\Models\Technik\Buchung::verifyEmail($email, $now);
+        \App\Models\RFSA\Buchung::verifyEmail($email, $now);
     }
 }

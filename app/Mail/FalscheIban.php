@@ -17,7 +17,7 @@ class FalscheIban extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(public string $iban)
+    public function __construct(public string $iban, public string $sender)
     {
     }
 
@@ -27,7 +27,7 @@ class FalscheIban extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: new Address("technik_anmeldungen@adfc-muenchen.de"),
+            from: new Address($this->sender),
             subject: 'IBAN ungültig',
         );
     }

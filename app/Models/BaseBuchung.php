@@ -10,10 +10,20 @@ use Filament\Notifications\Events\DatabaseNotificationsSent;
 use App\Models\EmailVerifikation;
 use App\Mail\VerifyEmail;
 use App\Mail\FalscheIban;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class BaseBuchung extends Model
+abstract class BaseBuchung extends Model
 {
-    protected bool $confirmAutomatically;
+    abstract protected bool $confirmAutomatically {
+        get;
+        set;
+    }
+    abstract public function kurs(): BelongsTo;
+    abstract public static function createBuchung($data): BaseBuchung;
+    abstract public function confirm(): void;
+    abstract public static function checkRestplätze(): void;
+    abstract public function getFrom(): string;
+
 
     public function checkIban()
     {
@@ -21,7 +31,7 @@ class BaseBuchung extends Model
         // So we check it again here and if it's invalid, we send an email to the user and set a note in the database.
         if (!static::test_iban($this->iban)) {
             $this->update(["notiz" => "Ungültige IBAN"]);
-            Mail::to($this->email)->send(new FalscheIban($this->iban));
+            Mail::to($this->email)->send(new FalscheIban($this->iban, $this->getFrom()));
             static::notifyWarning("Ungültige IBAN");
         }
     }
@@ -46,7 +56,7 @@ class BaseBuchung extends Model
             }
         }
         if (!$this->verified) {
-            Mail::to($this->email)->send(new VerifyEmail($this->email));
+            Mail::to($this->email)->send(new VerifyEmail($this->email, $this->getFrom()));
             static::notifyWarning("Email nicht bestätigt");
         }
     }
@@ -101,7 +111,7 @@ class BaseBuchung extends Model
         $unverified = static::where('email', $email)->whereNull("verified")->whereNull("notiz")->get();
         $unverified->each(function ($buchung) use ($now) {
             $buchung->update(['verified' => $now]);
-            if (!$this->notiz && $this->confirmAutomatically) {
+            if (!$buchung->notiz && $buchung->confirmAutomatically) {
                 $buchung->confirm();
             }
         });
