@@ -23,7 +23,7 @@ class BuchungResource extends Resource
     protected static string|UnitEnum|null $navigationGroup = "RFSA-Kurse";
     protected static ?string $pluralModelLabel = 'RFSA-Buchungen';
     protected static ?string $modelLabel = 'Buchung'; // ???
-    protected static ?string $navigationLabel = 'Buchungen'; // ???
+    protected static ?string $navigationLabel = 'RFSA-Buchungen'; // ???
     protected static ?string $slug = 'rfsabuchungen';
 
     protected static ?string $recordTitleAttribute = 'email';

@@ -69,3 +69,10 @@ php artisan make:migration create_rfsf_buchungen_table --create rfsf_buchungen
 php artisan make:migration create_rfsf_kurse_table --create rfsf_kurse
 php artisan make:migration create_rfsfp_buchungen_table --create rfsfp_buchungen
 php artisan make:migration create_rfsfp_kurse_table --create rfsfp_kurse
+
+
+php artisan make:model UserRole -m
+php artisan make:policy Technik\KursPolicy --model=Technik\Kurs
+php artisan make:policy Technik\BuchungPolicy --model=Technik\Buchung
+php artisan make:policy RFSA\KursPolicy --model=RFSA\Kurs
+php artisan make:policy RFSA\BuchungPolicy --model=RFSA\Buchung

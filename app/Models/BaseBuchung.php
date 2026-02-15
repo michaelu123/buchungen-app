@@ -108,39 +108,136 @@ class BaseBuchung extends Model
     }
 
     # https://gist.github.com/ahoehne/926b50a8a548801c5b52
+
     ########################################################
     # Funktion zur Plausibilitaetspruefung einer IBAN-Nummer, gilt fuer alle Laender
-    # Das Ganze ist deswegen etwas spannend, weil eine Modulo-Rechnung, also eine Ganzzahl-Division mit einer 
-    # bis zu 38-stelligen Ganzzahl durchgefuehrt werden muss. Wegen der meist nur zur Verfuegung stehenden 
-    # 32-Bit-CPUs koennen mit PHP aber nur maximal 9 Stellen mit allen Ziffern genutzt werden. 
-    # Deshalb muss die Modulo-Rechnung in mehere Teilschritte zerlegt werden.
-    # http://www.michael-schummel.de/2007/10/05/iban-prufung-mit-php
+    # Das Ganze ist deswegen spannend, weil eine Modulo-Rechnung, also eine Ganzzahl-Division mit einer
+    # bis zu 38-stelligen Ganzzahl durchgefuehrt werden muss.
+    # Mit 32-Bit-CPUs kann PHP nur mit maximal 9 Stellen mit allen Ziffern genutzt werden.
+    # Deshalb musste die Modulo-Rechnung in mehere Teilschritte zerlegt werden.
+    # Dies wäre mit bcmod() einfacher, würde jedoch die installation von php-bcmath voraussetzen.
     ########################################################
-    public static function test_iban($iban)
+
+    function test_iban(string $iban): bool
     {
-        $iban = str_replace(' ', '', $iban);
-        $iban1 = substr($iban, 4)
-            . \strval(\ord($iban[0]) - 55)
-            . \strval(\ord($iban[1]) - 55)
-            . substr($iban, 2, 2);
+        $normalizedIban = strtoupper(str_replace(' ', '', $iban));
 
-        for ($i = 0; $i < strlen($iban1); $i++) {
-            if (\ord($iban1[$i]) > 64 && \ord($iban1[$i]) < 91) {
-                $iban1 = substr($iban1, 0, $i) . \strval(\ord($iban1[$i]) - 55) . substr($iban1, $i + 1);
-            }
-        }
-        $rest = 0;
-        for ($pos = 0; $pos < strlen($iban1); $pos += 7) {
-            $part = \strval($rest) . substr($iban1, $pos, 7);
-            $rest = \intval($part) % 97;
+        if ($normalizedIban === '') {
+            return false;
         }
 
-        // $pz = \sprintf("%02d", 98 - $rest);
+        if (!preg_match('/^[A-Z]{2}[0-9]{2}[A-Z0-9]+$/', $normalizedIban)) {
+            return false;
+        }
 
-        // ??
-        // if (substr($iban, 2, 2) == '00')
-        //     return substr_replace($iban, $pz, 2, 2);
-        // else
-        return $rest == 1;
+        // IBAN registry provides current data for this
+        // https://www.swift.com/standards/data-standards/iban-international-bank-account-number
+        $expectedLengthsByCountry = [
+            'AD' => 24,
+            'AE' => 23,
+            'AL' => 28,
+            'AT' => 20,
+            'AZ' => 28,
+            'BA' => 20,
+            'BE' => 16,
+            'BG' => 22,
+            'BH' => 22,
+            'BI' => 27,
+            'BR' => 29,
+            'BY' => 28,
+            'CH' => 21,
+            'CR' => 22,
+            'CY' => 28,
+            'CZ' => 24,
+            'DE' => 22,
+            'DJ' => 27,
+            'DK' => 18,
+            'DO' => 28,
+            'EE' => 20,
+            'EG' => 29,
+            'ES' => 24,
+            'FI' => 18,
+            'FK' => 18,
+            'FO' => 18,
+            'FR' => 27,
+            'GB' => 22,
+            'GE' => 22,
+            'GI' => 23,
+            'GL' => 18,
+            'GR' => 27,
+            'GT' => 28,
+            'HR' => 21,
+            'HU' => 28,
+            'IE' => 22,
+            'IL' => 23,
+            'IQ' => 23,
+            'IS' => 26,
+            'IT' => 27,
+            'JO' => 30,
+            'KZ' => 20,
+            'KW' => 30,
+            'LB' => 28,
+            'LC' => 32,
+            'LI' => 21,
+            'LT' => 20,
+            'LU' => 20,
+            'LV' => 21,
+            'LY' => 25,
+            'MC' => 27,
+            'MD' => 24,
+            'ME' => 22,
+            'MK' => 19,
+            'MN' => 20,
+            'MR' => 27,
+            'MT' => 31,
+            'MU' => 30,
+            'NI' => 28,
+            'NL' => 18,
+            'NO' => 15,
+            'OM' => 23,
+            'PK' => 24,
+            'PL' => 28,
+            'PS' => 29,
+            'PT' => 25,
+            'QA' => 29,
+            'RO' => 24,
+            'RS' => 22,
+            'RU' => 33,
+            'SA' => 24,
+            'SC' => 31,
+            'SD' => 18,
+            'SE' => 24,
+            'SI' => 19,
+            'SK' => 24,
+            'SM' => 27,
+            'SO' => 23,
+            'ST' => 25,
+            'SV' => 28,
+            'TL' => 23,
+            'TN' => 24,
+            'TR' => 26,
+            'UA' => 29,
+            'VA' => 22,
+            'VG' => 24,
+            'XK' => 20
+        ];
+
+        $countryCode = substr($normalizedIban, 0, 2);
+        if (
+            !isset($expectedLengthsByCountry[$countryCode]) ||
+            \strlen($normalizedIban) !== $expectedLengthsByCountry[$countryCode]
+        ) {
+            return false;
+        }
+
+        $rearrangedIban = substr($normalizedIban, 4) . substr($normalizedIban, 0, 4);
+        $letterToDigitMap = array_combine(range('A', 'Z'), range(10, 35));
+        $numericIban = strtr($rearrangedIban, $letterToDigitMap);
+
+        $remainder = 0;
+        for ($i = 0, $length = \strlen($numericIban); $i < $length; $i++) {
+            $remainder = (int) ($remainder . $numericIban[$i]) % 97;
+        }
+        return $remainder === 1;
     }
 }

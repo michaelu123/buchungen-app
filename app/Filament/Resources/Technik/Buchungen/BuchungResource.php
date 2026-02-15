@@ -23,7 +23,7 @@ class BuchungResource extends Resource
     protected static string|UnitEnum|null $navigationGroup = "Technik-Kurse";
     protected static ?string $pluralModelLabel = 'Technik-Buchungen';
     protected static ?string $modelLabel = 'Buchung'; // ???
-    protected static ?string $navigationLabel = 'Buchungen'; // ???
+    protected static ?string $navigationLabel = 'Technik-Buchungen'; // ???
     protected static ?string $slug = 'technikbuchungen';
 
     protected static ?string $recordTitleAttribute = 'email';
