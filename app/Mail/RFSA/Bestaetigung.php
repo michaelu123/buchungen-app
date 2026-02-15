@@ -11,12 +11,14 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Bus\Queueable;
 use App\Models\RFSA\Kurs;
 use App\Models\RFSA\Buchung;
+use Illuminate\Mail\Mailables\Attachment;
 
 class Bestaetigung extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public string $anrede, $kursDetails;
+    public string $anrede;
+    public string $kursDetails;
     /**
      * Create a new message instance.
      */
@@ -54,6 +56,7 @@ class Bestaetigung extends Mailable
      */
     public function attachments(): array
     {
-        return [];// TODO
+        $files = glob(app_path('Mail/RFSA/Anhaenge/*')) ?: [];
+        return array_map(fn(string $file) => Attachment::fromPath($file), $files);
     }
 }

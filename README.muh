@@ -57,7 +57,7 @@ php artisan vendor:publish --tag=filament-config   # then add reverb
 3 Terminals:  1) npm run dev 2) php artisan queue:listen 3) php artisan reverb:start --debug
 
 # nach Änderungen der Konfiguration ? 
-php artisan route:clear;php artisan config:clear 
+php artisan route:clear;php artisan config:clear ;php artisan cache:clear
 
 composer require maatwebsite/excel
 php artisan make:export Technik\BuchungenExport --model=Technik\Buchung
