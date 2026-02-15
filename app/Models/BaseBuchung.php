@@ -19,7 +19,7 @@ class BaseBuchung extends Model
     {
         // IBAN is already checked in the frontend, but we want to be sure that no invalid IBAN gets into the database. 
         // So we check it again here and if it's invalid, we send an email to the user and set a note in the database.
-        if (!$this->test_iban($this->iban)) {
+        if (!static::test_iban($this->iban)) {
             $this->update(["notiz" => "Ungültige IBAN"]);
             Mail::to($this->email)->send(new FalscheIban($this->iban));
             static::notifyWarning("Ungültige IBAN");
@@ -106,7 +106,6 @@ class BaseBuchung extends Model
             }
         });
     }
-
     # https://gist.github.com/ahoehne/926b50a8a548801c5b52
 
     ########################################################
@@ -118,7 +117,7 @@ class BaseBuchung extends Model
     # Dies wäre mit bcmod() einfacher, würde jedoch die installation von php-bcmath voraussetzen.
     ########################################################
 
-    function test_iban(string $iban): bool
+    protected static function test_iban(string $iban): bool
     {
         $normalizedIban = strtoupper(str_replace(' ', '', $iban));
 

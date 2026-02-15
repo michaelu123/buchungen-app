@@ -76,3 +76,5 @@ php artisan make:policy Technik\KursPolicy --model=Technik\Kurs
 php artisan make:policy Technik\BuchungPolicy --model=Technik\Buchung
 php artisan make:policy RFSA\KursPolicy --model=RFSA\Kurs
 php artisan make:policy RFSA\BuchungPolicy --model=RFSA\Buchung
+
+Intelephense: Clear Cache in Command Palette, then Developer: Reload Window for strange error messages
