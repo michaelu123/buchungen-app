@@ -14,6 +14,27 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 abstract class BaseBuchung extends Model
 {
+    protected $fillable = [
+        "notiz",
+        "email",
+        "mitgliedsnummer",
+        "kursnummer",
+        "anrede",
+        "vorname",
+        "nachname",
+        "postleitzahl",
+        "ort",
+        "strasse_nr",
+        "telefonnr",
+        "kontoinhaber",
+        "iban",
+        "lastschriftok",
+        "verified",
+        "eingezogen",
+        "betrag",
+        "kommentar",
+    ];
+
     abstract protected bool $confirmAutomatically {
         get;
         set;

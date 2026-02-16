@@ -2,28 +2,28 @@
 
 namespace App\Filament\Resources\Technik\Buchungen\Schemas;
 
-use Filament\Schemas\Schema;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Textarea;
-use Closure;
-use App\Models\Technik\Kurs;
 use App\Models\Technik\Buchung;
+use App\Models\Technik\Kurs;
+use Closure;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Schema;
 
 class BuchungForm
 {
     public static function configure(Schema $schema): Schema
     {
-        $kurse = Kurs::select(["nummer", "titel"])
-            ->whereNull("notiz")
+        $kurse = Kurs::whereNull("notiz")
             ->where("restplätze", ">", 0)
             ->get()
             ->mapWithKeys(function (Kurs $kurs) {
-                return [$kurs["nummer"] => $kurs["nummer"] . ": " . $kurs["titel"]];
+                return [$kurs["nummer"] => $kurs->kursDetails()];
             })
             ->all();
+
         return $schema
             ->components([
                 TextInput::make('notiz'),
@@ -34,9 +34,7 @@ class BuchungForm
                     ->rules("digits:8"),
                 Select::make('kursnummer')
                     ->label("Kursname")
-                    ->options(
-                        $kurse,
-                    )
+                    ->options($kurse)
                     ->required(),
                 Select::make('anrede')
                     ->options(["Herr" => "Herr", "Frau" => "Frau", "" => "Keine Angabe"]),
@@ -67,7 +65,7 @@ class BuchungForm
                         },
                     ])
                     ->required(),
-                Toggle::make('lastschriftok')
+                Checkbox::make('lastschriftok')
                     ->label('Lastschrift genehmigt (oder Buchung ungültig!)')
                     ->default(true)
                     ->required(),

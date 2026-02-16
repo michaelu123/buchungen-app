@@ -2,15 +2,15 @@
 
 namespace App\Filament\Resources\RFSF\Buchungen\Schemas;
 
-use Filament\Schemas\Schema;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\DateTimePicker;
-use App\Models\RFSF\Kurs;
 use App\Models\RFSF\Buchung;
+use App\Models\RFSF\Kurs;
 use Closure;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Schema;
 
 class BuchungForm
 {
@@ -65,7 +65,7 @@ class BuchungForm
                         },
                     ])
                     ->required(),
-                Toggle::make('lastschriftok')
+                Checkbox::make('lastschriftok')
                     ->label('Lastschrift genehmigt (oder Buchung ungültig!)')
                     ->default(true)
                     ->required(),

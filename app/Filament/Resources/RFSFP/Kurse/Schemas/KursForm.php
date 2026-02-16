@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\RFSF\Kurse\Schemas;
+namespace App\Filament\Resources\RFSFP\Kurse\Schemas;
 
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\Textarea;
@@ -30,8 +30,8 @@ class KursForm
                     ->native(false)
                     ->displayFormat("D, d.m")
                     ->required(),
-                TextInput::make('kursort')
-                    ->required(),
+                // TextInput::make('kursort')
+                //     ->required(),
                 TextInput::make('kursplätze')
                     ->required()
                     ->numeric(),

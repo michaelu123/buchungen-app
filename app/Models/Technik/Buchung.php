@@ -14,27 +14,6 @@ class Buchung extends BaseBuchung
     protected bool $confirmAutomatically = false;
     protected $table = "technik_buchungen";
 
-    protected $fillable = [
-        "notiz",
-        "email",
-        "mitgliedsnummer",
-        "kursnummer",
-        "anrede",
-        "vorname",
-        "nachname",
-        "postleitzahl",
-        "ort",
-        "strasse_nr",
-        "telefonnr",
-        "kontoinhaber",
-        "iban",
-        "lastschriftok",
-        "verified",
-        "eingezogen",
-        "betrag",
-        "kommentar",
-    ];
-
     public function kurs(): BelongsTo
     {
         return $this->belongsTo(Kurs::class, "kursnummer", "nummer");

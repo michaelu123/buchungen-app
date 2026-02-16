@@ -1,19 +1,19 @@
 <?php
 
-namespace App\Models\RFSA;
+namespace App\Models\RFSFP;
 
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\BaseBuchung;
-use App\Mail\RFSA\Bestaetigung;
+use App\Mail\RFSFP\Bestaetigung;
 
 class Buchung extends BaseBuchung
 {
     protected bool $confirmAutomatically = false;
 
-    protected $table = "rfsa_buchungen";
+    protected $table = "rfsfp_buchungen";
 
     public function kurs(): BelongsTo
     {

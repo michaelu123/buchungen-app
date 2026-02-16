@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\Resources\RFSA\Buchungen\Schemas;
+namespace App\Filament\Resources\RFSFP\Buchungen\Schemas;
 
-use App\Models\RFSA\Buchung;
-use App\Models\RFSA\Kurs;
+use App\Models\RFSFP\Buchung;
+use App\Models\RFSFP\Kurs;
 use Closure;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
