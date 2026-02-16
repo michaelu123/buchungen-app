@@ -11,7 +11,6 @@ use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Checkbox;
 use App\Models\RFSA\Kurs;
 use App\Models\RFSA\Buchung;
-use Carbon\Carbon;
 
 new class extends Component implements HasSchemas {
     use InteractsWithSchemas;
@@ -21,7 +20,6 @@ new class extends Component implements HasSchemas {
     public function mount(): void
     {
         $this->form->fill();
-        // $this->form->inlineLabel();
     }
 
     public function form(Schema $schema): Schema
@@ -33,7 +31,6 @@ new class extends Component implements HasSchemas {
                 return [$kurs["nummer"] => $kurs->kursDetails() . ", freie Plätze: " . $kurs["restplätze"]];
             })->all();
         return $schema
-            // ->inlineLabel()
             ->components([
                 TextInput::make('email')
                     ->belowLabel("Die Bestätigung der Buchung erfolgt per E-Mail. Bitte geben Sie eine gültige E-Mail-Adresse an.")
@@ -41,18 +38,7 @@ new class extends Component implements HasSchemas {
                     ->required(),
                 TextInput::make('mitgliedsnummer')
                     ->belowLabel("Falls Sie ADFC-Mitglied sind, bitte hier die Mitgliedsnummer angeben, für den ermäßigten Preis. Sonst leer lassen.")
-                    ->rules("digits:8")
-                // ->validationMessages([
-                //     'decimal' => 'Die Mitgliedsnummer besteht aus 8 Ziffern.',
-                //])
-                ,
-                // Select::make('kursnummer')
-                //     ->belowLabel("Bitte wählen Sie den Kurs, für den Sie sich anmelden möchten.")
-                //     ->label("Kursname")
-                //     ->options(
-                //         $arr2,
-                //     )
-                //     ->required(),
+                    ->rules("digits:8"),
                 Radio::make("kursnummer")
                     ->label("Kurs")
                     ->belowLabel("Ich möchte mich für folgenden Kurs anmelden:")

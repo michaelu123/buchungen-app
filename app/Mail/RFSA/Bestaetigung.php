@@ -2,61 +2,29 @@
 
 namespace App\Mail\RFSA;
 
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Mail\Mailables\Envelope;
-use Illuminate\Mail\Mailables\Content;
-use Illuminate\Mail\Mailables\Address;
-use Illuminate\Mail\Mailable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Bus\Queueable;
+use App\Mail\BestaetigungBase;
 use App\Models\RFSA\Kurs;
 use App\Models\RFSA\Buchung;
-use Illuminate\Mail\Mailables\Attachment;
 
-class Bestaetigung extends Mailable
+class Bestaetigung extends BestaetigungBase
 {
-    use Queueable, SerializesModels;
-
-    public string $anrede;
-    public string $kursDetails;
-    /**
-     * Create a new message instance.
-     */
-    public function __construct(public Kurs $kurs, public Buchung $buchung)
+    public function __construct(Kurs $kurs, Buchung $buchung)
     {
-        $this->anrede = "Liebe(r) " . /*$buchung->anrede .*/ " " . $buchung->vorname . " " . $buchung->nachname;
-        $this->kursDetails = $kurs->kursDetails();
+        parent::__construct($kurs, $buchung);
     }
 
-    /**
-     * Get the message envelope.
-     */
-    public function envelope(): Envelope
+    protected function viewName(): string
     {
-        return new Envelope(
-            subject: 'Kursanmeldung bestätigt',
-            from: new Address("radfahrschule_anmeldungen@adfc-muenchen.de"),
-        );
+        return 'mail.rfsa.bestaetigung';
     }
 
-    /**
-     * Get the message content definition.
-     */
-    public function content(): Content
+    protected function fromAddress(): string
     {
-        return new Content(
-            view: 'mail.rfsa.bestaetigung',
-        );
+        return 'radfahrschule_anmeldungen@adfc-muenchen.de';
     }
 
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
-     */
-    public function attachments(): array
+    protected function attachmentPaths(): array
     {
-        $files = glob(app_path('Mail/RFSA/Anhaenge/*')) ?: [];
-        return array_map(fn(string $file) => Attachment::fromPath($file), $files);
+        return glob(app_path('Mail/RFSA/Anhaenge/*')) ?: [];
     }
 }
