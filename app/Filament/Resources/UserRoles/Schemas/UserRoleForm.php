@@ -23,7 +23,7 @@ class UserRoleForm
                     ->required(),
                 Select::make('role')
                     ->label("Rolle")
-                    ->options(["TK" => "TK", "RFSA" => "RFSA", "RFSF" => "RFSF", "RFSFP" => "RFSFP", "RFS" => "RFS"])
+                    ->options(["ADMIN" => "ADMIN", "TK" => "TK", "RFSA" => "RFSA", "RFSF" => "RFSF", "RFSFP" => "RFSFP", "RFS" => "RFS"])
                     ->required(),
             ]);
     }

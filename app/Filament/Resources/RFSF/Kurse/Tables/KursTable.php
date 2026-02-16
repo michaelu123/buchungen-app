@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\RFSA\Kurse\Tables;
+namespace App\Filament\Resources\RFSF\Kurse\Tables;
 
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Maatwebsite\Excel\Facades\Excel;
@@ -12,9 +12,9 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\Action;
-use App\Models\RFSA\Kurs;
-use App\Models\RFSA\Buchung;
-use App\Exports\RFSA\BuchungenExport;
+use App\Models\RFSF\Kurs;
+use App\Models\RFSF\Buchung;
+use App\Exports\RFSF\BuchungenExport;
 use Carbon\Carbon;
 
 class KursTable
@@ -25,13 +25,13 @@ class KursTable
             ->columns([
                 TextColumn::make('notiz'),
                 TextColumn::make('nummer')
+                    ->label('Nummer')
                     ->searchable()
                     ->sortable(),
+                TextColumn::make('datum'),
+                TextColumn::make('ersatztermin'),
                 TextColumn::make('uhrzeit'),
-                TextColumn::make('kurstermine')
-                    ->state(fn(Kurs $kurs) => $kurs->termine(true)),
-                TextColumn::make('ersatztermine')
-                    ->state(fn(Kurs $kurs) => $kurs->termine(false)),
+                TextColumn::make('kursort'),
                 TextColumn::make('kursplätze')
                     ->numeric(),
                 TextColumn::make('restplätze')
@@ -46,17 +46,12 @@ class KursTable
                         }
                         return $state;
                     }),
-                TextColumn::make('lehrer')
+                TextColumn::make('trainer')
                     ->searchable(),
-                TextColumn::make('co_lehrer')
-                    ->label("Co-Lehrer")
-                    ->searchable(),
-                TextColumn::make('co_lehrer2')
-                    ->label("Co-Lehrer2")
+                TextColumn::make('co_trainer')
+                    ->label("Co-Trainer")
                     ->searchable(),
                 TextColumn::make('hospitant')
-                    ->searchable(),
-                TextColumn::make('hospitant2')
                     ->searchable(),
                 TextColumn::make('liste_verschicken')
                     ->searchable(),

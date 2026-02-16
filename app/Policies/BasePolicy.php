@@ -13,6 +13,8 @@ class BasePolicy
   public function permits(User $user): bool
   {
     $roles = $user->roles->map(fn($role) => $role["role"]);
+    if ($roles->contains("ADMIN"))
+      return true;
     if ($roles->contains($this->role))
       return true;
     if ($roles->contains('RFS'))

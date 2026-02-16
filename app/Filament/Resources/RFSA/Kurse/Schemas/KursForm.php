@@ -95,6 +95,10 @@ class KursForm
                 TextInput::make('co_lehrer2')->label("Co-Lehrer2"),
                 TextInput::make('hospitant'),
                 TextInput::make('hospitant2'),
+                TextInput::make('liste_verschicken')->label("Liste verschicken"),
+                TextInput::make('abgesagt_am')->label("Abgesagt am"),
+                TextInput::make('abgesagt_wg')->label("Abgesagt wegen"),
+                TextInput::make('status')->label("Status"),
             ]);
     }
 }

@@ -9,8 +9,8 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Checkbox;
-use App\Models\RFSA\Kurs;
-use App\Models\RFSA\Buchung;
+use App\Models\RFSF\Kurs;
+use App\Models\RFSF\Buchung;
 use Closure;
 
 new class extends Component implements HasSchemas {
@@ -136,7 +136,7 @@ EOD))
 <x-filament::section class="max-w-7xl mx-auto items-center justify-center">
     <x-slot name="heading">
         <div class="flex flex-row justify-between items-center">
-            <p class="lg:text-5xl text-2xl">Anmeldung zu einem Anfänger-Kurs der Radfahrschule</p>
+            <p class="lg:text-5xl text-2xl">Anmeldung zu einem Fahrsicherheitstraining der Radfahrschule</p>
             <img src="/ADFC_MUENCHEN.PNG" alt="">
         </div>
     </x-slot>
