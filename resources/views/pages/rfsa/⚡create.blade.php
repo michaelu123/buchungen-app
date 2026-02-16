@@ -4,17 +4,19 @@ use Livewire\Component;
 use Illuminate\Support\HtmlString;
 use Filament\Schemas\Schema;
 use Filament\Schemas\Contracts\HasSchemas;
-use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Checkbox;
 use App\Models\RFSA\Kurs;
 use App\Models\RFSA\Buchung;
-use Closure;
 
 new class extends Component implements HasSchemas {
-    use InteractsWithSchemas;
+    // noinspection PhpUnusedAliasInspection
+    /** @use \Filament\Schemas\Concerns\InteractsWithSchemas */
+    use \Filament\Schemas\Concerns\InteractsWithSchemas;
+    private const _TRAITS = [\Filament\Schemas\Concerns\InteractsWithSchemas::class];
+
     protected static ?string $model = Buchung::class;
     public array $data = [];
 
@@ -29,7 +31,7 @@ new class extends Component implements HasSchemas {
             ->where("restplätze", ">", 0)
             ->get()
             ->mapWithKeys(function (Kurs $kurs) {
-                return [$kurs["nummer"] => $kurs->kursDetails() . ", freie Plätze: " . $kurs["restplätze"]];
+                return [$kurs->nummer => $kurs->kursDetails() . ", freie Plätze: " . $kurs->restplätze];
             })->all();
         return $schema
             ->components([
@@ -72,7 +74,7 @@ new class extends Component implements HasSchemas {
                 TextInput::make('iban')
                     ->belowLabel("Bitte geben Sie die IBAN des Kontos an, von dem die Lastschrift erfolgen soll.")
                     ->rules([
-                        fn(): Closure => function ($attribute, $value, Closure $fail) {
+                        fn(): \Closure => function ($attribute, $value, \Closure $fail) {
                             if (!Buchung::test_iban($value)) {
                                 $fail('Die IBAN ist ungültig.');
                             }

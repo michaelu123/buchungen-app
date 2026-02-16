@@ -2,79 +2,19 @@
 
 namespace App\Filament\Resources\Technik\Buchungen\Schemas;
 
+use App\Filament\Resources\BuchungenBase\Schemas\BuchungFormBase;
 use App\Models\Technik\Buchung;
 use App\Models\Technik\Kurs;
-use Closure;
-use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Schema;
 
-class BuchungForm
+class BuchungForm extends BuchungFormBase
 {
-    public static function configure(Schema $schema): Schema
+    protected static function getBuchungModelClass(): string
     {
-        $kurse = Kurs::whereNull("notiz")
-            ->where("restplätze", ">", 0)
-            ->get()
-            ->mapWithKeys(function (Kurs $kurs) {
-                return [$kurs["nummer"] => $kurs->kursDetails()];
-            })
-            ->all();
+        return Buchung::class;
+    }
 
-        return $schema
-            ->components([
-                TextInput::make('notiz'),
-                TextInput::make('email')
-                    ->email()
-                    ->required(),
-                TextInput::make('mitgliedsnummer')
-                    ->rules("digits:8"),
-                Select::make('kursnummer')
-                    ->label("Kursname")
-                    ->options($kurse)
-                    ->required(),
-                Select::make('anrede')
-                    ->options(["Herr" => "Herr", "Frau" => "Frau", "" => "Keine Angabe"]),
-                TextInput::make('vorname')
-                    ->required(),
-                TextInput::make('nachname')
-                    ->required(),
-                TextInput::make('postleitzahl')
-                    ->required()
-                    ->numeric(),
-                TextInput::make('ort')
-                    ->required(),
-                TextInput::make('strasse_nr')
-                    ->label('Straße und Hausnummer')
-                    ->required(),
-                TextInput::make('telefonnr')
-                    ->label('Telefon')
-                    ->tel()
-                    ->required(),
-                TextInput::make('kontoinhaber')
-                    ->required(),
-                TextInput::make('iban')
-                    ->rules([
-                        fn(): Closure => function ($attribute, $value, Closure $fail) {
-                            if (!Buchung::test_iban($value)) {
-                                $fail('Die IBAN ist ungültig.');
-                            }
-                        },
-                    ])
-                    ->required(),
-                Checkbox::make('lastschriftok')
-                    ->label('Lastschrift genehmigt (oder Buchung ungültig!)')
-                    ->default(true)
-                    ->required(),
-                DateTimePicker::make('verified')
-                    ->label("Email verifiziert"),
-                DateTimePicker::make('eingezogen'),
-                TextInput::make('betrag')
-                    ->numeric(),
-                Textarea::make('kommentar'),
-            ]);
+    protected static function getKursModelClass(): string
+    {
+        return Kurs::class;
     }
 }

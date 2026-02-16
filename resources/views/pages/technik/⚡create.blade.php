@@ -4,7 +4,6 @@ use Livewire\Component;
 use Illuminate\Support\HtmlString;
 use Filament\Schemas\Schema;
 use Filament\Schemas\Contracts\HasSchemas;
-use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Radio;
@@ -13,7 +12,11 @@ use App\Models\Technik\Kurs;
 use App\Models\Technik\Buchung;
 
 new class extends Component implements HasSchemas {
-    use InteractsWithSchemas;
+    // noinspection PhpUnusedAliasInspection
+    /** @use \Filament\Schemas\Concerns\InteractsWithSchemas */
+    use \Filament\Schemas\Concerns\InteractsWithSchemas;
+    private const _TRAITS = [\Filament\Schemas\Concerns\InteractsWithSchemas::class];
+
     protected static ?string $model = Buchung::class;
     public array $data = [];
 
@@ -24,12 +27,11 @@ new class extends Component implements HasSchemas {
 
     public function form(Schema $schema): Schema
     {
-        $kurse = Kurs::select(["nummer", "titel"])
-            ->whereNull("notiz")
+        $kurse = Kurs::whereNull("notiz")
             ->where("restplätze", ">", 0)
             ->get()
             ->mapWithKeys(function (Kurs $kurs) {
-                return [$kurs["nummer"] => $kurs["nummer"] . ": " . $kurs["titel"] . " am " . date("d.m.Y", strtotime($kurs["datum"])) . ", freie Plätze: " . $kurs["restplätze"]];
+                return [$kurs->nummer => $kurs->nummer . ": " . $kurs->titel . " am " . date("d.m.Y", strtotime($kurs->datum)) . ", freie Plätze: " . $kurs->restplätze];
             })
             ->all();
         return $schema
@@ -73,7 +75,7 @@ new class extends Component implements HasSchemas {
                 TextInput::make('iban')
                     ->belowLabel("Bitte geben Sie die IBAN des Kontos an, von dem die Lastschrift erfolgen soll.")
                     ->rules([
-                        fn(): Closure => function ($attribute, $value, Closure $fail) {
+                        fn(): \Closure => function ($attribute, $value, \Closure $fail) {
                             if (!Buchung::test_iban($value)) {
                                 $fail('Die IBAN ist ungültig.');
                             }

@@ -2,19 +2,16 @@
 
 namespace App\Filament\Resources\RFSF\Buchungen\Pages;
 
-use Illuminate\Database\Eloquent\Model;
-use Filament\Resources\Pages\CreateRecord;
-use App\Models\RFSF\Buchung;
+use App\Filament\Resources\BuchungenBase\Pages\CreateBuchungBase;
 use App\Filament\Resources\RFSF\Buchungen\BuchungResource;
+use App\Models\RFSF\Buchung;
 
-class CreateBuchung extends CreateRecord
+class CreateBuchung extends CreateBuchungBase
 {
     protected static string $resource = BuchungResource::class;
 
-    protected function handleRecordCreation(array $data): Model
+    protected static function getBuchungModelClass(): string
     {
-        $buchung = parent::handleRecordCreation($data);
-        Buchung::checkRestplätze();
-        return $buchung;
+        return Buchung::class;
     }
 }
