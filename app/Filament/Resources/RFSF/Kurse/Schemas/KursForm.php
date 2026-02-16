@@ -15,7 +15,9 @@ class KursForm
             ->components([
                 TextInput::make('notiz'),
                 TextInput::make('nummer')
+                    ->label("Kursname")
                     ->required()
+                    ->belowContent("muß auf G, A oder S enden!")
                     ->unique(ignoreRecord: true)
                     ->disabledOn("edit"),
                 TextInput::make("uhrzeit")

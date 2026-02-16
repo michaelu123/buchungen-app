@@ -62,6 +62,12 @@ class Kurs extends Model
 
     public function kursDetails(): string
     {
-        return $this->nummer . ": " . $this->uhrzeit . ", " . $this->termine(true) . ", Ersatztermin: " . $this->termine(false) . ", Kursort: " . $this->kursort;
+        $titel = match ($this->nummer[-1]) {
+            "G" => "Grundkurs",
+            "A" => "Aufbaukurs",
+            "S" => "Seniorenkurs",
+            default => "G/A/S??",
+        };
+        return $this->nummer . " (" . $titel . "): " . $this->uhrzeit . ", " . $this->termine(true) . ", Ersatztermin: " . $this->termine(false) . ", Kursort: " . $this->kursort;
     }
 }

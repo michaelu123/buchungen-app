@@ -84,41 +84,84 @@ new class extends Component implements HasSchemas {
                 Checkbox::make('lastschriftok')
                     ->belowContent(new HtmlString(<<<EOD
 Hiermit ermächtige ich den ADFC München e.V. (Gläubiger-Identifikationsnummer: DE44ZZZ00000793122), den Teilnahmebeitrag 
-aus dieser Anmeldung von meinem o.a. Bankkonto bei Fälligkeit unter Angabe der Mandatsreferenz „ADFC-M-TK“ einzuziehen. 
+aus dieser Anmeldung von meinem o.a. Bankkonto bei Fälligkeit unter Angabe der Mandatsreferenz „ADFC-M-RFS“ einzuziehen. 
 Zugleich weise ich mein Kreditinstitut an, vom ADFC München e.V. auf mein Konto gezogene SEPA-Lastschrift einzulösen. 
 Hinweis: Ich kann innerhalb von acht Wochen, beginnend mit dem Belastungsdatum, die Erstattung des belasteten Betrages verlangen. 
 Es gelten dabei die mit meinem Kreditinstitut vereinbarten Bedingungen.
 
-<br><br><strong>Anmeldebedingungen:</strong><br>
+<br><br><strong>Teilnahmebedingungen und Datenschutzerklärung:</strong><br>
 
-Für alle Kurse ist eine Anmeldung erforderlich (online).
-<p>
-- Die Annahme der Kursanmeldung durch den ADFC München e.V. ist erfolgt, wenn sie durch eine Bestätigungsmail schriftlich quittiert wird.
-</p><p>
-- Die Bezahlung erfolgt per Bankeinzug. Die Kursgebühr ist mit Zustandekommen des Vertrags fällig. Die Teilnahme am Kurs ist erst gesichert 
-mit Eingang der Lastschrift auf dem Bankkonto des ADFC München e.V.
-</p><p>
-- Sie können nur durch schriftliche Erklärung (Email an den Absender der Bestätigungsmail) von einem noch nicht begonnenen Kurs zurücktreten. 
-Erfolgt der Rücktritt bis 72 Stunden vor Kursbeginn, erstatten wir die Kursgebühr zurück.
-</p><p>
-- Mit der Anmeldung stimmen Sie unseren Anmeldebedingungen und unserem Hygienekonzept zu und machen sich damit vertraut.
-</p>
+Die Teilnahmebedingungen für die Kurse der Radfahrschule regeln Dinge wie Anmeldung, Bezahlung und Rücktritt und 
+gelten sowohl für Anfängerkurse wie auch für FahrSicherheitsTrainings aller Stufen.<br><br>
 
-<br><strong>Datenschutzerklärung gemäß Art. 13 Datenschutz-Grundverordnung (DSGVO):</strong><br>
+1. Präambel:<br>
+Die vom ADFC München e.V. durchgeführten Radfahrschulungen für Fahranfänger:innen und FahrSicherheitsTrainings 
+fortgeschrittener Radfahrer:innen dienen entsprechend dem Vereinsziel der Förderung des Fahrradfahrens. 
+Sie dienen keinem gewerblichen oder kommerziellen Zweck. Die Radfahrschulungen werden von ehrenamtlichen 
+Mitgliedern geplant, organisiert und durchgeführt. Die Bedingungen sind für ADFC-Mitglieder und Nichtmitglieder 
+gleich, soweit nicht anders angegeben.<br><br>
 
-Der „Allgemeine Deutsche Fahrrad-Club München e.V.“ speichert die Anmeldedaten nur zur Erfüllung des vereinbarten Schulungsverhältnisses. 
-Verantwortliche Stelle ist der Verein „Allgemeiner Deutscher Fahrrad-Club München e.V., Platenstraße 4, 80336 München. 
-Die in diesem Anmeldeformular erhobenen personenbezogenen Daten Name, Vorname, Postanschrift, E-Mail-Adresse, diverse Telefonnummern 
-und die Bankverbindung (bei einer SEPA-Lastschriftvereinbarung) werden ausschließlich zum Zwecke der Verwaltung und Betreuung der 
-angemeldeten Kursteilnehmer/-innen genutzt.
+2. Anmeldung:<br>
+Mit der Anmeldung (Online) bietet der/die Teilnehmer:in dem ADFC München e.V. den Abschluss eines der Anmeldung 
+entsprechenden Schulungsvertrages an. Die Annahme der Kursanmeldung durch den ADFC München e.V. ist erfolgt, 
+wenn sie durch die Radfahrschule des ADFC München e.V. schriftlich/per Mail bestätigt wird.<br><br>
 
-Die Daten werden an Dritte nur bei Vorliegen einer rechtlichen Verpflichtung übermittelt. Die Nutzung zu Werbezwecken findet nicht statt.
-Die personenbezogenen Daten werden nach Abschluss des Kurses gelöscht, soweit sie nicht entsprechend rechtlicher Vorgaben länger 
-aufbewahrt werden müssen (SEPA-Lastschriftverfahren).
-Jede Kursteilnehmerin bzw. jeder Kursteilnehmer hat im Rahmen der gesetzlichen Vorgaben das Recht auf Auskunft über die personenbezogenen 
-Daten, die zu seiner Person bei der hier genannten verantwortlichen Stelle gespeichert sind, sowie das Recht auf Korrektur fehlerhafter 
-Daten und ein Beschwerderecht beim Bayerischen Landesamt für Datenschutzaufsicht. (Eine ausführliche Erklärung des Vereins 
-unter: https://www.adfc-muenchen.de/datenschutzerklaerung/)
+3. Bezahlung:<br>
+Die Bezahlung des Teilnahmebetrages kann ausschließlich im Wege des SEPA-Lastschriftverfahrens erfolgen. 
+Der Teilnahmebetrag ist mit Zustandekommen des Vertrags fällig und wird innerhalb von 2 Wochen nach Anmeldebestätigung 
+eingezogen. Die Teilnahme am Kurs ist erst mit Eingang des Lastschriftbetrages auf dem Bankkonto des ADFC München e.V. gesichert.<br><br>
+
+4. Rücktritt von einem Schulungskurs / Absage des Kurses seitens des ADFC München e.V.<br>
+Ein:e Teilnehmer:in kann nur durch schriftliche Erklärung von einem noch nicht begonnenen Schulungskurs zurücktreten. 
+Erfolgt der Rücktritt bis 7 Tage vor Beginn der Ausbildung, erstatten wir den Teilnahmebetrag abzüglich eines 
+Bearbeitungsentgelts zurück. Bei mehrtägigen Schulungen beträgt dieser 15 €, bei eintägigen Schulungen 50% des 
+Teilnahmebetrages. Bei einem späteren Rücktritt oder Nichterscheinen zum Kurs erfolgt keine Erstattung. 
+Sollte der Kurs seitens des ADFC München e.V. abgesagt werden müssen, wird der Teilnahmebetrag unverzüglich 
+nach Absage in voller Höhe erstattet.<br><br>
+
+5. Risiken:<br>
+Da die Teilnahme an einer Radfahrschulung bzw. einem FahrSicherheitsTraining für Ungeübte anstrengend ist, 
+sollte eine ausreichende körperliche Fitness vorhanden sein. Wenn Sie sich nicht sicher sind, die Schulungsdauer 
+von jeweils 90 bzw. bis zu 240 Minuten pro Termin (je nach gewähltem Kurs) ohne Erschöpfung überstehen zu können, 
+lassen Sie sich bitte ärztlich beraten. Bei den Anfängerkursen werden Schulungsräder zur Verfügung gestellt. 
+Diese Fahrräder sind bis 100 kg Körpergewicht zugelassen. Für eine Teilnahme an einem Fortgeschrittenenkurs werden 
+Grundkenntnisse im Fahrradfahren vorausgesetzt.
+Während des Kurses sind die Regeln der Straßenverkehrsordnung zu beachten. Der/die Teilnehnmer:in ist sich bewusst, 
+dass die Sorgfalt des ADFC München e.V. bei der Erfüllung von Verkehrssicherungspflichten hinsichtlich 
+der Sicherheit des Trainingsgeländes sich billigerweise nur auf vorhersehbare Risiken erstrecken kann. 
+Sie/Er akzeptiert daher, dass der ADFC nicht verpflichtet ist, Maßnahmen zu ergreifen, die nicht mehr in 
+einem angemessenen Verhältnis zu der Wahrscheinlichkeit und dem Ausmaß eines etwaigen Schadens stehen. 
+Dabei ist entscheidend die pflichtgemäße Betrachtung des ADFC München e.V. vor Beginn der jew. Schulungsveranstaltung.<br><br>
+
+6. Haftungsbeschränkung:<br>
+Die Teilnahme erfolgt auf eigenes Risiko! Der/die Teilnehmer:in erklärt, wie schon unter Ziffer 5 erwähnt, dass sein/ihr 
+Gesundheitszustand den Anforderungen der Radfahrschulung entspricht. Schadenersatzansprüche gegen den 
+ADFC München e.V., gleich aus welchem Rechtsgrunde, bestehen nur, soweit dem ADFC München e.V. Vorsatz 
+oder grobe Fahrlässigkeit zur Last fallen. Von dem Haftungsausschluss ausgenommen sind Schadensersatzansprüche 
+aufgrund einer Verletzung des Lebens, des Körpers, der Gesundheit und Schadensersatzansprüche aus der Verletzung 
+wesentlicher Vertragspflichten durch den ADFC München e.V. Wesentliche Vertragspflichten sind solche, deren Erfüllung 
+zur Erreichung des Vertragsziels notwendig ist. Für diese Schäden haftet der ADFC München e.V. bei Schäden, 
+die nicht Personenschäden sind, und die nicht auf Vorsatz oder grober Fahrlässigkeit beruhen, mit maximal 4.000,00 € 
+je Schulung und Teilnehmer; bei Personenschäden mit maximal 75.000,00 €. Der vorstehende Haftungsausschluss 
+gilt auch zugunsten der gesetzlichen Vertreter und Erfüllungsgehilfen des ADFC München e.V., sofern der/die Teilnehmer:in 
+Ansprüche gegen diese geltend macht.<br><br>
+
+7. Datenschutzerklärung gemäß Art. 13 Datenschutz-Grundverordnung (DSGVO):<br>
+Die Radfahrschule des Vereins „Allgemeiner Deutscher Fahrrad-Club München e.V.“ speichert die Anmeldedaten nur zur 
+Erfüllung des vereinbarten Schulungsverhältnisses. Verantwortliche Stelle ist der Verein „Allgemeiner Deutscher 
+Fahrrad-Club München e.V., Platenstraße 4, 80336 München. Die in diesem Anmeldeformular erhobenen personenbezogenen 
+Daten Name, Vorname, Postanschrift, E-Mail-Adresse, diverse Telefonnummern und die Bankverbindung 
+(bei einer SEPA-Lastschriftvereinbarung) werden ausschließlich zum Zwecke der Verwaltung und Betreuung der angemeldeten 
+Kursteilnehmer/-innen genutzt.
+Die Daten werden an Dritte nur bei Vorliegen einer rechtlichen Verpflichtung übermittelt. Die Nutzung zu Werbezwecken 
+findet nicht statt.<br>
+Die personenbezogenen Daten werden nach Abschluss des Kurses gelöscht, soweit sie nicht entsprechend rechtlicher 
+Vorgaben länger aufbewahrt werden müssen (SEPA-Lastschriftverfahren).
+Jede Kursteilnehmerin bzw. jeder Kursteilnehmer hat im Rahmen der gesetzlichen Vorgaben das Recht auf Auskunft über 
+die personenbezogenen Daten, die zu seiner Person bei der hier genannten verantwortlichen Stelle gespeichert sind, s
+owie das Recht auf Korrektur fehlerhafter Daten und ein Beschwerderecht beim Bayerischen Landesamt für Datenschutzaufsicht. 
+(Eine ausführliche Erklärung des Vereins unter:<br>
+https://muenchen.adfc.de/datenschutz)
 EOD))
                     ->label('Lastschrift genehmigt')
                     ->default(true)
@@ -144,11 +187,24 @@ EOD))
     </x-slot>
     <div>
         <p class="mb-10">
-            Mit diesem Formular können Sie sich für einen Kurs der Radfahrschule des ADFC München anmelden. Wir brauchen
-            Ihre
-            Email-Adresse für die Bestätigungs-Mails. Die Kursgebühr von 120€ wird per Lastschrift eingezogen. Halten
-            Sie dafür
-            bitte Ihre IBAN-Kontonummer bereit. Sie finden die Kurse auch in
+            Hier können Sie sich zu einem FahrSicherheitsTraining anmelden.<br>
+            Es gibt 3 verschiedene Kurse:<br><br>
+
+            - Grundkurs FahrSicherheitsTraining: „Fahr sicher und souverän. Sicheres Beherrschen des Fahrrades in
+            kritischen
+            Situationen". Teilnahmegebühr € 39, für ADFC-Mitglieder € 29.<br><br>
+
+            - Aufbaukurs FahrSicherheitsTraining: "Sicher und souverän auf Schotter unterwegs". Teilnahmegebühr € 52,
+            für
+            ADFC-Mitglieder € 39.<br><br>
+
+            - FahrSicherheitsTraining für Senior:innen: Teilnahmegebühr € 39, für ADFC-Mitglieder € 29.<br><br>
+
+            Die Kursgebühr wird erst fällig, wenn wir Ihre Anmeldung bestätigt haben und wird in der Regel ca. 1-2
+            Wochen vor dem
+            Kurstermin abgebucht.<br><br>
+
+            Sie finden die Kurse auch in
             unserem
             <a class="underline text-blue-600 hover:text-blue-800 visited:text-purple-600" target="_blank"
                 href="https://touren-termine.adfc.de/suche?fromNow=true&eventType=Termin&includedTags=11&latLng=48.1351253%2C11.5819806&place=M%C3%BCnchen">

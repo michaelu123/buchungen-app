@@ -182,7 +182,8 @@ EOD
 <x-filament::section class="max-w-7xl mx-auto items-center justify-center">
     <x-slot name="heading">
         <div class="flex flex-row justify-between items-center">
-            <p class="lg:text-5xl text-2xl">Anmeldung zum Kurs "Fahrpraxis für Anfänger:innen"</p>
+            <p class="lg:text-5xl text-2xl">Anmeldung zum Kurs "Fahrpraxis für Anfänger:innen" der Radfahrschule München
+            </p>
             <img src="/ADFC_MUENCHEN.PNG" alt="">
         </div>
     </x-slot>
