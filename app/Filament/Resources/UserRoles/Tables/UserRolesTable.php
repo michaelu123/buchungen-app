@@ -14,11 +14,14 @@ class UserRolesTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->striped()
             ->columns([
                 TextColumn::make('user.name')
+                    ->searchable()
                     ->sortable(),
                 TextColumn::make('role')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

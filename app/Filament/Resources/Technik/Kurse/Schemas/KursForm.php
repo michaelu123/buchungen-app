@@ -28,9 +28,9 @@ class KursForm
                 TextInput::make('restplätze')
                     ->required()
                     ->numeric(),
-                TextInput::make('leiter')
+                TextInput::make('leiter')->label("Leiter:in")
                     ->required(),
-                TextInput::make('leiter2'),
+                TextInput::make('leiter2')->label("Leiter:in2"),
                 Textarea::make('kommentar'),
             ]);
     }

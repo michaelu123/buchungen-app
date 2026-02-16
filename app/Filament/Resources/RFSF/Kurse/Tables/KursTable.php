@@ -22,6 +22,7 @@ class KursTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->striped()
             ->columns([
                 TextColumn::make('notiz'),
                 TextColumn::make('nummer')
@@ -46,12 +47,11 @@ class KursTable
                         }
                         return $state;
                     }),
-                TextColumn::make('trainer')
+                TextColumn::make('trainer')->label("Trainer:in")
                     ->searchable(),
-                TextColumn::make('co_trainer')
-                    ->label("Co-Trainer")
+                TextColumn::make('co_trainer')->label("Co-Trainer:in")
                     ->searchable(),
-                TextColumn::make('hospitant')
+                TextColumn::make('hospitant')->label("Hospitant:in")
                     ->searchable(),
                 TextColumn::make('liste_verschicken')
                     ->searchable(),

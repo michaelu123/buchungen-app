@@ -21,6 +21,7 @@ class KursTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->striped()
             ->columns([
                 TextColumn::make('notiz'),
                 TextColumn::make('nummer')
@@ -38,9 +39,9 @@ class KursTable
                     ->numeric(),
                 TextColumn::make('restplätze')
                     ->numeric(),
-                TextColumn::make('leiter')
+                TextColumn::make('leiter')->label("Leiter:in")
                     ->sortable(),
-                TextColumn::make('leiter2')
+                TextColumn::make('leiter2')->label("Leiter:in2")
                     ->sortable(),
                 TextColumn::make('kommentar')
                     ->searchable()

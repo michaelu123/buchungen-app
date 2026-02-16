@@ -40,9 +40,9 @@ class KursForm
                     ->required()
                     ->numeric(),
                 Textarea::make('kommentar'),
-                TextInput::make('trainer'),
-                TextInput::make('co_trainer')->label("Co-Trainer"),
-                TextInput::make('hospitant'),
+                TextInput::make('trainer')->label("Trainer:in"),
+                TextInput::make('co_trainer')->label("Co-Trainer:in"),
+                TextInput::make('hospitant')->label("Hospitant:in"),
                 TextInput::make('liste_verschicken')->label("Liste verschicken"),
                 TextInput::make('abgesagt_am')->label("Abgesagt am"),
                 TextInput::make('abgesagt_wg')->label("Abgesagt wegen"),

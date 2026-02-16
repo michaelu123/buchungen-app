@@ -21,6 +21,7 @@ class BuchungTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->striped()
             ->columns([
                 TextColumn::make('created_at')
                     ->label("Eingegangen am")
