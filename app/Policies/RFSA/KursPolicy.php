@@ -4,15 +4,21 @@ namespace App\Policies\RFSA;
 
 use App\Models\RFSA\Kurs;
 use App\Models\User;
+use App\Policies\BasePolicy;
 
-class KursPolicy
+class KursPolicy extends BasePolicy
 {
+    public function __construct()
+    {
+        parent::__construct("RFSA");
+    }
+
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        return $user->roles->map(fn($role) => $role["role"])->contains("RFSA");
+        return $this->permits($user);
     }
 
     /**
@@ -20,7 +26,7 @@ class KursPolicy
      */
     public function view(User $user, Kurs $kurs): bool
     {
-        return $user->roles->map(fn($role) => $role["role"])->contains("RFSA");
+        return $this->permits($user);
     }
 
     /**
@@ -28,7 +34,7 @@ class KursPolicy
      */
     public function create(User $user): bool
     {
-        return $user->roles->map(fn($role) => $role["role"])->contains("RFSA");
+        return $this->permits($user);
     }
 
     /**
@@ -36,7 +42,7 @@ class KursPolicy
      */
     public function update(User $user, Kurs $kurs): bool
     {
-        return $user->roles->map(fn($role) => $role["role"])->contains("RFSA");
+        return $this->permits($user);
     }
 
     /**
@@ -44,7 +50,7 @@ class KursPolicy
      */
     public function delete(User $user, Kurs $kurs): bool
     {
-        return $user->roles->map(fn($role) => $role["role"])->contains("RFSA");
+        return $this->permits($user);
     }
 
     /**
@@ -52,7 +58,7 @@ class KursPolicy
      */
     public function restore(User $user, Kurs $kurs): bool
     {
-        return $user->roles->map(fn($role) => $role["role"])->contains("RFSA");
+        return $this->permits($user);
     }
 
     /**
@@ -60,6 +66,6 @@ class KursPolicy
      */
     public function forceDelete(User $user, Kurs $kurs): bool
     {
-        return $user->roles->map(fn($role) => $role["role"])->contains("RFSA");
+        return $this->permits($user);
     }
 }

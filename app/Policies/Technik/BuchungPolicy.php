@@ -4,15 +4,22 @@ namespace App\Policies\Technik;
 
 use App\Models\Technik\Buchung;
 use App\Models\User;
+use App\Policies\BasePolicy;
 
-class BuchungPolicy
+class BuchungPolicy extends BasePolicy
 {
+
+    public function __construct()
+    {
+        parent::__construct("TK");
+    }
+
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        return $user->roles->map(fn($role) => $role["role"])->contains("TK");
+        return $this->permits($user);
     }
 
     /**
@@ -20,7 +27,7 @@ class BuchungPolicy
      */
     public function view(User $user, Buchung $buchung): bool
     {
-        return $user->roles->map(fn($role) => $role["role"])->contains("TK");
+        return $this->permits($user);
     }
 
     /**
@@ -28,7 +35,7 @@ class BuchungPolicy
      */
     public function create(User $user): bool
     {
-        return $user->roles->map(fn($role) => $role["role"])->contains("TK");
+        return $this->permits($user);
     }
 
     /**
@@ -36,7 +43,7 @@ class BuchungPolicy
      */
     public function update(User $user, Buchung $buchung): bool
     {
-        return $user->roles->map(fn($role) => $role["role"])->contains("TK");
+        return $this->permits($user);
     }
 
     /**
@@ -44,7 +51,7 @@ class BuchungPolicy
      */
     public function delete(User $user, Buchung $buchung): bool
     {
-        return $user->roles->map(fn($role) => $role["role"])->contains("TK");
+        return $this->permits($user);
     }
 
     /**
@@ -52,7 +59,7 @@ class BuchungPolicy
      */
     public function restore(User $user, Buchung $buchung): bool
     {
-        return $user->roles->map(fn($role) => $role["role"])->contains("TK");
+        return $this->permits($user);
     }
 
     /**
@@ -60,6 +67,6 @@ class BuchungPolicy
      */
     public function forceDelete(User $user, Buchung $buchung): bool
     {
-        return $user->roles->map(fn($role) => $role["role"])->contains("TK");
+        return $this->permits($user);
     }
 }
