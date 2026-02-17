@@ -5,6 +5,7 @@ namespace App\Filament\Resources\RFSF\Buchungen\Tables;
 use App\Exports\RFSF\BuchungenExport;
 use App\Filament\Resources\BuchungenBase\Tables\BuchungTableBase;
 use App\Models\RFSF\Buchung;
+use App\Models\RFSF\Kurs;
 
 class BuchungTable extends BuchungTableBase
 {
@@ -16,5 +17,10 @@ class BuchungTable extends BuchungTableBase
     protected static function getBuchungenExportClass(): string
     {
         return BuchungenExport::class;
+    }
+
+    protected static function getKursClass(): string
+    {
+        return Kurs::class;
     }
 }

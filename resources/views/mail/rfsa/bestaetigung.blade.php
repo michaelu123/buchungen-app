@@ -1,5 +1,5 @@
 <div>
-  <h1>Anmeldebestätigung für einen Kurs der Radfahrschule</h1>
+  <h1>Anmeldebestätigung für einen Anfängerkurs der Radfahrschule</h1>
   <p>{{ $anrede }},</p>
   <p>
     Sie sind für den Kurs<br>

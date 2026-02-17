@@ -78,3 +78,8 @@ php artisan make:policy RFSA\KursPolicy --model=RFSA\Kurs
 php artisan make:policy RFSA\BuchungPolicy --model=RFSA\Buchung
 
 Intelephense: Index Workspace in Command Palette (php file must be selected), then Developer: Reload Window for strange error messages
+composer dump-autoload
+
+composer require saloonphp/xml-wrangler
+
+search exclude: storage,database,vendor,node_modules
