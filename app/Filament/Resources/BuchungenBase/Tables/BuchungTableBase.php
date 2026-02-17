@@ -39,7 +39,9 @@ abstract class BuchungTableBase
           ->label('Eingegangen am')
           ->dateTime('d.m.Y H:i:s')
           ->sortable(),
-        TextColumn::make('notiz'),
+        TextColumn::make('notiz')
+          ->searchable()
+          ->sortable(),
         TextColumn::make('kursnummer')
           ->label('Kursname')
           ->searchable()

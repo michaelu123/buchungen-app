@@ -3,11 +3,15 @@
 namespace App\Models\RFSFP;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Model;
 
 class Kurs extends Model
 {
+    use HasFactory;
+
+
     protected $table = "rfsfp_kurse";
     protected $fillable = [
         'nummer',

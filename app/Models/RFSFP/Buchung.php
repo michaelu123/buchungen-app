@@ -8,9 +8,12 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\BaseBuchung;
 use App\Mail\RFSFP\Bestaetigung;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Buchung extends BaseBuchung
 {
+    use HasFactory;
+
     protected bool $confirmAutomatically = false;
 
     protected $table = "rfsfp_buchungen";

@@ -24,7 +24,9 @@ class KursTable
         return $table
             ->striped()
             ->columns([
-                TextColumn::make('notiz'),
+                TextColumn::make('notiz')
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('nummer')
                     ->label('Nummer')
                     ->searchable()
