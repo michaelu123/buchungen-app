@@ -30,9 +30,9 @@ class KursTable
                     ->sortable(),
                 TextColumn::make('uhrzeit'),
                 TextColumn::make('kurstermine')
-                    ->state(fn(Kurs $kurs) => $kurs->termine(true)),
+                    ->state(fn(Kurs $kurs): string => $kurs->termine(true)),
                 TextColumn::make('ersatztermine')
-                    ->state(fn(Kurs $kurs) => $kurs->termine(false)),
+                    ->state(fn(Kurs $kurs): string => $kurs->termine(false)),
                 TextColumn::make('kursplätze')
                     ->numeric(),
                 TextColumn::make('restplätze')
@@ -94,7 +94,7 @@ class KursTable
                 Action::make("update")
                     ->label("Update Restplätze")
                     ->tableIcon(Heroicon::OutlinedArrowPath)
-                    ->action(function () {
+                    ->action(function (): void {
                         Buchung::checkRestPlätze();                      // do nothing, just redirect to the create page
                     })
             ]);

@@ -14,7 +14,7 @@ class EmailVerifikation extends Model
     ];
 
 
-    public static function verifyEmail($email)
+    public static function verifyEmail($email): void
     {
         $now = now();
         if (!EmailVerifikation::where('email', $email)->exists()) {

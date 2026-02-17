@@ -82,7 +82,7 @@ class KursTable
                 Action::make("update")
                     ->label("Update Restplätze")
                     ->tableIcon(Heroicon::OutlinedArrowPath)
-                    ->action(function () {
+                    ->action(function (): void {
                         Buchung::checkRestPlätze();                      // do nothing, just redirect to the create page
                     })
             ]);

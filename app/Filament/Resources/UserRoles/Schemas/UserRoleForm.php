@@ -11,7 +11,7 @@ class UserRoleForm
     public static function configure(Schema $schema): Schema
     {
         $users = User::get()
-            ->mapWithKeys(function (User $user) {
+            ->mapWithKeys(function (User $user): array {
                 return [$user["id"] => $user->name];
             })
             ->all();

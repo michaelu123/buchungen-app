@@ -115,7 +115,7 @@ abstract class BuchungTableBase
               ->options(["leer" => "ohne Notiz", "nicht leer" => "mit Notiz"]),//->live(),
           ])
           ->indicateUsing(
-            function (array $data): ?array {
+            function (array $data): array {
               $inds = [];
               if ($data["nummer"]) {
                 $inds[] = Indicator::make("Kurs")->removeField("nummer");
@@ -145,24 +145,24 @@ abstract class BuchungTableBase
       ])
       ->recordActions([
         EditAction::make(),
-        DeleteAction::make()->after(function (DeleteBulkAction $action) use ($buchungClass) {
+        DeleteAction::make()->after(function (DeleteBulkAction $action) use ($buchungClass): void {
           $buchungClass::checkRestplätze();
         }),
         Action::make('Prüfen')
           ->tableIcon(Heroicon::OutlinedCheckCircle)
-          ->action(function ($record) {
+          ->action(function ($record): void {
             $record->check();
           }),
         Action::make('Bestätigung senden')
           ->tableIcon(Heroicon::OutlinedEnvelope)
-          ->action(function ($record) {
+          ->action(function ($record): void {
             $record->confirm();
           }),
 
       ])
       ->toolbarActions([
         BulkActionGroup::make([
-          DeleteBulkAction::make()->after(function (DeleteBulkAction $action) use ($buchungClass) {
+          DeleteBulkAction::make()->after(function (DeleteBulkAction $action) use ($buchungClass): void {
             $buchungClass::checkRestplätze();
           }),
         ]),

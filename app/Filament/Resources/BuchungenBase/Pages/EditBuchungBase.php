@@ -15,7 +15,7 @@ abstract class EditBuchungBase extends EditRecord
         $buchungClass = static::getBuchungModelClass();
 
         return [
-            DeleteAction::make()->after(function (DeleteAction $action) use ($buchungClass) {
+            DeleteAction::make()->after(function (DeleteAction $action) use ($buchungClass): void {
                 $buchungClass::checkRestplätze();
             }),
         ];

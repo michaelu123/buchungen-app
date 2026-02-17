@@ -49,7 +49,7 @@ class Kurs extends Model
         return $this->hasMany(Buchung::class, "kursnummer", "nummer");
     }
 
-    public function termine($tage)
+    public function termine($tage): string
     {
 
         $tags = array_filter($tage ? [
@@ -64,9 +64,9 @@ class Kurs extends Model
         ] : [
             $this->ersatztermin1 ?? null,
             $this->ersatztermin2 ?? null,
-        ], fn($v) => !empty($v));
+        ], fn($v): bool => !empty($v));
 
-        $formatted = array_map(function ($t) {
+        $formatted = array_map(function (\DateTimeInterface|\Carbon\WeekDay|\Carbon\Month|string|int|float|null $t): string {
             try {
                 return Carbon::parse($t)->translatedFormat('D, d.m');
             } catch (\Throwable $e) {

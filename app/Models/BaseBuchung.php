@@ -46,7 +46,7 @@ abstract class BaseBuchung extends Model
     abstract public function getFrom(): string;
 
 
-    public function checkIban()
+    public function checkIban(): void
     {
         // IBAN is already checked in the frontend, but we want to be sure that no invalid IBAN gets into the database. 
         // So we check it again here and if it's invalid, we send an email to the user and set a note in the database.
@@ -57,7 +57,7 @@ abstract class BaseBuchung extends Model
         }
     }
 
-    public function checkLastschriftOk()
+    public function checkLastschriftOk(): void
     {
         if (!$this->lastschriftok) {
             $this->update(["notiz" => "Lastschrift nicht erlaubt"]);
@@ -65,7 +65,7 @@ abstract class BaseBuchung extends Model
         }
     }
 
-    public function checkVerified()
+    public function checkVerified(): void
     {
         if (!$this->verified) {
             $ev = EmailVerifikation::where("email", $this->email)->first();
@@ -119,18 +119,18 @@ abstract class BaseBuchung extends Model
     }
 
 
-    public function check()
+    public function check(): void
     {
         $this->checkIban();
         $this->checkLastschriftOk();
         $this->checkVerified();
-        $this->checkRestplätze();
+        static::checkRestplätze();
     }
 
-    public static function verifyEmail($email, $now)
+    public static function verifyEmail($email, $now): void
     {
         $unverified = static::where('email', $email)->whereNull("verified")->whereNull("notiz")->get();
-        $unverified->each(function ($buchung) use ($now) {
+        $unverified->each(function ($buchung) use ($now): void {
             $buchung->update(['verified' => $now]);
             if (!$buchung->notiz && $buchung->confirmAutomatically) {
                 $buchung->confirm();
@@ -156,7 +156,7 @@ abstract class BaseBuchung extends Model
             return false;
         }
 
-        if (!preg_match('/^[A-Z]{2}[0-9]{2}[A-Z0-9]+$/', $normalizedIban)) {
+        if (!preg_match('/^[A-Z]{2}\d{2}[A-Z0-9]+$/', $normalizedIban)) {
             return false;
         }
 

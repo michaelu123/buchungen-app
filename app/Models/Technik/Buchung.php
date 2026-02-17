@@ -82,11 +82,9 @@ class Buchung extends BaseBuchung
                     }
                 }
             }
-            if (!$buchungenFound) {
-                if ($kurs["restplätze"] != $kurs["kursplätze"]) {
-                    Kurs::find($kurs["id"])->update(["restplätze" => $kurs["kursplätze"]]);
-                    Buchung::notifyWarning("Restplätze für Kursnummer " . $kurs["nummer"] . " von " . $kurs["restplätze"] . " auf " . $kurs["kursplätze"] . " korrigiert");
-                }
+            if (!$buchungenFound && $kurs["restplätze"] != $kurs["kursplätze"]) {
+                Kurs::find($kurs["id"])->update(["restplätze" => $kurs["kursplätze"]]);
+                Buchung::notifyWarning("Restplätze für Kursnummer " . $kurs["nummer"] . " von " . $kurs["restplätze"] . " auf " . $kurs["kursplätze"] . " korrigiert");
             }
         }
     }

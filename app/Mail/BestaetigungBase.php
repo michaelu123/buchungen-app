@@ -19,7 +19,7 @@ abstract class BestaetigungBase extends Mailable
 
   public function __construct(protected object $kurs, protected object $buchung)
   {
-    $this->anrede = "Liebe(r) " . " " . $this->buchung->vorname . " " . $this->buchung->nachname;
+    $this->anrede = "Liebe(r) " . $this->buchung->vorname . " " . $this->buchung->nachname;
     if (method_exists($this->kurs, 'kursDetails')) {
       $this->kursDetails = $this->kurs->kursDetails();
     }
@@ -28,8 +28,8 @@ abstract class BestaetigungBase extends Mailable
   public function envelope(): Envelope
   {
     return new Envelope(
-      subject: 'Kursanmeldung bestätigt',
       from: new Address($this->fromAddress()),
+      subject: 'Kursanmeldung bestätigt',
     );
   }
 

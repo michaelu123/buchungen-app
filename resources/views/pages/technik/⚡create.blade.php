@@ -15,7 +15,7 @@ new class extends Component implements HasSchemas {
     // noinspection PhpUnusedAliasInspection
     /** @use \Filament\Schemas\Concerns\InteractsWithSchemas */
     use \Filament\Schemas\Concerns\InteractsWithSchemas;
-    private const _TRAITS = [\Filament\Schemas\Concerns\InteractsWithSchemas::class];
+    protected const _TRAITS = [\Filament\Schemas\Concerns\InteractsWithSchemas::class];
 
     protected static ?string $model = Buchung::class;
     public array $data = [];
@@ -30,7 +30,7 @@ new class extends Component implements HasSchemas {
         $kurse = Kurs::whereNull("notiz")
             ->where("restplätze", ">", 0)
             ->get()
-            ->mapWithKeys(function (Kurs $kurs) {
+            ->mapWithKeys(function (Kurs $kurs): array {
                 return [$kurs->nummer => $kurs->nummer . ": " . $kurs->titel . " am " . date("d.m.Y", strtotime($kurs->datum)) . ", freie Plätze: " . $kurs->restplätze];
             })
             ->all();
@@ -75,7 +75,7 @@ new class extends Component implements HasSchemas {
                 TextInput::make('iban')
                     ->belowLabel("Bitte geben Sie die IBAN des Kontos an, von dem die Lastschrift erfolgen soll.")
                     ->rules([
-                        fn(): \Closure => function ($attribute, $value, \Closure $fail) {
+                        fn(): \Closure => function ($attribute, $value, \Closure $fail): void {
                             if (!Buchung::test_iban($value)) {
                                 $fail('Die IBAN ist ungültig.');
                             }

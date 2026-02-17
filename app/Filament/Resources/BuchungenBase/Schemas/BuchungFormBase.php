@@ -24,7 +24,7 @@ abstract class BuchungFormBase
         $kurse = $kursClass::whereNull('notiz')
             ->where('restplätze', '>', 0)
             ->get()
-            ->mapWithKeys(function ($kurs) {
+            ->mapWithKeys(function (array $kurs): array {
                 return [$kurs['nummer'] => $kurs->kursDetails()];
             })
             ->all();
@@ -63,7 +63,7 @@ abstract class BuchungFormBase
                     ->required(),
                 TextInput::make('iban')
                     ->rules([
-                        fn (): Closure => function ($attribute, $value, Closure $fail) use ($buchungClass) {
+                        fn (): Closure => function ($attribute, $value, Closure $fail) use ($buchungClass): void {
                             if (! $buchungClass::test_iban($value)) {
                                 $fail('Die IBAN ist ungültig.');
                             }
