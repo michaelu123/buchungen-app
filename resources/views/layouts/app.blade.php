@@ -22,7 +22,6 @@
 
 <body class="mt-10 antialiased">
     {{ $slot }}
-
     @livewire('notifications')
     @filamentScripts
     @vite('resources/js/app.js')
