@@ -2,25 +2,18 @@
 
 namespace App\Filament\Resources\RFSA\Kurse\Tables;
 
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Maatwebsite\Excel\Facades\Excel;
-use Filament\Tables\Table;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Support\Icons\Heroicon;
-use Filament\Actions\EditAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\Action;
-use App\Models\RFSA\Kurs;
-use App\Models\RFSA\Buchung;
 use App\Exports\RFSA\BuchungenExport;
-use Carbon\Carbon;
+use App\Filament\Resources\KurseBase\KursTableActions;
+use App\Models\RFSA\Kurs;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
 class KursTable
 {
     public static function configure(Table $table): Table
     {
+        $kursTableActions = new KursTableActions(BuchungenExport::class);
+
         return $table
             ->striped()
             ->columns([
@@ -47,58 +40,44 @@ class KursTable
                         if (\strlen($state) <= $column->getCharacterLimit()) {
                             return null;
                         }
+
                         return $state;
                     }),
-                TextColumn::make('lehrer')->label("Lehrer:in")
+                TextColumn::make('lehrer')->label('Lehrer:in')
                     ->searchable(),
-                TextColumn::make('co_lehrer')->label("Co-Lehrer:in")
+                TextColumn::make('co_lehrer')->label('Co-Lehrer:in')
                     ->searchable(),
-                TextColumn::make('co_lehrer2')->label("Co-Lehrer:in2")
+                TextColumn::make('co_lehrer2')->label('Co-Lehrer:in2')
                     ->searchable(),
-                TextColumn::make('hospitant')->label("Hospitant:in")
+                TextColumn::make('hospitant')->label('Hospitant:in')
                     ->searchable(),
-                TextColumn::make('hospitant2')->label("Hospitant:in2")
+                TextColumn::make('hospitant2')->label('Hospitant:in2')
                     ->searchable(),
                 TextColumn::make('liste_verschicken')
                     ->searchable(),
                 TextColumn::make('abgesagt_am')
-                    ->label("Abgesagt am")
+                    ->label('Abgesagt am')
                     ->searchable(),
                 TextColumn::make('abgesagt_wg')
-                    ->label("Abgesagt wegen")
+                    ->label('Abgesagt wegen')
                     ->searchable(),
                 TextColumn::make('created_at')
-                    ->dateTime("d.m.Y H:i:s")
+                    ->dateTime('d.m.Y H:i:s')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
-                    ->dateTime("d.m.Y H:i:s")
+                    ->dateTime('d.m.Y H:i:s')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
             ])
-            ->recordActions([
-                EditAction::make(),
-                DeleteAction::make(),
-                Action::make("export")
-                    ->Label("Excel")
-                    ->tableIcon(Heroicon::OutlinedDocumentArrowDown)
-                    ->action(function (Kurs $kurs): BinaryFileResponse {
-                        return Excel::download(new BuchungenExport($kurs), $kurs->nummer . ".xlsx");
-                    }),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
-                Action::make("update")
-                    ->label("Update Restplätze")
-                    ->tableIcon(Heroicon::OutlinedArrowPath)
-                    ->action(function (): void {
-                        Buchung::checkRestPlätze();                      // do nothing, just redirect to the create page
-                    })
-            ]);
+            ->recordActions(
+                $kursTableActions->getRecordActions()
+            )
+            ->toolbarActions(
+                $kursTableActions->getToolbarActions()
+            );
     }
 }

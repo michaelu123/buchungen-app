@@ -84,4 +84,13 @@ class Kurs extends Model
     {
         return $this->nummer . ": " . $this->uhrzeit . ", " . $this->termine(true) . ", Ersatztermine: " . $this->termine(false);
     }
+
+    public function ebicsData(): array
+    {
+        return [
+            "mitgliederpreis" => 120,
+            "nichtmitgliederpreis" => 120,
+            "mandat" => "M-RFSA-" . now()->year,
+        ];
+    }
 }
