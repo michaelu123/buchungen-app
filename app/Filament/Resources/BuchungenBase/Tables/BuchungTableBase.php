@@ -25,13 +25,13 @@ abstract class BuchungTableBase
 
     abstract protected static function getBuchungenExportClass(): string;
 
-    abstract protected static function getKursClass(): string;
+    abstract protected static function getKursModelClass(): string;
 
     public static function configure(Table $table): Table
     {
         $buchungClass = static::getBuchungModelClass();
         $exportClass = static::getBuchungenExportClass();
-        $kursClass = static::getKursClass();
+        $kursClass = static::getKursModelClass();
 
         return $table
             ->striped()
@@ -106,7 +106,7 @@ abstract class BuchungTableBase
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-            Filter::make('kurs-filter')
+                Filter::make('kurs-filter')
                     ->schema([
                         Select::make('nummer')
                             ->label('Filtern nach Kurs')
@@ -137,48 +137,48 @@ abstract class BuchungTableBase
                         return $query
                             ->when(
                                 $nummer,
-                                fn ($query): Builder => $query->where('kursnummer', $nummer)
+                                fn($query): Builder => $query->where('kursnummer', $nummer)
                             )->when(
                                 $notiz,
-                                fn ($query): Builder => $notiz == 'leer' ?
+                                fn($query): Builder => $notiz == 'leer' ?
                                 $query->whereNull('notiz') :
                                 $query->whereNotNull('notiz')
                             );
                     }),
-        ])
+            ])
             ->recordActions([
-            ActionGroup::make([
+                ActionGroup::make([
                     EditAction::make(),
                     DeleteAction::make()->after(function (DeleteBulkAction $action) use ($buchungClass): void {
                         $buchungClass::checkRestplätze();
                     }),
                     Action::make('Prüfen')
-                        ->disabled(fn ($record) => filled($record['notiz']))
+                        ->disabled(fn($record) => filled($record['notiz']))
                         ->icon(Heroicon::OutlinedCheckCircle)
                         ->action(function ($record): void {
                             $record->check();
                         }),
                     Action::make('Bestätigung senden')
-                        ->disabled(fn ($record) => filled($record['notiz']))
+                        ->disabled(fn($record) => filled($record['notiz']))
                         ->icon(Heroicon::OutlinedEnvelope)
                         ->action(function ($record): void {
                             $record->confirm();
                         }),
-            ])->label('Aktionen')->button()->color('primary'),
-        ])
+                ])->label('Aktionen')->button()->color('primary'),
+            ])
             ->toolbarActions([
-            BulkActionGroup::make([
-                DeleteBulkAction::make()->after(function (DeleteBulkAction $action) use ($buchungClass): void {
-                    $buchungClass::checkRestplätze();
-                }),
-            ]),
-            Action::make('export')
-                ->Label('Excel')
-                ->tableIcon(Heroicon::OutlinedDocumentArrowDown)
-                ->action(function () use ($exportClass): BinaryFileResponse {
-                    return Excel::download(new $exportClass(null), 'Buchungen.xlsx');
-                }),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make()->after(function (DeleteBulkAction $action) use ($buchungClass): void {
+                        $buchungClass::checkRestplätze();
+                    }),
+                ]),
+                Action::make('export')
+                    ->Label('Excel')
+                    ->tableIcon(Heroicon::OutlinedDocumentArrowDown)
+                    ->action(function () use ($exportClass): BinaryFileResponse {
+                        return Excel::download(new $exportClass(null), 'Buchungen.xlsx');
+                    }),
 
-        ]);
+            ]);
     }
 }

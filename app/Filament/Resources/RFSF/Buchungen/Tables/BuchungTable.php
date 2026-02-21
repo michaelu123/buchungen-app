@@ -19,7 +19,7 @@ class BuchungTable extends BuchungTableBase
         return BuchungenExport::class;
     }
 
-    protected static function getKursClass(): string
+    protected static function getKursModelClass(): string
     {
         return Kurs::class;
     }
