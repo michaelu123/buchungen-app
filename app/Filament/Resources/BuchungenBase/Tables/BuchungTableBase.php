@@ -8,6 +8,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
@@ -25,12 +26,15 @@ abstract class BuchungTableBase
 
     abstract protected static function getBuchungenExportClass(): string;
 
+    abstract protected static function getBuchungenImportClass(): string;
+
     abstract protected static function getKursModelClass(): string;
 
     public static function configure(Table $table): Table
     {
         $buchungClass = static::getBuchungModelClass();
         $exportClass = static::getBuchungenExportClass();
+        $importClass = static::getBuchungenImportClass();
         $kursClass = static::getKursModelClass();
 
         return $table
@@ -137,10 +141,10 @@ abstract class BuchungTableBase
                         return $query
                             ->when(
                                 $nummer,
-                                fn($query): Builder => $query->where('kursnummer', $nummer)
+                                fn ($query) => $query->where('kursnummer', $nummer)
                             )->when(
                                 $notiz,
-                                fn($query): Builder => $notiz == 'leer' ?
+                                fn ($query) => $notiz == 'leer' ?
                                 $query->whereNull('notiz') :
                                 $query->whereNotNull('notiz')
                             );
@@ -153,13 +157,13 @@ abstract class BuchungTableBase
                         $buchungClass::checkRestplätze();
                     }),
                     Action::make('Prüfen')
-                        ->disabled(fn($record) => filled($record['notiz']))
+                        ->disabled(fn ($record) => filled($record['notiz']))
                         ->icon(Heroicon::OutlinedCheckCircle)
                         ->action(function ($record): void {
                             $record->check();
                         }),
                     Action::make('Bestätigung senden')
-                        ->disabled(fn($record) => filled($record['notiz']))
+                        ->disabled(fn ($record) => filled($record['notiz'] || ! filled($record['verified'])))
                         ->icon(Heroicon::OutlinedEnvelope)
                         ->action(function ($record): void {
                             $record->confirm();
@@ -173,10 +177,25 @@ abstract class BuchungTableBase
                     }),
                 ]),
                 Action::make('export')
-                    ->Label('Excel')
+                    ->Label('Excel Export')
                     ->tableIcon(Heroicon::OutlinedDocumentArrowDown)
                     ->action(function () use ($exportClass): BinaryFileResponse {
                         return Excel::download(new $exportClass(null), 'Buchungen.xlsx');
+                    }),
+                Action::make('import')
+                    ->label('Excel Import')
+                    ->icon(Heroicon::OutlinedDocumentArrowUp)
+                    ->schema([
+                        FileUpload::make('xlsx')
+                            ->label('Excel Datei auswählen')
+                            ->required()
+                            ->acceptedFileTypes(['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'])
+                            ->mimeTypeMap([
+                                '.xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                            ]),
+                    ])
+                    ->action(function ($data) use ($importClass): \Maatwebsite\Excel\Excel {
+                        return Excel::import(new $importClass, storage_path('app/private/'.$data['xlsx']));
                     }),
 
             ]);

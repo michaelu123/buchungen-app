@@ -2,83 +2,87 @@
 
 namespace App\Models;
 
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Database\Eloquent\Model;
-use Filament\Notifications\Notification;
-use Filament\Notifications\Events\DatabaseNotificationsSent;
-use App\Models\EmailVerifikation;
-use App\Mail\VerifyEmail;
 use App\Mail\FalscheIban;
+use App\Mail\VerifyEmail;
+use Filament\Notifications\Events\DatabaseNotificationsSent;
+use Filament\Notifications\Notification;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 abstract class BaseBuchung extends Model
 {
     protected $fillable = [
-        "notiz",
-        "email",
-        "mitgliedsnummer",
-        "kursnummer",
-        "anrede",
-        "vorname",
-        "nachname",
-        "postleitzahl",
-        "ort",
-        "strasse_nr",
-        "telefonnr",
-        "kontoinhaber",
-        "iban",
-        "lastschriftok",
-        "verified",
-        "eingezogen",
-        "betrag",
-        "kommentar",
+        'created_at',
+        'notiz',
+        'email',
+        'mitgliedsnummer',
+        'kursnummer',
+        'anrede',
+        'vorname',
+        'nachname',
+        'postleitzahl',
+        'ort',
+        'strasse_nr',
+        'telefonnr',
+        'kontoinhaber',
+        'iban',
+        'lastschriftok',
+        'verified',
+        'eingezogen',
+        'betrag',
+        'kommentar',
     ];
 
     abstract protected bool $confirmAutomatically {
         get;
         set;
     }
-    abstract public function kurs(): BelongsTo;
-    abstract public static function createBuchung($data): BaseBuchung;
-    abstract public function confirm(): void;
-    abstract public static function checkRestplätze(): void;
-    abstract public function getFrom(): string;
 
+    abstract public function kurs(): BelongsTo;
+
+    abstract public static function createBuchung($data): BaseBuchung;
+
+    abstract public function confirm(): void;
+
+    abstract public static function checkRestplätze(): void;
+
+    abstract public function getFrom(): string;
 
     public function checkIban(): void
     {
-        // IBAN is already checked in the frontend, but we want to be sure that no invalid IBAN gets into the database. 
+        // IBAN is already checked in the frontend, but we want to be sure that no invalid IBAN gets into the database.
         // So we check it again here and if it's invalid, we send an email to the user and set a note in the database.
-        if (!static::test_iban($this->iban)) {
-            $this->update(["notiz" => "Ungültige IBAN"]);
+        if (! static::test_iban($this->iban)) {
+            $this->update(['notiz' => 'Ungültige IBAN']);
             Mail::to($this->email)->send(new FalscheIban($this->iban, $this->getFrom()));
-            static::notifyWarning("Ungültige IBAN");
+            static::notifyWarning('Ungültige IBAN');
         }
     }
 
     public function checkLastschriftOk(): void
     {
-        if (!$this->lastschriftok) {
-            $this->update(["notiz" => "Lastschrift nicht erlaubt"]);
-            static::notifyWarning("Lastschrift nicht erlaubt");
+        if (! $this->lastschriftok) {
+            $this->update(['notiz' => 'Lastschrift nicht erlaubt']);
+            static::notifyWarning('Lastschrift nicht erlaubt');
         }
     }
 
     public function checkVerified(): void
     {
-        if (!$this->verified) {
-            $ev = EmailVerifikation::where("email", $this->email)->first();
+        if (! $this->verified) {
+            $ev = EmailVerifikation::where('email', $this->email)->first();
             if ($ev && $ev->verified) {
-                $this->update(["verified" => $ev->verified]);
-                if (!$this->notiz && $this->confirmAutomatically) {
+                $this->update(['verified' => $ev->verified]);
+                if (! $this->notiz && $this->confirmAutomatically) {
                     $this->confirm();
                 }
             }
         }
-        if (!$this->verified) {
+        if (! $this->verified) {
             Mail::to($this->email)->send(new VerifyEmail($this->email, $this->getFrom()));
-            static::notifyWarning("Email nicht bestätigt");
+            static::notifyWarning('Email nicht bestätigt');
         }
     }
 
@@ -118,7 +122,6 @@ abstract class BaseBuchung extends Model
         }
     }
 
-
     public function check(): void
     {
         $this->checkIban();
@@ -129,24 +132,24 @@ abstract class BaseBuchung extends Model
 
     public static function verifyEmail($email, $now): void
     {
-        $unverified = static::where('email', $email)->whereNull("verified")->whereNull("notiz")->get();
+        $unverified = static::where('email', $email)->whereNull('verified')->whereNull('notiz')->get();
         $unverified->each(function ($buchung) use ($now): void {
             $buchung->update(['verified' => $now]);
-            if (!$buchung->notiz && $buchung->confirmAutomatically) {
+            if (! $buchung->notiz && $buchung->confirmAutomatically) {
                 $buchung->confirm();
             }
         });
     }
-    # https://gist.github.com/ahoehne/926b50a8a548801c5b52
+    // https://gist.github.com/ahoehne/926b50a8a548801c5b52
 
-    ########################################################
-    # Funktion zur Plausibilitaetspruefung einer IBAN-Nummer, gilt fuer alle Laender
-    # Das Ganze ist deswegen spannend, weil eine Modulo-Rechnung, also eine Ganzzahl-Division mit einer
-    # bis zu 38-stelligen Ganzzahl durchgefuehrt werden muss.
-    # Mit 32-Bit-CPUs kann PHP nur mit maximal 9 Stellen mit allen Ziffern genutzt werden.
-    # Deshalb musste die Modulo-Rechnung in mehere Teilschritte zerlegt werden.
-    # Dies wäre mit bcmod() einfacher, würde jedoch die installation von php-bcmath voraussetzen.
-    ########################################################
+    // #######################################################
+    // Funktion zur Plausibilitaetspruefung einer IBAN-Nummer, gilt fuer alle Laender
+    // Das Ganze ist deswegen spannend, weil eine Modulo-Rechnung, also eine Ganzzahl-Division mit einer
+    // bis zu 38-stelligen Ganzzahl durchgefuehrt werden muss.
+    // Mit 32-Bit-CPUs kann PHP nur mit maximal 9 Stellen mit allen Ziffern genutzt werden.
+    // Deshalb musste die Modulo-Rechnung in mehere Teilschritte zerlegt werden.
+    // Dies wäre mit bcmod() einfacher, würde jedoch die installation von php-bcmath voraussetzen.
+    // #######################################################
 
     protected static function test_iban(string $iban): bool
     {
@@ -156,7 +159,7 @@ abstract class BaseBuchung extends Model
             return false;
         }
 
-        if (!preg_match('/^[A-Z]{2}\d{2}[A-Z0-9]+$/', $normalizedIban)) {
+        if (! preg_match('/^[A-Z]{2}\d{2}[A-Z0-9]+$/', $normalizedIban)) {
             return false;
         }
 
@@ -249,25 +252,26 @@ abstract class BaseBuchung extends Model
             'UA' => 29,
             'VA' => 22,
             'VG' => 24,
-            'XK' => 20
+            'XK' => 20,
         ];
 
         $countryCode = substr($normalizedIban, 0, 2);
         if (
-            !isset($expectedLengthsByCountry[$countryCode]) ||
+            ! isset($expectedLengthsByCountry[$countryCode]) ||
             \strlen($normalizedIban) !== $expectedLengthsByCountry[$countryCode]
         ) {
             return false;
         }
 
-        $rearrangedIban = substr($normalizedIban, 4) . substr($normalizedIban, 0, 4);
+        $rearrangedIban = substr($normalizedIban, 4).substr($normalizedIban, 0, 4);
         $letterToDigitMap = array_combine(range('A', 'Z'), range(10, 35));
         $numericIban = strtr($rearrangedIban, $letterToDigitMap);
 
         $remainder = 0;
         for ($i = 0, $length = \strlen($numericIban); $i < $length; $i++) {
-            $remainder = (int) ($remainder . $numericIban[$i]) % 97;
+            $remainder = (int) ($remainder.$numericIban[$i]) % 97;
         }
+
         return $remainder === 1;
     }
 }

@@ -60,6 +60,7 @@ php artisan vendor:publish --tag=filament-config   # then add reverb
 php artisan route:clear;php artisan config:clear ;php artisan cache:clear
 
 composer require maatwebsite/excel
+php artisan vendor:publish --provider="Maatwebsite\Excel\ExcelServiceProvider" --tag=config
 php artisan make:export Technik\BuchungenExport --model=Technik\Buchung
 
 
@@ -108,3 +109,14 @@ php artisan db:seed RFSASeeder
 php artisan db:seed RFSFSeeder
 php artisan db:seed RFSFPSeeder
 php artisan db:seed TechnikSeeder
+
+sskm demo-banking googeln
+chipTan, anmelden, oben "Geschäftlich", unten "Firmenkonto"
+links "Finanzübersicht, auf Mehr klicken, Sammelaufträge, dann Dateiübergabe
+oder mit Sammelüberweisung, Sammellastschrift mit Vorlage oder einzeln ausfüllen,
+dann "Prüfen", dann "Exportieren", um XML-Datei als Vorlage zu erhalten.
+
+
+
+TODO: Import von Google 
+php artisan make:import RFSA\BuchungenImport --model=RFSA\Buchung 

@@ -2,25 +2,18 @@
 
 namespace App\Filament\Resources\RFSFP\Kurse\Tables;
 
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Maatwebsite\Excel\Facades\Excel;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Support\Icons\Heroicon;
-use Filament\Actions\EditAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\Action;
-use App\Models\RFSFP\Kurs;
-use App\Models\RFSFP\Buchung;
 use App\Exports\RFSFP\BuchungenExport;
-use Carbon\Carbon;
+use App\Filament\Resources\KurseBase\KursTableActions;
+use App\Imports\RFSFP\KurseImport;
 
 class KursTable
 {
     public static function configure(Table $table): Table
     {
+        $kursTableActions = new KursTableActions(BuchungenExport::class, KurseImport::class);
+
         return $table
             ->striped()
             ->columns([
@@ -75,27 +68,12 @@ class KursTable
             ->filters([
                 //
             ])
-            ->recordActions([
-                EditAction::make(),
-                DeleteAction::make(),
-                Action::make("export")
-                    ->Label("Excel")
-                    ->tableIcon(Heroicon::OutlinedDocumentArrowDown)
-                    ->action(function (Kurs $kurs): BinaryFileResponse {
-                        return Excel::download(new BuchungenExport($kurs), $kurs->nummer . ".xlsx");
-                    }),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
-                Action::make("update")
-                    ->label("Update Restplätze")
-                    ->tableIcon(Heroicon::OutlinedArrowPath)
-                    ->action(function (): void {
-                        Buchung::checkRestPlätze();                      // do nothing, just redirect to the create page
-                    })
-            ]);
+            ->recordActions(
+                $kursTableActions->getRecordActions()
+            )
+            ->toolbarActions(
+                $kursTableActions->getToolbarActions()
+            );
     }
 }
 

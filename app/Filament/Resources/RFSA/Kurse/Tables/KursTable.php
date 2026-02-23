@@ -4,6 +4,7 @@ namespace App\Filament\Resources\RFSA\Kurse\Tables;
 
 use App\Exports\RFSA\BuchungenExport;
 use App\Filament\Resources\KurseBase\KursTableActions;
+use App\Imports\RFSA\KurseImport;
 use App\Models\RFSA\Kurs;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -12,7 +13,7 @@ class KursTable
 {
     public static function configure(Table $table): Table
     {
-        $kursTableActions = new KursTableActions(BuchungenExport::class);
+        $kursTableActions = new KursTableActions(BuchungenExport::class, KurseImport::class);
 
         return $table
             ->striped()
@@ -25,9 +26,9 @@ class KursTable
                     ->sortable(),
                 TextColumn::make('uhrzeit'),
                 TextColumn::make('kurstermine')
-                    ->state(fn(Kurs $kurs): string => $kurs->termine(true)),
+                    ->state(fn (Kurs $kurs): string => $kurs->termine(true)),
                 TextColumn::make('ersatztermine')
-                    ->state(fn(Kurs $kurs): string => $kurs->termine(false)),
+                    ->state(fn (Kurs $kurs): string => $kurs->termine(false)),
                 TextColumn::make('kursplätze')
                     ->numeric(),
                 TextColumn::make('restplätze')
