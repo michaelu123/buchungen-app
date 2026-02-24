@@ -10,8 +10,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
-abstract class BaseBuchung extends Model
+class BaseBuchung extends Model
 {
     protected $fillable = [
         'created_at',
@@ -35,20 +37,110 @@ abstract class BaseBuchung extends Model
         'kommentar',
     ];
 
-    abstract protected bool $confirmAutomatically {
-        get;
-        set;
+    protected bool $confirmAutomatically; // redefined in subclass
+
+    public static function kursClass(): string
+    {
+        $ns = (new \ReflectionClass(static::class))->getNamespaceName();
+        $parts = explode('\\', $ns);
+        $segment = end($parts);
+        $kursClass = "App\\Models\\{$segment}\\Kurs";
+        return $kursClass;
     }
 
-    abstract public function kurs(): BelongsTo;
+    public function kurs(): BelongsTo
+    {
+        $kursClass = self::kursClass();
+        return $this->belongsTo($kursClass, 'kursnummer', 'nummer');
+    }
 
-    abstract public static function createBuchung($data): BaseBuchung;
+    public static function createBuchung($data): BaseBuchung
+    {
+        $buchungClass = static::class;
+        $buchung = $buchungClass::create($data);
 
-    abstract public function confirm(): void;
+        $kursClass = self::kursClass();
+        $kursnummer = $data['kursnummer'];
+        $buchungenCount = $buchungClass::where('kursnummer', $kursnummer)
+            ->whereNull('notiz')->count();
+        $kurs = $kursClass::where('nummer', $kursnummer)->first();
+        if ($kurs && $kurs->restplätze > 0) {
+            $kurs->restplätze = $kurs->kursplätze - $buchungenCount - 1;
+        }
+        if ($kurs->restplätze < 0) {
+            throw new \Exception('Keine verfügbaren Plätze für diesen Kurs.');
+        }
+        $kurs->save();
+        $buchungClass::notifySuccess('Buchung erfolgreich angelegt');
+        $buchung->check();
+        return $buchung;
+    }
 
-    abstract public static function checkRestplätze(): void;
+    public function confirm(): void
+    {
+        if ($this->notiz || !$this->verified || !$this->lastschriftok) {
+            Log::info('2confirm');
+            static::notifyWarning('Buchung hat eine Notiz oder ist nicht verifiziert oder Lastschrift verweigert');
+            return;
+        }
 
-    abstract public function getFrom(): string;
+        $ns = (new \ReflectionClass(static::class))->getNamespaceName();
+        $parts = explode('\\', $ns);
+        $segment = end($parts);
+        $kursClass = "App\\Models\\{$segment}\\Kurs";
+        $mailClass = "App\\Mail\\{$segment}\\Bestaetigung";
+
+        $kurs = $kursClass::where('nummer', $this->kursnummer)->first();
+        if (class_exists($mailClass)) {
+            Mail::to($this->email)->send(new $mailClass($kurs, $this));
+            static::notifySuccess('Bestätigung versendet');
+        } else {
+            Log::warning('Mailable not found: ' . $mailClass);
+        }
+    }
+
+    public static function checkRestplätze(): void
+    {
+        Log::info('checkRestplätze');
+        Log::info('selfclass' . self::class);
+        Log::info('staticclass' . static::class);
+        Log::info('$ns ' . (new \ReflectionClass(static::class))->getNamespaceName());
+
+
+        $buchungClass = static::class;
+
+        $kursClass = self::kursClass();
+        $kursBuchungen = $buchungClass::select('kursnummer', DB::raw('count(*) as count'))
+            ->whereNull('notiz')
+            ->groupBy('kursnummer')
+            ->get()->toArray();
+        $kursPlätze = $kursClass::select('id', 'nummer', 'kursplätze', 'restplätze')
+            ->whereNull('notiz')
+            ->get()
+            ->toArray();
+        foreach ($kursPlätze as $kurs) {
+            $buchungenFound = false;
+            foreach ($kursBuchungen as $buchung) {
+                if ($buchung['kursnummer'] == $kurs['nummer']) {
+                    $buchungenFound = true;
+                    $restOld = $kurs['restplätze'];
+                    $diff = $kurs['kursplätze'] - $buchung['count'];
+                    if ($diff < 0) {
+                        $diff = 0;
+                        $buchungClass::notifyWarning('Kurs ' . $kurs['nummer'] . ' ist überbucht!');
+                    }
+                    if ($diff != $restOld) {
+                        $kursClass::find($kurs['id'])->update(['restplätze' => $diff]);
+                        $buchungClass::notifyWarning('Restplätze für Kursnummer ' . $kurs['nummer'] . ' von ' . $restOld . ' auf ' . $diff . ' korrigiert');
+                    }
+                }
+            }
+            if (!$buchungenFound && $kurs['restplätze'] != $kurs['kursplätze']) {
+                $kursClass::find($kurs['id'])->update(['restplätze' => $kurs['kursplätze']]);
+                $buchungClass::notifyWarning('Restplätze für Kursnummer ' . $kurs['nummer'] . ' von ' . $kurs['restplätze'] . ' auf ' . $kurs['kursplätze'] . ' korrigiert');
+            }
+        }
+    }
 
     public function checkIban(): void
     {

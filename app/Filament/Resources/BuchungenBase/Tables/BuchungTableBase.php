@@ -153,7 +153,7 @@ abstract class BuchungTableBase
             ->recordActions([
                 ActionGroup::make([
                     EditAction::make(),
-                    DeleteAction::make()->after(function (DeleteBulkAction $action) use ($buchungClass): void {
+                    DeleteAction::make()->after(function (DeleteAction $action) use ($buchungClass): void {
                         $buchungClass::checkRestplätze();
                     }),
                     Action::make('Prüfen')
@@ -163,7 +163,7 @@ abstract class BuchungTableBase
                             $record->check();
                         }),
                     Action::make('Bestätigung senden')
-                        ->disabled(fn($record) => filled($record['notiz'] || !filled($record['verified'])))
+                        ->disabled(fn($record) => filled($record['notiz']) || !filled($record['verified']))
                         ->icon(Heroicon::OutlinedEnvelope)
                         ->action(function ($record): void {
                             $record->confirm();
