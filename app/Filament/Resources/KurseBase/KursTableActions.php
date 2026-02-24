@@ -13,6 +13,8 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Maatwebsite\Excel\Facades\Excel;
 use Saloon\XmlWrangler\Data\Element;
 use Saloon\XmlWrangler\Data\RootElement;
@@ -82,13 +84,21 @@ class KursTableActions
                     FileUpload::make('xlsx')
                         ->label('Excel Datei auswählen')
                         ->required()
+                        ->storeFiles(false)
                         ->acceptedFileTypes(['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'])
                         ->mimeTypeMap([
                             '.xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                         ]),
                 ])
                 ->action(function ($data): \Maatwebsite\Excel\Excel {
-                    return Excel::import(new $this->importClass, storage_path('app/private/' . $data['xlsx']));
+                    /** @var TemporaryUploadedFile $tuf */
+                    $tuf = $data['xlsx'];
+                    $path = $tuf->getRealPath();
+                    Log::info("path=" . $path);
+                    $excel = Excel::import(new $this->importClass, $path);
+                    $res = $tuf->delete();
+                    Log::info("res=" . $res);
+                    return $excel;
                 }),
         ];
     }

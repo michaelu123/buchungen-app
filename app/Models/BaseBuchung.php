@@ -79,7 +79,6 @@ class BaseBuchung extends Model
     public function confirm(): void
     {
         if ($this->notiz || !$this->verified || !$this->lastschriftok) {
-            Log::info('2confirm');
             static::notifyWarning('Buchung hat eine Notiz oder ist nicht verifiziert oder Lastschrift verweigert');
             return;
         }
@@ -101,14 +100,7 @@ class BaseBuchung extends Model
 
     public static function checkRestplätze(): void
     {
-        Log::info('checkRestplätze');
-        Log::info('selfclass' . self::class);
-        Log::info('staticclass' . static::class);
-        Log::info('$ns ' . (new \ReflectionClass(static::class))->getNamespaceName());
-
-
         $buchungClass = static::class;
-
         $kursClass = self::kursClass();
         $kursBuchungen = $buchungClass::select('kursnummer', DB::raw('count(*) as count'))
             ->whereNull('notiz')

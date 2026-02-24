@@ -2,6 +2,7 @@
 
 namespace App\Imports;
 
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
@@ -44,6 +45,7 @@ abstract class KurseImportBase implements OnEachRow, SkipsEmptyRows, WithHeading
             }
             (new $modelClass($kursData))->save();
         } catch (\Throwable $t) {
+            Log::error("import failed:" . $t);
             return;
         }
     }

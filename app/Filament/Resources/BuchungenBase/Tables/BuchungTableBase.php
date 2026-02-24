@@ -17,6 +17,7 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\Indicator;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
@@ -189,13 +190,19 @@ abstract class BuchungTableBase
                         FileUpload::make('xlsx')
                             ->label('Excel Datei auswählen')
                             ->required()
+                            ->storeFiles(false)
                             ->acceptedFileTypes(['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'])
                             ->mimeTypeMap([
                                 '.xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                             ]),
                     ])
                     ->action(function ($data) use ($importClass): \Maatwebsite\Excel\Excel {
-                        return Excel::import(new $importClass, storage_path('app/private/' . $data['xlsx']));
+                        /** @var TemporaryUploadedFile $tuf */
+                        $tuf = $data['xlsx'];
+                        $path = $tuf->getRealPath();
+                        $excel = Excel::import(new $importClass, $path);
+                        $res = $tuf->delete();
+                        return $excel;
                     }),
 
             ]);
