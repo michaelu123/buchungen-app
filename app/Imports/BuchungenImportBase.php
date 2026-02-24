@@ -29,14 +29,10 @@ abstract class BuchungenImportBase implements OnEachRow, SkipsEmptyRows, WithHea
         $worksheet = $row->getDelegate()->getWorksheet();
         $comment = $worksheet->getComment([1, $row->getIndex()]);
         $note = $comment->getText()->getPlainText();
-        $createdAt = null;
-        $verifiedAt = null;
-        if (filled($rowData['zeitstempel'])) {
-            $createdAt = Date::excelToDateTimeObject($rowData['zeitstempel']);
-        }
-        if (filled($rowData['verifikation'])) {
-            $verifiedAt = Date::excelToDateTimeObject($rowData['verifikation']);
-        }
+        $note = empty($note) ? null : $note;
+        $createdAt = $this->fromExcelDateTime($rowData['zeitstempel']);
+
+
         $buchungData = [
             'created_at' => $createdAt,
             'notiz' => filled($note) ? $note : null,
@@ -52,7 +48,7 @@ abstract class BuchungenImportBase implements OnEachRow, SkipsEmptyRows, WithHea
             'kontoinhaber' => $rowData['lastschrift_name_des_kontoinhabers'],
             'iban' => $rowData['lastschrift_iban_kontonummer'],
             'lastschriftok' => filled($rowData['zustimmung_zur_sepa_lastschrift']),
-            'verified' => $verifiedAt,
+            'verified' => $this->fromExcelDateTime($rowData['verifikation']),
             'eingezogen' => $rowData['eingezogen'],
             'betrag' => $rowData['zahlungsbetrag'],
             'kommentar' => $rowData['kommentar'],
@@ -68,5 +64,14 @@ abstract class BuchungenImportBase implements OnEachRow, SkipsEmptyRows, WithHea
             return;
         }
         (new $modelClass($buchungData))->save();
+    }
+
+    public function fromExcelDateTime($dt)
+    {
+        $res = null;
+        if (filled($dt)) {
+            $res = Date::excelToDateTimeObject($dt);
+        }
+        return $res;
     }
 }

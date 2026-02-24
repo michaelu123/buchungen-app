@@ -23,12 +23,12 @@ class UserRolesTable
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('created_at')
-                    ->dateTime()
+                    ->dateTime('d.m.Y H:i:s')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
+                    ->dateTime('d.m.Y H:i:s')
+                    ->sortable('d.m.Y H:i:s')
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([

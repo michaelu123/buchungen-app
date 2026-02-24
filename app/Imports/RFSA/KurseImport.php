@@ -11,22 +11,23 @@ class KurseImport extends KurseImportBase
     {
         return Kurs::class;
     }
+
     protected function getKursData($row, $note): array
     {
         return [
             'nummer' => $row['kursname'],
             'notiz' => $note,
             'uhrzeit' => $row['uhrzeit'],
-            'tag1' => $row['tag_1'],
-            'tag2' => $row['tag_2'],
-            'tag3' => $row['tag_3'],
-            'tag4' => $row['tag_4'],
-            'tag5' => $row['tag_5'],
-            'tag6' => $row['tag_6'],
-            'tag7' => $row['tag_7'],
-            'tag8' => $row['tag_8'],
-            'ersatztermin1' => $row['ersatztermin_1'],
-            'ersatztermin2' => $row['ersatztermin_2'],
+            'tag1' => $this->fromExcelDateTime($row['tag_1']),
+            'tag2' => $this->fromExcelDateTime($row['tag_2']),
+            'tag3' => $this->fromExcelDateTime($row['tag_3']),
+            'tag4' => $this->fromExcelDateTime($row['tag_4']),
+            'tag5' => $this->fromExcelDateTime($row['tag_5']),
+            'tag6' => $this->fromExcelDateTime($row['tag_6']),
+            'tag7' => $this->fromExcelDateTime($row['tag_7']),
+            'tag8' => $this->fromExcelDateTime($row['tag_8']),
+            'ersatztermin1' => $this->fromExcelDateTime($row['ersatztermin_1']),
+            'ersatztermin2' => $this->fromExcelDateTime($row['ersatztermin_2']),
             'kursplätze' => $row['kursplatze'],
             'restplätze' => $row['restplatze'],
             'lehrer' => $row['rfl'],

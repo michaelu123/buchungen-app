@@ -85,10 +85,10 @@ abstract class BuchungTableBase
                     ->boolean(),
                 TextColumn::make('verified')
                     ->label('Email verifiziert')
-                    ->datetime()
+                    ->datetime('d.m.Y H:i:s')
                     ->sortable(),
                 TextColumn::make('eingezogen')
-                    ->datetime()
+                    ->datetime('d.m.Y H:i:s')
                     ->sortable(),
                 TextColumn::make('betrag')
                     ->numeric()
@@ -141,10 +141,10 @@ abstract class BuchungTableBase
                         return $query
                             ->when(
                                 $nummer,
-                                fn ($query) => $query->where('kursnummer', $nummer)
+                                fn($query) => $query->where('kursnummer', $nummer)
                             )->when(
                                 $notiz,
-                                fn ($query) => $notiz == 'leer' ?
+                                fn($query) => $notiz == 'leer' ?
                                 $query->whereNull('notiz') :
                                 $query->whereNotNull('notiz')
                             );
@@ -157,13 +157,13 @@ abstract class BuchungTableBase
                         $buchungClass::checkRestplätze();
                     }),
                     Action::make('Prüfen')
-                        ->disabled(fn ($record) => filled($record['notiz']))
+                        ->disabled(fn($record) => filled($record['notiz']))
                         ->icon(Heroicon::OutlinedCheckCircle)
                         ->action(function ($record): void {
                             $record->check();
                         }),
                     Action::make('Bestätigung senden')
-                        ->disabled(fn ($record) => filled($record['notiz'] || ! filled($record['verified'])))
+                        ->disabled(fn($record) => filled($record['notiz'] || !filled($record['verified'])))
                         ->icon(Heroicon::OutlinedEnvelope)
                         ->action(function ($record): void {
                             $record->confirm();
@@ -195,7 +195,7 @@ abstract class BuchungTableBase
                             ]),
                     ])
                     ->action(function ($data) use ($importClass): \Maatwebsite\Excel\Excel {
-                        return Excel::import(new $importClass, storage_path('app/private/'.$data['xlsx']));
+                        return Excel::import(new $importClass, storage_path('app/private/' . $data['xlsx']));
                     }),
 
             ]);

@@ -54,7 +54,7 @@ abstract class BaseBuchung extends Model
     {
         // IBAN is already checked in the frontend, but we want to be sure that no invalid IBAN gets into the database.
         // So we check it again here and if it's invalid, we send an email to the user and set a note in the database.
-        if (! static::test_iban($this->iban)) {
+        if (!static::test_iban($this->iban)) {
             $this->update(['notiz' => 'Ungültige IBAN']);
             Mail::to($this->email)->send(new FalscheIban($this->iban, $this->getFrom()));
             static::notifyWarning('Ungültige IBAN');
@@ -63,7 +63,7 @@ abstract class BaseBuchung extends Model
 
     public function checkLastschriftOk(): void
     {
-        if (! $this->lastschriftok) {
+        if (!$this->lastschriftok) {
             $this->update(['notiz' => 'Lastschrift nicht erlaubt']);
             static::notifyWarning('Lastschrift nicht erlaubt');
         }
@@ -71,16 +71,16 @@ abstract class BaseBuchung extends Model
 
     public function checkVerified(): void
     {
-        if (! $this->verified) {
+        if (!$this->verified) {
             $ev = EmailVerifikation::where('email', $this->email)->first();
             if ($ev && $ev->verified) {
                 $this->update(['verified' => $ev->verified]);
-                if (! $this->notiz && $this->confirmAutomatically) {
+                if (!$this->notiz && $this->confirmAutomatically) {
                     $this->confirm();
                 }
             }
         }
-        if (! $this->verified) {
+        if (!$this->verified) {
             Mail::to($this->email)->send(new VerifyEmail($this->email, $this->getFrom()));
             static::notifyWarning('Email nicht bestätigt');
         }
@@ -135,7 +135,7 @@ abstract class BaseBuchung extends Model
         $unverified = static::where('email', $email)->whereNull('verified')->whereNull('notiz')->get();
         $unverified->each(function ($buchung) use ($now): void {
             $buchung->update(['verified' => $now]);
-            if (! $buchung->notiz && $buchung->confirmAutomatically) {
+            if (!$buchung->notiz && $buchung->confirmAutomatically) {
                 $buchung->confirm();
             }
         });
@@ -159,7 +159,7 @@ abstract class BaseBuchung extends Model
             return false;
         }
 
-        if (! preg_match('/^[A-Z]{2}\d{2}[A-Z0-9]+$/', $normalizedIban)) {
+        if (!preg_match('/^[A-Z]{2}\d{2}[A-Z0-9]+$/', $normalizedIban)) {
             return false;
         }
 
@@ -257,19 +257,19 @@ abstract class BaseBuchung extends Model
 
         $countryCode = substr($normalizedIban, 0, 2);
         if (
-            ! isset($expectedLengthsByCountry[$countryCode]) ||
+            !isset($expectedLengthsByCountry[$countryCode]) ||
             \strlen($normalizedIban) !== $expectedLengthsByCountry[$countryCode]
         ) {
             return false;
         }
 
-        $rearrangedIban = substr($normalizedIban, 4).substr($normalizedIban, 0, 4);
+        $rearrangedIban = substr($normalizedIban, 4) . substr($normalizedIban, 0, 4);
         $letterToDigitMap = array_combine(range('A', 'Z'), range(10, 35));
         $numericIban = strtr($rearrangedIban, $letterToDigitMap);
 
         $remainder = 0;
         for ($i = 0, $length = \strlen($numericIban); $i < $length; $i++) {
-            $remainder = (int) ($remainder.$numericIban[$i]) % 97;
+            $remainder = (int) ($remainder . $numericIban[$i]) % 97;
         }
 
         return $remainder === 1;

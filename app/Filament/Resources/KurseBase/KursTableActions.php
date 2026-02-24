@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\KurseBase;
 
-use App\Models\BaseBuchung;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
@@ -23,7 +22,9 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class KursTableActions
 {
-    public function __construct(public string $exportClass, public string $importClass) {}
+    public function __construct(public string $exportClass, public string $importClass, public string $buchungClass)
+    {
+    }
 
     public function getRecordActions(): array
     {
@@ -35,16 +36,16 @@ class KursTableActions
                     ->label('Excel')
                     ->icon(Heroicon::OutlinedDocumentArrowDown)
                     ->action(function (Model $kurs): BinaryFileResponse {
-                        return Excel::download(new $this->exportClass($kurs), $kurs->nummer.'.xlsx');
+                        return Excel::download(new $this->exportClass($kurs), $kurs->nummer . '.xlsx');
                     }),
                 Action::make('ebics')
                     ->label('EBICS')
                     ->icon(Heroicon::OutlinedDocumentArrowDown)
                     ->requiresConfirmation()
-                  // ->modalHeading("Ebics-Datei erstellen?")
+                    // ->modalHeading("Ebics-Datei erstellen?")
                     ->modalDescription('Ebics-Datei erstellen?')
                     ->modalSubmitActionLabel('Ja, erstellen')
-                    ->fillForm(fn (Model $kurs): array => $this->fillForm($kurs))
+                    ->fillForm(fn(Model $kurs): array => $this->fillForm($kurs))
                     ->schema([
                         TextInput::make('eingezogen1')->label('Schon eingezogen:')->readonly()->inlineLabel(),
                         TextInput::make('eingezogen2')->label('Noch einzuziehen:')->readonly()->inlineLabel(),
@@ -54,7 +55,7 @@ class KursTableActions
                     ->action(function (array $data, Model $kurs) {
                         return response()->streamDownload(function () use ($kurs, $data) {
                             echo $this->createEbics($kurs, $data['einzug']);
-                        }, $kurs->nummer.'_ebics.xml', ['Content-type' => 'application/xml']);
+                        }, $kurs->nummer . '_ebics.xml', ['Content-type' => 'application/xml']);
                     }),
 
             ])->label('Aktionen')->button()->color('primary'),
@@ -72,7 +73,7 @@ class KursTableActions
                 ->label('Update Restplätze')
                 ->tableIcon(Heroicon::OutlinedArrowPath)
                 ->action(function (): void {
-                    BaseBuchung::checkRestPlätze();                      // do nothing, just redirect to the create page
+                    $this->buchungClass::checkRestPlätze();                      // do nothing, just redirect to the create page
                 }),
             Action::make('import')
                 ->label('Excel Import')
@@ -87,7 +88,7 @@ class KursTableActions
                         ]),
                 ])
                 ->action(function ($data): \Maatwebsite\Excel\Excel {
-                    return Excel::import(new $this->importClass, storage_path('app/private/'.$data['xlsx']));
+                    return Excel::import(new $this->importClass, storage_path('app/private/' . $data['xlsx']));
                 }),
         ];
     }
@@ -100,7 +101,7 @@ class KursTableActions
 
         foreach ($kurs->buchungen()->get() as $buchung) {
             // dd($buchung->notiz, !$buchung->lastschriftok, !$buchung->iban, !$buchung->verified, $buchung->eingezogen);
-            if ($buchung->notiz || ! $buchung->lastschriftok || ! $buchung->iban) {
+            if ($buchung->notiz || !$buchung->lastschriftok || !$buchung->iban) {
                 continue;
             }
             if ($buchung->eingezogen) {
@@ -108,7 +109,7 @@ class KursTableActions
             } else {
                 $nochZuEinziehen++;
             }
-            if (! $buchung->verified) {
+            if (!$buchung->verified) {
                 $unverifiziert++;
             }
         }
@@ -157,7 +158,7 @@ class KursTableActions
             $r2 .= $this->charset[random_int(0, strlen($this->digits))];
         }
 
-        return $r1.$r2;
+        return $r1 . $r2;
     }
 
     protected function isLatin(string $s): bool
@@ -209,12 +210,12 @@ class KursTableActions
     {
         $msgIds = $this->findElements($rootContent, 'MsgId');
         foreach ($msgIds as $elem) {
-            $elem->setContent('MSG'.$this->randomId(32));
+            $elem->setContent('MSG' . $this->randomId(32));
         }
 
         $pmtInfIds = $this->findElements($rootContent, 'PmtInfId');
         foreach ($pmtInfIds as $elem) {
-            $elem->setContent('PII'.$this->randomId(32));
+            $elem->setContent('PII' . $this->randomId(32));
         }
     }
 

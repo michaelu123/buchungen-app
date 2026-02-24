@@ -15,22 +15,13 @@ class KurseImport extends KurseImportBase
 
     protected function getKursData($row, $note): array
     {
-        $datum = null;
-        if (filled($row['datum'])) {
-            $datum = Date::excelToDateTimeObject($row['datum']);
-        }
-        $ersatztermin = null;
-        if (filled($row['ersatztermin'])) {
-            $ersatztermin = Date::excelToDateTimeObject($row['ersatztermin']);
-        }
-
         return [
             'nummer' => $row['kursname'],
             'notiz' => $note,
             'uhrzeit' => $row['uhrzeit'],
             'kursort' => $row['kursort'],
-            'datum' => $datum,
-            'ersatztermin' => $ersatztermin,
+            'datum' => $this->fromExcelDateTime($row['datum']),
+            'ersatztermin' => $this->fromExcelDateTime($row['ersatztermin']),
             'kursplätze' => $row['kursplatze'],
             'restplätze' => $row['restplatze'] ?? $row['kursplatze'],
             'lehrer' => $row['trainerin'],

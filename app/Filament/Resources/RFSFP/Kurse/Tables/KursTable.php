@@ -7,12 +7,13 @@ use Filament\Tables\Columns\TextColumn;
 use App\Exports\RFSFP\BuchungenExport;
 use App\Filament\Resources\KurseBase\KursTableActions;
 use App\Imports\RFSFP\KurseImport;
+use App\Models\RFSFP\Buchung;
 
 class KursTable
 {
     public static function configure(Table $table): Table
     {
-        $kursTableActions = new KursTableActions(BuchungenExport::class, KurseImport::class);
+        $kursTableActions = new KursTableActions(BuchungenExport::class, KurseImport::class, Buchung::class);
 
         return $table
             ->striped()
@@ -24,8 +25,10 @@ class KursTable
                     ->label('Nummer')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('datum'),
-                TextColumn::make('ersatztermin'),
+                TextColumn::make('datum')
+                    ->date('D, d.m'),
+                TextColumn::make('ersatztermin')
+                    ->date('D, d.m'),
                 TextColumn::make('uhrzeit'),
                 // TextColumn::make('kursort'),
                 TextColumn::make('kursplätze')

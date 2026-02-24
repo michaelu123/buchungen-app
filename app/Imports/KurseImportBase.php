@@ -7,6 +7,7 @@ use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 use Maatwebsite\Excel\Row;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 abstract class KurseImportBase implements OnEachRow, SkipsEmptyRows, WithHeadingRow, WithMultipleSheets
 {
@@ -29,6 +30,7 @@ abstract class KurseImportBase implements OnEachRow, SkipsEmptyRows, WithHeading
         $worksheet = $row->getDelegate()->getWorksheet();
         $comment = $worksheet->getComment([1, $row->getIndex()]);
         $note = $comment->getText()->getPlainText();
+        $note = empty($note) ? null : $note;
 
         try {
             $kursData = $this->getKursData($rowData, $note);
@@ -44,5 +46,14 @@ abstract class KurseImportBase implements OnEachRow, SkipsEmptyRows, WithHeading
         } catch (\Throwable $t) {
             return;
         }
+    }
+
+    public function fromExcelDateTime($dt)
+    {
+        $res = null;
+        if (filled($dt)) {
+            $res = Date::excelToDateTimeObject($dt);
+        }
+        return $res;
     }
 }

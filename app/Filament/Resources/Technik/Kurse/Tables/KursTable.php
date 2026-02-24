@@ -7,12 +7,13 @@ use Filament\Tables\Columns\TextColumn;
 use App\Exports\Technik\BuchungenExport;
 use App\Filament\Resources\KurseBase\KursTableActions;
 use App\Imports\Technik\KurseImport;
+use App\Models\Technik\Buchung;
 
 class KursTable
 {
     public static function configure(Table $table): Table
     {
-        $kursTableActions = new KursTableActions(BuchungenExport::class, KurseImport::class);
+        $kursTableActions = new KursTableActions(BuchungenExport::class, KurseImport::class, Buchung::class);
 
         return $table
             ->striped()
@@ -29,7 +30,7 @@ class KursTable
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('datum')
-                    ->date("d.m.Y")
+                    ->date('D, d.m')
                     ->sortable(),
                 TextColumn::make('kursplätze')
                     ->numeric(),
