@@ -181,7 +181,10 @@ abstract class BuchungTableBase
                     ->Label('Excel Export')
                     ->tableIcon(Heroicon::OutlinedDocumentArrowDown)
                     ->action(function () use ($exportClass): BinaryFileResponse {
-                        return Excel::download(new $exportClass(null), 'Buchungen.xlsx');
+                        $ns = (new \ReflectionClass($exportClass))->getNamespaceName();
+                        $parts = explode('\\', $ns);
+                        $segment = end($parts);
+                        return Excel::download(new $exportClass(null), $segment . "_" . 'Buchungen.xlsx');
                     }),
                 Action::make('import')
                     ->label('Excel Import')

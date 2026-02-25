@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\RFSA\Kurse\Tables;
 
 use App\Exports\RFSA\BuchungenExport;
+use App\Exports\RFSA\KurseExport;
 use App\Filament\Resources\KurseBase\KursTableActions;
 use App\Imports\RFSA\KurseImport;
 use App\Models\RFSA\Buchung;
@@ -14,7 +15,7 @@ class KursTable
 {
     public static function configure(Table $table): Table
     {
-        $kursTableActions = new KursTableActions(BuchungenExport::class, KurseImport::class, Buchung::class);
+        $kursTableActions = new KursTableActions(BuchungenExport::class, KurseExport::class, KurseImport::class, Buchung::class);
 
         return $table
             ->striped()

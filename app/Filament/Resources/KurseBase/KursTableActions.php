@@ -24,7 +24,7 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class KursTableActions
 {
-    public function __construct(public string $exportClass, public string $importClass, public string $buchungClass)
+    public function __construct(public string $buchungenExportClass, public string $kurseExportClass, public string $importClass, public string $buchungClass)
     {
     }
 
@@ -38,7 +38,7 @@ class KursTableActions
                     ->label('Excel')
                     ->icon(Heroicon::OutlinedDocumentArrowDown)
                     ->action(function (Model $kurs): BinaryFileResponse {
-                        return Excel::download(new $this->exportClass($kurs), $kurs->nummer . '.xlsx');
+                        return Excel::download(new $this->buchungenExportClass($kurs), $kurs->nummer . '.xlsx');
                     }),
                 Action::make('ebics')
                     ->label('EBICS')
@@ -77,6 +77,16 @@ class KursTableActions
                 ->action(function (): void {
                     $this->buchungClass::checkRestPlätze();                      // do nothing, just redirect to the create page
                 }),
+            Action::make('export')
+                ->Label('Excel Export')
+                ->tableIcon(Heroicon::OutlinedDocumentArrowDown)
+                ->action(function (): BinaryFileResponse {
+                    $ns = (new \ReflectionClass($this->kurseExportClass))->getNamespaceName();
+                    $parts = explode('\\', $ns);
+                    $segment = end($parts);
+                    return Excel::download(new $this->kurseExportClass(null), $segment . "_" . 'Kurse.xlsx');
+                }),
+
             Action::make('import')
                 ->label('Excel Import')
                 ->icon(Heroicon::OutlinedDocumentArrowUp)

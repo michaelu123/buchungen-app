@@ -7,8 +7,10 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\Exportable;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Events\AfterSheet;
 
-class BuchungenExportBase implements FromCollection, WithMapping, WithHeadings, ShouldAutoSize
+class BuchungenExportBase implements FromCollection, WithMapping, WithHeadings, ShouldAutoSize, WithEvents
 {
   use Exportable;
 
@@ -18,6 +20,15 @@ class BuchungenExportBase implements FromCollection, WithMapping, WithHeadings, 
    */
   public function __construct(protected ?object $kurs, protected string $kursClass, protected string $buchungClass)
   {
+  }
+
+  public function registerEvents(): array
+  {
+    return [
+      AfterSheet::class => function (AfterSheet $event): void {
+        $event->sheet->getDelegate()->setTitle('Buchungen');
+      },
+    ];
   }
 
   /**
@@ -36,6 +47,7 @@ class BuchungenExportBase implements FromCollection, WithMapping, WithHeadings, 
   public function map($buchung): array
   {
     return [
+      $buchung->created_at,
       $buchung->notiz,
       $buchung->kursnummer,
       $buchung->email,
@@ -47,15 +59,22 @@ class BuchungenExportBase implements FromCollection, WithMapping, WithHeadings, 
       $buchung->ort,
       $buchung->strasse_nr,
       $buchung->telefonnr,
-      $buchung->verified ? "Ja" : "Nein",
+      $buchung->kontoinhaber,
+      $buchung->iban,
+      $buchung->lastschriftok,
+      $buchung->verified,
+      $buchung->eingezogen,
+      $buchung->betrag,
+      $buchung->kommentar,
     ];
   }
 
   public function headings(): array
   {
     return [
+      'Zeitstempel',
       'Notiz',
-      'Kurs',
+      'Kursnummer',
       'Email',
       'Mitgliedsnummer',
       'Anrede',
@@ -63,9 +82,15 @@ class BuchungenExportBase implements FromCollection, WithMapping, WithHeadings, 
       'Nachname',
       'Postleitzahl',
       'Ort',
-      'Strasse Nr',
-      'Telefonnummer',
-      'Verifiziert',
+      'Strasse_Nr',
+      'Telefonnr',
+      'Kontoinhaber',
+      'IBAN',
+      'Lastschriftok',
+      'Verified',
+      'Eingezogen',
+      'Betrag',
+      'Kommentar',
     ];
   }
 }

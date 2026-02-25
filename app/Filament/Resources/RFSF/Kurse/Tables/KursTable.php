@@ -5,6 +5,7 @@ namespace App\Filament\Resources\RFSF\Kurse\Tables;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use App\Exports\RFSF\BuchungenExport;
+use App\Exports\RFSF\KurseExport;
 use App\Filament\Resources\KurseBase\KursTableActions;
 use App\Imports\RFSF\KurseImport;
 use App\Models\RFSF\Buchung;
@@ -13,7 +14,7 @@ class KursTable
 {
     public static function configure(Table $table): Table
     {
-        $kursTableActions = new KursTableActions(BuchungenExport::class, KurseImport::class, Buchung::class);
+        $kursTableActions = new KursTableActions(BuchungenExport::class, KurseExport::class, KurseImport::class, Buchung::class);
 
         return $table
             ->striped()

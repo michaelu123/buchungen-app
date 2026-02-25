@@ -25,20 +25,23 @@ abstract class KurseImportBase implements OnEachRow, SkipsEmptyRows, WithHeading
     public function onRow(Row $row): void
     {
         $rowData = $row->toArray(null, false, false);
-        // Get the underlying PhpSpreadsheet Worksheet from the row delegate to access the cell and its comment
-        // MUH: this works only because config/excel.php contains 'imports' => ['read_only' => false],
-        /** @var \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $worksheet */
-        $worksheet = $row->getDelegate()->getWorksheet();
-        $comment = $worksheet->getComment([1, $row->getIndex()]);
-        $note = $comment->getText()->getPlainText();
-        $note = empty($note) ? null : $note;
 
         try {
+            if (isset($rowData["email"])) {
+                $kursData = $rowData;
+            } else {
+                // Get the underlying PhpSpreadsheet Worksheet from the row delegate to access the cell and its comment
+                // MUH: this works only because config/excel.php contains 'imports' => ['read_only' => false],
+                /** @var \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $worksheet */
+                $worksheet = $row->getDelegate()->getWorksheet();
+                $comment = $worksheet->getComment([1, $row->getIndex()]);
+                $note = $comment->getText()->getPlainText();
+                $note = empty($note) ? null : $note;
+            }
             $kursData = $this->getKursData($rowData, $note);
             $modelClass = $this->getKursModelClass();
             if (
-                $modelClass::where('nummer', $rowData['kursname'])
-                    ->where('uhrzeit', $rowData['uhrzeit'])
+                $modelClass::where('nummer', $kursData['nummer'])
                     ->first()
             ) {
                 return;

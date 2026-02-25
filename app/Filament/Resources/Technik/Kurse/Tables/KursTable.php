@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Technik\Kurse\Tables;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use App\Exports\Technik\BuchungenExport;
+use App\Exports\Technik\KurseExport;
 use App\Filament\Resources\KurseBase\KursTableActions;
 use App\Imports\Technik\KurseImport;
 use App\Models\Technik\Buchung;
@@ -13,7 +14,7 @@ class KursTable
 {
     public static function configure(Table $table): Table
     {
-        $kursTableActions = new KursTableActions(BuchungenExport::class, KurseImport::class, Buchung::class);
+        $kursTableActions = new KursTableActions(BuchungenExport::class, KurseExport::class, KurseImport::class, Buchung::class);
 
         return $table
             ->striped()
