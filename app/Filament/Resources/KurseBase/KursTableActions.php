@@ -13,7 +13,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Log;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Maatwebsite\Excel\Facades\Excel;
 use Saloon\XmlWrangler\Data\Element;
@@ -104,10 +103,8 @@ class KursTableActions
                     /** @var TemporaryUploadedFile $tuf */
                     $tuf = $data['xlsx'];
                     $path = $tuf->getRealPath();
-                    Log::info("path=" . $path);
                     $excel = Excel::import(new $this->importClass, $path);
                     $res = $tuf->delete();
-                    Log::info("res=" . $res);
                     return $excel;
                 }),
         ];

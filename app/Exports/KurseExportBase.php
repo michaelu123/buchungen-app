@@ -10,7 +10,7 @@ use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\AfterSheet;
 
-class KurseExportBase implements FromCollection, WithMapping, WithHeadings, ShouldAutoSize, WithEvents
+class KurseExportBase implements FromCollection, WithHeadings, ShouldAutoSize, WithEvents, WithMapping
 {
   use Exportable;
 
@@ -45,6 +45,6 @@ class KurseExportBase implements FromCollection, WithMapping, WithHeadings, Shou
 
   public function headings(): array // to be overridden
   {
-    return [];
+    return (new $this->kursClass())->getFillable();
   }
 }

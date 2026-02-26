@@ -27,8 +27,10 @@ abstract class KurseImportBase implements OnEachRow, SkipsEmptyRows, WithHeading
         $rowData = $row->toArray(null, false, false);
 
         try {
-            if (isset($rowData["email"])) {
+            if (isset($rowData["nummer"])) {
                 $kursData = $rowData;
+                $kursData['kursplätze'] = $kursData["kursplatze"];
+                $kursData['restplätze'] = $kursData["restplatze"];
             } else {
                 // Get the underlying PhpSpreadsheet Worksheet from the row delegate to access the cell and its comment
                 // MUH: this works only because config/excel.php contains 'imports' => ['read_only' => false],
@@ -37,8 +39,8 @@ abstract class KurseImportBase implements OnEachRow, SkipsEmptyRows, WithHeading
                 $comment = $worksheet->getComment([1, $row->getIndex()]);
                 $note = $comment->getText()->getPlainText();
                 $note = empty($note) ? null : $note;
+                $kursData = $this->getKursData($rowData, $note);
             }
-            $kursData = $this->getKursData($rowData, $note);
             $modelClass = $this->getKursModelClass();
             if (
                 $modelClass::where('nummer', $kursData['nummer'])
@@ -58,6 +60,15 @@ abstract class KurseImportBase implements OnEachRow, SkipsEmptyRows, WithHeading
         $res = null;
         if (filled($dt)) {
             $res = Date::excelToDateTimeObject($dt);
+        }
+        return $res;
+    }
+
+    public function fromExcelDate($dt): string|null
+    {
+        $res = null;
+        if (filled($dt)) {
+            $res = Date::excelToDateTimeObject($dt)->format("Y/m/d");
         }
         return $res;
     }
