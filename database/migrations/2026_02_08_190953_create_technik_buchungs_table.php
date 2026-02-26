@@ -16,7 +16,8 @@ return new class extends Migration {
             $table->string("email");
             $table->unsignedInteger("mitgliedsnummer")->nullable();
             // aktuell kursnummer von Hand von bigint auf varchar ändern!
-            $table->foreignId("kursnummer")->constrained("technik_kurse", "nummer")->onDelete("cascade");
+            // $table->foreignId("kursnummer")->constrained("technik_kurse", "nummer")->onDelete("cascade");
+            $table->string("kursnummer")->constrained("technik_kurse", "nummer")->onDelete("cascade");
             $table->string("anrede")->nullable();
             $table->string("vorname");
             $table->string("nachname");

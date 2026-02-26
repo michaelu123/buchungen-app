@@ -25,3 +25,4 @@ package-lock.json
 xxx*
 _ide_helper.php
 .github
+env.strato

@@ -18,4 +18,6 @@ Route::livewire("rfsabuchung", "pages::rfsa.create")->name("rfsabuchung");
 Route::livewire("rfsfbuchung", "pages::rfsf.create")->name("rfsfbuchung");
 Route::livewire("rfsfpbuchung", "pages::rfsfp.create")->name("rfsfpbuchung");
 
+Route::livewire("phpinfo", "pages::phpinfo")->name("phpinfo");
+
 require __DIR__ . '/settings.php';

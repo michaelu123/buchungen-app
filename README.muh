@@ -120,3 +120,37 @@ dann "Prüfen", dann "Exportieren", um XML-Datei als Vorlage zu erhalten.
 php artisan make:import RFSA\BuchungenImport --model=RFSA\Buchung  # etc
 
 Gemini abmelden: https://gemini.google.com/app , profile, abmelden
+
+
+Deployment:
+on this machine:
+php artisan optimize:clear
+php artisan optimize
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+php artisan log:clear
+php artisan cache:clear
+
+copy to server:
+artisan
+composer.json
+app/*
+bootstrap/*
+config/*
+database/ factories, migrations, seeders 
+public/*  außer hot!
+resources/*
+routes/*
+storage/ app, framework
+vendor/* vielleicht eher composer install aufrufen
+
+
+on server:
+.env:
+APP_ENV=production
+APP_DEBUG=false
+
+php artisan log:clear
+php artisan cache:clear
+php artisan config:clear
