@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 
+use function Livewire\str;
+use function Symfony\Component\String\s;
+
 class BaseBuchung extends Model
 {
     protected $fillable = [
@@ -244,7 +247,7 @@ class BaseBuchung extends Model
         }
 
         if (!preg_match('/^[A-Z]{2}\d{2}[A-Z0-9]+$/', $normalizedIban)) {
-            return false;
+            return str_starts_with($normalizedIban, "AKTIV");
         }
 
         // IBAN registry provides current data for this

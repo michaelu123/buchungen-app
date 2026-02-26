@@ -117,6 +117,4 @@ oder mit Sammelüberweisung, Sammellastschrift mit Vorlage oder einzeln ausfüll
 dann "Prüfen", dann "Exportieren", um XML-Datei als Vorlage zu erhalten.
 
 
-
-TODO: Import von Google 
-php artisan make:import RFSA\BuchungenImport --model=RFSA\Buchung 
+php artisan make:import RFSA\BuchungenImport --model=RFSA\Buchung  # etc

@@ -39,9 +39,9 @@ new class extends Component implements HasSchemas {
                     ->belowLabel("Die Bestätigung der Buchung erfolgt per E-Mail. Bitte geben Sie eine gültige E-Mail-Adresse an.")
                     ->email()
                     ->required(),
-                TextInput::make('mitgliedsnummer')
-                    ->belowLabel("Falls Sie ADFC-Mitglied sind, bitte hier die Mitgliedsnummer angeben, für den ermäßigten Preis. Sonst leer lassen.")
-                    ->rules("digits:8"),
+                // TextInput::make('mitgliedsnummer')
+                //     ->belowLabel("Falls Sie ADFC-Mitglied sind, bitte hier die Mitgliedsnummer angeben, für den ermäßigten Preis. Sonst leer lassen.")
+                //     ->rules("digits:8"),
                 Radio::make("kursnummer")
                     ->label("Kurs")
                     ->belowLabel("Ich möchte mich für folgenden Kurs anmelden:")
@@ -192,16 +192,14 @@ EOD))
             Die Teilnahmegebühr für den Kurs (16 Unterrichtseinheiten) beträgt € 120,00.<br><br>
 
             Die Bezahlung erfolgt durch Lastschrift, bitte halten Sie dafür die IBAN-Kontonummer bereit. Wir belasten
-            Ihr Konto
-            erst, nachdem wir die Anmeldung per E-Mail bestätigt haben.<br><br>
+            Ihr Konto erst, nachdem wir die Anmeldung per E-Mail bestätigt haben.<br><br>
 
             Durch Teilnehmende nicht wahrgenommene Stunden können nicht nachgeholt werden, da die Kursinhalte
             aufeinander aufbauen.
             Wir weisen auf unsere Stornobedingungen (Punkt 4. der Teilnahmebedingungen) hin.<br><br>
 
             Die Ersatztermine sind ausschließlich für wetter- oder trainerbedingte Verschiebungen vorgesehen. Bitte
-            halten Sich sich
-            die Ersatztermine ebenfalls frei!<br><br>
+            halten Sie sich die Ersatztermine ebenfalls frei!<br><br>
 
             Bitte beachten Sie unsere 2 Standorte:
             Radlerhaus (Nähe Theresienwiese, U-Bahn-Station "Goetheplatz") und Riem (U-Bahn-Station "Messestadt Ost").

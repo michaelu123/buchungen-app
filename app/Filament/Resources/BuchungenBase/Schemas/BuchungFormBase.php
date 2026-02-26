@@ -62,6 +62,7 @@ abstract class BuchungFormBase
                 TextInput::make('kontoinhaber')
                     ->required(),
                 TextInput::make('iban')
+                    ->label('IBAN oder Aktive/er')
                     ->rules([
                         fn(): Closure => function ($attribute, $value, Closure $fail) use ($buchungClass): void {
                             if (!$buchungClass::test_iban($value)) {

@@ -18,7 +18,7 @@ class KurseImport extends KurseImportBase
             'nummer' => $row['kursnummer'],
             'notiz' => $note,
             'titel' => $row['kurstitel'],
-            'datum' => $this->fromExcelDateTime($row['kursdatum']),
+            'datum' => $this->fromExcelDate($row['kursdatum']),
             'kursplätze' => $row['kursplatze'],
             'restplätze' => $row['restplatze'],
             'leiter' => $row['kursleiter'],

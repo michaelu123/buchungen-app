@@ -55,15 +55,6 @@ abstract class KurseImportBase implements OnEachRow, SkipsEmptyRows, WithHeading
         }
     }
 
-    public function fromExcelDateTime($dt)
-    {
-        $res = null;
-        if (filled($dt)) {
-            $res = Date::excelToDateTimeObject($dt);
-        }
-        return $res;
-    }
-
     public function fromExcelDate($dt): string|null
     {
         $res = null;
