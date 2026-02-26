@@ -140,17 +140,6 @@ class KursTableActions
 
     public function createEbics(Model $kurs, bool $einzug): string
     {
-        // foreach ($kurs->buchungen()->get() as $buchung) {
-        //   // dd($buchung->notiz, !$buchung->lastschriftok, !$buchung->iban, !$buchung->verified, $buchung->eingezogen);
-        //   if ($buchung->notiz || !$buchung->lastschriftok || !$buchung->iban || !$buchung->verified || $buchung->eingezogen) {
-        //     continue;
-        //   }
-        //   $cnt++;
-        // }
-        /*
-        // return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-        //   . "<xxx>" . $kurs->nummer . ":  " . $cnt . " Einzug: " . ($einzug ? "Ja" : "Nein") . " Mandat " . $kurs->ebicsData()["mandat"] . "</xxx>";
-        */
         $xmlString = $this->createXml($kurs);
         if ($einzug) {
             // TODO
@@ -223,6 +212,13 @@ class KursTableActions
         return $results;
     }
 
+    protected function deepClone(Element $elem): Element
+    {
+        // Deep-clone an Element and its nested content.
+        // Using serialize/unserialize to duplicate the object graph.
+        return unserialize(serialize($elem));
+    }
+
     protected function fillinIDs(array $rootContent): void
     {
         $msgIds = $this->findElements($rootContent, 'MsgId');
@@ -265,18 +261,69 @@ class KursTableActions
         }
     }
 
-    /*
-      def fillinDates(self):
-          creDtTm = self.xmlt.getElementsByTagName("CreDtTm")
-          now = datetime.datetime.utcnow()
-          d = now.isoformat(timespec="milliseconds") + "Z"
-          creDtTm[0].childNodes[0] = self.xmlt.createTextNode(d)
+    protected function getBuchungenList(Model $kurs): array
+    {
+        $buchungenList = [];
+        $sum = 0.0;
+        $cnt = 0;
+        $ebicsData = $kurs->ebicsData();
+        $buchungen = $kurs->buchungen()->whereNull("notiz")->whereNotNull("lastschriftok")->whereNotNull("verified")->whereNull("eingezogen")->get();
+        foreach ($buchungen as $buchung) {
+            $betrag = $buchung->mitgliedsnummer ? $ebicsData["mitgliederpreis"] : $ebicsData["nichtmitgliederpreis"];
+            $sum += $betrag;
+            $cnt++;
+            $buchungenList[] = [
+                "datum" => $buchung->created_at->format('Y-m-d'),
+                "betrag" => $betrag,
+                "iban" => $buchung->iban,
+                "mandat" => $ebicsData["mandat"],
+                "kontoinhaber" => $buchung->kontoinhaber,
+            ];
 
-          reqdColltnDt = self.xmlt.getElementsByTagName("ReqdExctnDt" if self.sammel else "ReqdColltnDt")
-          day2 = datetime.date.today() + datetime.timedelta(days=2)
-          d = day2.isoformat()
-          reqdColltnDt[0].childNodes[0] = self.xmlt.createTextNode(d)
-    */
+        }
+        return ["sum" => $sum, "cnt" => $cnt, "list" => $buchungenList];
+    }
+
+    protected function fillinBuchungen(Element $template, array $buchungen): array
+    {
+        // build new DrctDbtTxInf elements from template
+        $newDrcts = [];
+        foreach ($buchungen as $b) {
+            $clone = $this->deepClone($template);
+
+            // set date (DtOfSgntr)
+            foreach ($this->findElements($clone->getContent(), 'DtOfSgntr') as $elem) {
+                $elem->setContent($b['datum']);
+            }
+
+            // set amount (InstdAmt) - ensure two decimals
+            foreach ($this->findElements($clone->getContent(), 'InstdAmt') as $elem) {
+                $elem->setContent(number_format((float) $b['betrag'], 2, '.', ''));
+            }
+
+            // set debtor name (Dbtr->Nm)
+            $dbtrs = $this->findElements($clone->getContent(), 'Dbtr');
+            if (count($dbtrs) > 0) {
+                $dbtr = $dbtrs[0];
+                foreach ($this->findElements($dbtr->getContent(), 'Nm') as $nm) {
+                    $nm->setContent($b['kontoinhaber']);
+                }
+            }
+
+            // set IBAN (DbtrAcct->Id->IBAN)
+            foreach ($this->findElements($clone->getContent(), 'IBAN') as $ibanElem) {
+                $ibanElem->setContent($b['iban']);
+            }
+
+            // set MndtId (DrctDbtTx->MndtRltdInf->MndtId)
+            foreach ($this->findElements($clone->getContent(), 'MndtId') as $mandatElem) {
+                $mandatElem->setContent($b['mandat']);
+            }
+
+            $newDrcts[] = $clone;
+        }
+        return $newDrcts;
+    }
 
     protected XmlReader $xmlReader;
 
@@ -285,6 +332,11 @@ class KursTableActions
     // protected array $xmlt;
     protected function createXml(Model $kurs)
     {
+        $buchungenList = $this->getBuchungenList($kurs);
+        $sum = $buchungenList["sum"];
+        $cnt = $buchungenList["cnt"];
+        $buchungen = $buchungenList["list"];
+
         $this->xmlReader = XmlReader::fromString($this->xmlsAbbuchung);
 
         $elements = $this->xmlReader->elements();
@@ -292,17 +344,35 @@ class KursTableActions
         $rootContent = $document->getContent();
 
         $this->fillinIDs($rootContent);
-        $this->fillinSumme($rootContent, 100.0, 5);
+        $this->fillinSumme($rootContent, $sum, $cnt);
         $this->fillinDates($rootContent);
 
-        $this->xmlWriter = XmlWriter::make('UTF-8', '1.0', true);
+        // Replace template DrctDbtTxInf with one entry per booking
+        $drctTemplates = $this->findElements($rootContent, 'DrctDbtTxInf');
+        $template = $drctTemplates[0];
 
+        // find the parent PmtInf elements and remove existing DrctDbtTxInf entries
+        $pmtInfs = $this->findElements($rootContent, 'PmtInf');
+        $pmtInf = $pmtInfs[0];
+        $pmtContent = $pmtInf->getContent();
+        // remove any existing DrctDbtTxInf entries
+        foreach ($pmtContent as $k => $v) {
+            if ($k === 'DrctDbtTxInf') {
+                unset($pmtContent[$k]);
+            }
+        }
+        $newDrcts = $this->fillinBuchungen($template, $buchungen);
+        if (!empty($newDrcts)) {
+            // attach the new DrctDbtTxInf array to the PmtInf content
+            $pmtContent['DrctDbtTxInf'] = $newDrcts;
+        }
+        $pmtInf->setContent($pmtContent);
+
+        $this->xmlWriter = XmlWriter::make('UTF-8', '1.0', true);
         $root = new RootElement('Document');
         $root->setAttributes($document->getAttributes());
         // $root->setNamespaces($document->getNamespaces());
-
         $xmlString = $this->xmlWriter->write($root, $rootContent);
-
         return $xmlString;
     }
 

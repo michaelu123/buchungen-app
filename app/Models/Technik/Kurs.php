@@ -38,4 +38,13 @@ class Kurs extends Model
     {
         return $this->nummer . ": " . $this->titel . " am " . Carbon::parse($this->datum)->translatedFormat('D, d.m');
     }
+
+    public function ebicsData(): array
+    {
+        return [
+            "mitgliederpreis" => 10,
+            "nichtmitgliederpreis" => 20,
+            "mandat" => "M-TK-" . now()->year,
+        ];
+    }
 }

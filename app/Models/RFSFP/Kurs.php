@@ -32,8 +32,6 @@ class Kurs extends Model
         "kommentar",
     ];
 
-
-
     public function getRouteKeyName(): string
     {
         return 'nummer';
@@ -67,5 +65,14 @@ class Kurs extends Model
     public function kursDetails(): string
     {
         return $this->nummer . ": " . $this->uhrzeit . ", " . $this->termine(true) . ", Ersatztermin: " . $this->termine(false) . ", Kursort: " . $this->kursort;
+    }
+
+    public function ebicsData(): array
+    {
+        return [
+            "mitgliederpreis" => 20,
+            "nichtmitgliederpreis" => 35,
+            "mandat" => "M-RFSFP-" . now()->year,
+        ];
     }
 }

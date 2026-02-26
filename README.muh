@@ -111,10 +111,12 @@ php artisan db:seed RFSFPSeeder
 php artisan db:seed TechnikSeeder
 
 sskm demo-banking googeln
-chipTan, anmelden, oben "Geschäftlich", unten "Firmenkonto"
+chipTan, anmelden, oben "Geschäftlich", unten "Firmenkonto"   DE84701500000000129995
 links "Finanzübersicht, auf Mehr klicken, Sammelaufträge, dann Dateiübergabe
 oder mit Sammelüberweisung, Sammellastschrift mit Vorlage oder einzeln ausfüllen,
 dann "Prüfen", dann "Exportieren", um XML-Datei als Vorlage zu erhalten.
 
 
 php artisan make:import RFSA\BuchungenImport --model=RFSA\Buchung  # etc
+
+Gemini abmelden: https://gemini.google.com/app , profile, abmelden
