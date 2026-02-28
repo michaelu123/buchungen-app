@@ -1,4 +1,4 @@
-C:\Users\Michael\AppData\Roaming\Composer\vendor\bin\laravel new buchungen-app
+C:\Users\Michael\AppData\Roaming\Composer\vendor\bin\laravel new buchungen
 
 php artisan boost:install
 composer require filament/filament:"^5.0"
@@ -47,7 +47,7 @@ php artisan queue:listen
 # to test Reverb:
 php artisan make:livewire Sample
 php artisan make:event Test
-in welcome.blade.php sample und @vite, dann http://buchungen-app.test/, unten steht was von sample
+in welcome.blade.php sample und @vite, dann http://buchungen.test/, unten steht was von sample
 php artisan reverb:start --debug
 php artisan tinker
   App\Events\Test::dispatch(); 
@@ -123,7 +123,7 @@ Gemini abmelden: https://gemini.google.com/app , profile, abmelden
 
 
 Deployment:
-auf strato: lokale Weiterleitung nach /buchungen-app/public 
+auf strato: lokale Weiterleitung nach /buchungen/public 
 
 on this machine:
 php artisan optimize:clear
@@ -156,6 +156,7 @@ APP_DEBUG=false
 php artisan log:clear
 php artisan cache:clear
 php artisan config:clear
+php artisan config:cache
 
 php artisan db:seed RFSASeeder
 php artisan db:seed RFSFSeeder
@@ -166,3 +167,6 @@ ALTER TABLE `technik_buchungen` ADD CONSTRAINT `tkc` FOREIGN KEY (`kursnummer`) 
 ALTER TABLE `rfsf_buchungen` ADD CONSTRAINT `rfsfc` FOREIGN KEY (`kursnummer`) REFERENCES `rfsf_kurse`(`nummer`) ON DELETE CASCADE ON UPDATE RESTRICT;
 ALTER TABLE `rfsfp_buchungen` ADD CONSTRAINT `rfsfpc` FOREIGN KEY (`kursnummer`) REFERENCES `rfsfp_kurse`(`nummer`) ON DELETE CASCADE ON UPDATE RESTRICT;
 ALTER TABLE `rfsa_buchungen` ADD CONSTRAINT `rfsac` FOREIGN KEY (`kursnummer`) REFERENCES `rfsa_kurse`(`nummer`) ON DELETE CASCADE ON UPDATE RESTRICT;
+
+php artisan make:filament-widget UsageWidget  
+Widget erscheint erst nach php artisan filament:optimize !! ( or php artisan filament:cache-components ?)

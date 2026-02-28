@@ -3,7 +3,14 @@
 use Livewire\Component;
 
 new class extends Component {
-    //
+    protected string $view = 'filament.widgets.usage-widget';
+    protected int|string|array $columnSpan = 2;
+    public string $content = 'init xxxxxx';
+
+    public function mount(): void
+    {
+        $this->content = file_get_contents(public_path('intro.md'));
+    }
 };
 ?>
 
@@ -31,5 +38,14 @@ new class extends Component {
         </p>
 
         <x-filament-actions::modals />
+    </div>
+
+
+</x-filament::section>
+
+<x-filament::section class="mt-10 max-w-7xl mx-auto items-center justify-center">
+    <div class="fi-prose lg:prose-xl max-w-none dark:prose-invert">
+        <h1>Dieser Text erscheint nur während der Testphase!</h1>
+        {!! str($content)->markdown() !!}
     </div>
 </x-filament::section>
