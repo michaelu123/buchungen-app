@@ -140,11 +140,18 @@ class KursTableActions
 
     public function createEbics(Model $kurs, bool $einzug): string
     {
-        $xmlString = $this->createXml($kurs);
+        $list = $this->getBuchungen($kurs);
+        $xmlString = $this->createXml($kurs, $list);
         if ($einzug) {
-            // TODO
+            $now = now();
+            $buchungenList = $list["buchungenList"];
+            $buchungenData = $list["buchungenData"];
+            for ($i = 0; $i < count($buchungenList); $i++) {
+                $buchung = $buchungenList[$i];
+                $data = $buchungenData[$i];
+                $buchung->update(['eingezogen' => $now, 'betrag' => $data['betrag']]);
+            }
         }
-
         return $xmlString;
     }
 
@@ -261,27 +268,32 @@ class KursTableActions
         }
     }
 
-    protected function getBuchungenList(Model $kurs): array
+    protected function getBuchungen(Model $kurs): array
     {
         $buchungenList = [];
+        $buchungenData = [];
         $sum = 0.0;
         $cnt = 0;
         $ebicsData = $kurs->ebicsData();
         $buchungen = $kurs->buchungen()->whereNull("notiz")->whereNotNull("lastschriftok")->whereNotNull("verified")->whereNull("eingezogen")->get();
         foreach ($buchungen as $buchung) {
+            $normalizedIban = strtoupper(str_replace(' ', '', $buchung->iban));
+            if (str_starts_with($normalizedIban, "AKTIV"))
+                continue;
             $betrag = $buchung->mitgliedsnummer ? $ebicsData["mitgliederpreis"] : $ebicsData["nichtmitgliederpreis"];
             $sum += $betrag;
             $cnt++;
-            $buchungenList[] = [
+            $buchungenData[] = [
                 "datum" => $buchung->created_at->format('Y-m-d'),
                 "betrag" => $betrag,
                 "iban" => $buchung->iban,
                 "mandat" => $ebicsData["mandat"],
                 "kontoinhaber" => $buchung->kontoinhaber,
             ];
+            $buchungenList[] = $buchung;
 
         }
-        return ["sum" => $sum, "cnt" => $cnt, "list" => $buchungenList];
+        return ["sum" => $sum, "cnt" => $cnt, "buchungenList" => $buchungenList, "buchungenData" => $buchungenData];
     }
 
     protected function fillinBuchungen(Element $template, array $buchungen): array
@@ -330,12 +342,12 @@ class KursTableActions
     protected XmlWriter $xmlWriter;
 
     // protected array $xmlt;
-    protected function createXml(Model $kurs)
+    protected function createXml(Model $kurs, $list)
     {
-        $buchungenList = $this->getBuchungenList($kurs);
-        $sum = $buchungenList["sum"];
-        $cnt = $buchungenList["cnt"];
-        $buchungen = $buchungenList["list"];
+        $sum = $list["sum"];
+        $cnt = $list["cnt"];
+        $buchungenList = $list["buchungenList"];
+        $buchungenData = $list["buchungenData"];
 
         $this->xmlReader = XmlReader::fromString($this->xmlsAbbuchung);
 
@@ -361,7 +373,7 @@ class KursTableActions
                 unset($pmtContent[$k]);
             }
         }
-        $newDrcts = $this->fillinBuchungen($template, $buchungen);
+        $newDrcts = $this->fillinBuchungen($template, $buchungenData);
         if (!empty($newDrcts)) {
             // attach the new DrctDbtTxInf array to the PmtInf content
             $pmtContent['DrctDbtTxInf'] = $newDrcts;

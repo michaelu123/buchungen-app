@@ -13,6 +13,7 @@ use Filament\Forms\Components\Select;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\Indicator;
 use Filament\Tables\Table;
@@ -45,7 +46,7 @@ abstract class BuchungTableBase
                     ->label('Eingegangen am')
                     ->dateTime('d.m.Y H:i:s')
                     ->sortable(),
-                TextColumn::make('notiz')
+                TextInputColumn::make('notiz')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('kursnummer')
@@ -164,7 +165,11 @@ abstract class BuchungTableBase
                             $record->check();
                         }),
                     Action::make('Bestätigung senden')
-                        ->disabled(fn($record) => filled($record['notiz']) || !filled($record['verified']))
+                        ->disabled(
+                            fn($record) => filled($record['notiz'])
+                            || !filled($record['verified'])
+                            || !str_ends_with($record->email, "@adfc-muenchen.de") // TODO
+                        )
                         ->icon(Heroicon::OutlinedEnvelope)
                         ->action(function ($record): void {
                             $record->confirm();

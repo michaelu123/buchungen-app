@@ -2,13 +2,14 @@
 
 namespace App\Filament\Resources\RFSF\Kurse\Tables;
 
-use Filament\Tables\Table;
-use Filament\Tables\Columns\TextColumn;
 use App\Exports\RFSF\BuchungenExport;
 use App\Exports\RFSF\KurseExport;
 use App\Filament\Resources\KurseBase\KursTableActions;
 use App\Imports\RFSF\KurseImport;
 use App\Models\RFSF\Buchung;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\TextInputColumn;
+use Filament\Tables\Table;
 
 class KursTable
 {
@@ -19,7 +20,7 @@ class KursTable
         return $table
             ->striped()
             ->columns([
-                TextColumn::make('notiz')
+                TextInputColumn::make('notiz')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('nummer')

@@ -15,7 +15,7 @@ class Bestaetigung extends BestaetigungBase
 
     protected function viewName(): string
     {
-        return 'mail.technik.bestätigung';
+        return 'mail.technik.bestaetigung';
     }
 
     protected function fromAddress(): string

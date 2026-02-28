@@ -9,6 +9,7 @@ use App\Imports\RFSA\KurseImport;
 use App\Models\RFSA\Buchung;
 use App\Models\RFSA\Kurs;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Table;
 
 class KursTable
@@ -20,7 +21,7 @@ class KursTable
         return $table
             ->striped()
             ->columns([
-                TextColumn::make('notiz')
+                TextInputColumn::make('notiz')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('nummer')

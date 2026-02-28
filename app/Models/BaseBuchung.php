@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Throwable;
 
 use function Livewire\str;
 use function Symfony\Component\String\s;
@@ -92,13 +93,16 @@ class BaseBuchung extends Model
         $kursClass = "App\\Models\\{$segment}\\Kurs";
         $mailClass = "App\\Mail\\{$segment}\\Bestaetigung";
 
+        if (!str_ends_with($this->email, "@adfc-muenchen.de"))
+            return; // TODO 
         $kurs = $kursClass::where('nummer', $this->kursnummer)->first();
-        if (class_exists($mailClass)) {
+        try {
             Mail::to($this->email)->send(new $mailClass($kurs, $this));
-            static::notifySuccess('Bestätigung versendet');
-        } else {
-            Log::warning('Mailable not found: ' . $mailClass);
+        } catch (Throwable $t) {
+            Log::error("error " . $t->getMessage());
+            Log::error("error " . $t);
         }
+        static::notifySuccess('Bestätigung versendet');
     }
 
     public static function checkRestplätze(): void
@@ -143,6 +147,8 @@ class BaseBuchung extends Model
         // So we check it again here and if it's invalid, we send an email to the user and set a note in the database.
         if (!static::test_iban($this->iban)) {
             $this->update(['notiz' => 'Ungültige IBAN']);
+            if (!str_ends_with($this->email, "@adfc-muenchen.de"))
+                return; // TODO 
             Mail::to($this->email)->send(new FalscheIban($this->iban, $this->getFrom()));
             static::notifyWarning('Ungültige IBAN');
         }
@@ -168,6 +174,8 @@ class BaseBuchung extends Model
             }
         }
         if (!$this->verified) {
+            if (!str_ends_with($this->email, "@adfc-muenchen.de"))
+                return; // TODO 
             Mail::to($this->email)->send(new VerifyEmail($this->email, $this->getFrom()));
             static::notifyWarning('Email nicht bestätigt');
         }

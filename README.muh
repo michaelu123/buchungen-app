@@ -123,6 +123,8 @@ Gemini abmelden: https://gemini.google.com/app , profile, abmelden
 
 
 Deployment:
+auf strato: lokale Weiterleitung nach /buchungen-app/public 
+
 on this machine:
 php artisan optimize:clear
 php artisan optimize
@@ -148,9 +150,19 @@ vendor/* vielleicht eher composer install aufrufen
 
 on server:
 .env:
-APP_ENV=production
+APP_ENV=production ?? aktuell noch local
 APP_DEBUG=false
 
 php artisan log:clear
 php artisan cache:clear
 php artisan config:clear
+
+php artisan db:seed RFSASeeder
+php artisan db:seed RFSFSeeder
+php artisan db:seed RFSFPSeeder
+php artisan db:seed Technik
+
+ALTER TABLE `technik_buchungen` ADD CONSTRAINT `tkc` FOREIGN KEY (`kursnummer`) REFERENCES `technik_kurse`(`nummer`) ON DELETE CASCADE ON UPDATE RESTRICT;
+ALTER TABLE `rfsf_buchungen` ADD CONSTRAINT `rfsfc` FOREIGN KEY (`kursnummer`) REFERENCES `rfsf_kurse`(`nummer`) ON DELETE CASCADE ON UPDATE RESTRICT;
+ALTER TABLE `rfsfp_buchungen` ADD CONSTRAINT `rfsfpc` FOREIGN KEY (`kursnummer`) REFERENCES `rfsfp_kurse`(`nummer`) ON DELETE CASCADE ON UPDATE RESTRICT;
+ALTER TABLE `rfsa_buchungen` ADD CONSTRAINT `rfsac` FOREIGN KEY (`kursnummer`) REFERENCES `rfsa_kurse`(`nummer`) ON DELETE CASCADE ON UPDATE RESTRICT;

@@ -2,13 +2,14 @@
 
 namespace App\Filament\Resources\Technik\Kurse\Tables;
 
-use Filament\Tables\Table;
-use Filament\Tables\Columns\TextColumn;
 use App\Exports\Technik\BuchungenExport;
 use App\Exports\Technik\KurseExport;
 use App\Filament\Resources\KurseBase\KursTableActions;
 use App\Imports\Technik\KurseImport;
 use App\Models\Technik\Buchung;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\TextInputColumn;
+use Filament\Tables\Table;
 
 class KursTable
 {
@@ -19,7 +20,7 @@ class KursTable
         return $table
             ->striped()
             ->columns([
-                TextColumn::make('notiz')
+                TextInputColumn::make('notiz')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('nummer')
