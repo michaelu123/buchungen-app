@@ -48,7 +48,8 @@ abstract class BuchungTableBase
                     ->sortable(),
                 TextInputColumn::make('notiz')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->afterStateUpdated(fn() => $buchungClass::checkRestplätze()),
                 TextColumn::make('kursnummer')
                     ->label('Kursname')
                     ->searchable()
