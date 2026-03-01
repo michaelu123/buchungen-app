@@ -9,7 +9,7 @@ use Database\Factories\BaseBuchungFactory;
  */
 class BuchungFactory extends BaseBuchungFactory
 {
-  public $nummern = ["RFSF001", "RFSF002", "RFSF003", "RFSF004", "RFSF005", "RFSF006", "RFSF007", "RFSF008", "RFSF009", "RFSF010"];
+  public $nummern = ["RFSF001G", "RFSF002A", "RFSF003S", "RFSF004G", "RFSF005A", "RFSF006S", "RFSF007G", "RFSF008A", "RFSF009S", "RFSF010G"];
 
   public function getNummern(int $r): string
   {

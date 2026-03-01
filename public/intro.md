@@ -13,7 +13,7 @@ Das Passwort bei allen Benutzern ist xxxx1234. Probiert es aus, was sich ändert
 
 ## Notiz
 
-Bei Google hatte eine Notiz in der 1. Spalte den Effekt, daß diese Zeile ungültig wurde. Der Effekt war ähnlich, als ob die Zeile gelöscht wurde, aber sie war noch sichtbar. Damit konnten Kurse und Buchungen z.B. storniert werden, ober abgelaufene Kurse als solche markiert werden. Diese Funktion erfüllt jetzt das Feld Notiz.
+Bei Google hatte eine Notiz in der 1. Spalte den Effekt, daß diese Zeile ungültig wurde. Der Effekt war ähnlich, als ob die Zeile gelöscht wurde, aber sie war noch sichtbar. Damit konnten Kurse und Buchungen z.B. storniert werden, ober abgelaufene Kurse als solche markiert werden. Diese Funktion erfüllt jetzt das Feld Notiz. In den Tabellen kann eine Notiz direkt erstellt oder geändert werden, ohne extra die Zeile editieren zu müssen.
 
 ## Kommentare
 
@@ -23,14 +23,26 @@ Das Kommentarfeld kann auch für längere Kommentare genutzt werden. Die Suchfun
 
 Indem Ihr in Kurse verschiedene Kurse hinzufügt oder ändert, ändert sich das Buchungsformular. Indem Ihr Buchungen löscht oder eine Notiz hinzufügt, oder über das Formular neue Buchungen erstellt, ändern sich die Restplätze und damit auch das Buchungsformular. Der Knopf "Update Restplätze" ist i.a. nicht notwendig.
 
+Zwischen Kursen und Buchungen ist in der Datenbank festgelegt, daß eine Buchung immer auf einen existierenden Kurs verweisen muß (referential integrity, on delete cascade). Das hat mehrere Folgen:
+
+- man kann die Kursnummer eines Kurses nicht ändern.
+- man kann Buchungen nur für existierende Kurse anlegen.
+- das Löschen eines Kurses bewirkt das Löschen aller Buchungen für diesen Kurs! Wenn man den Kurs und die dazugehörigen Buchungen noch sehen will, kann man den Kurs stattdessen mit einer Notiz versehen.
+
+## IBAN
+
+Ein Anmelder muß im Formular eine IBAN eingeben. Danach lässt sich die IBAN auf Aktive/Aktiver ändern, was bewirkt, daß die Buchung gültig bleibt, aber nichts abgebucht wird.
+
 ## Excel-Exporte
 
-Für Kurse bedeutet "Excel Export" oberhalb der Tabelle den Export aller Kurse. Am Ende jeder Zeile gibt es unter Aktionen den Menüpunkt Excel, mit dem eine Tabelle aller Buchungen für diesen Kurs erstellt wird.
+Für Kurse bedeutet "Excel Export" oberhalb der Tabelle den Export aller Kurse. Am Ende jeder Zeile gibt es unter Aktionen den Menüpunkt Excel, mit dem eine Tabelle **aller Buchungen** für diesen Kurs erstellt wird.
 Für Buchungen bedeutet "Excel Export" oberhalb der Tabelle den Export aller Buchungen.
 
 ## Excel-Importe
 
-Man kann eine Google-Backend-Tabelle als Excel-Datei downloaden. Diese kann man hier importieren, erst die Kurse, dann die Buchungen, mit der gleichen Excel-Datei, in der die Tabellenblätter Buchungen und Kurse vorkommen müssen. Die Beispieldaten der Kurse und Buchungen enthalten jeweils 10 Kurse und 100 Buchungen mit Fake-Daten, plus die Imports von Google vom 26.2.
+Man kann eine Google-Backend-Tabelle als Excel-Datei downloaden. Diese kann man hier importieren, erst die Kurse, dann die Buchungen, mit der gleichen Excel-Datei, in der die Tabellenblätter Buchungen und Kurse vorkommen müssen. Wenn Ihr das tut, solltet ihr die importierten Dateien aus Datenschutzgründen schnell wieder löschen. Während der Testphase kann sich ja jeder als admin einloggen und alle Daten sehen. Die Beispieldaten der Kurse und Buchungen enthalten jeweils 10 Kurse und 100 Buchungen mit Fake-Daten, die Ihr beliebig ändern und löschen könnt.
+
+Weiters lassen sich alle mit Excel Export exportierten Daten wieder importieren. Wenn die Import-Daten schon in der DB enthalten sind, werden sie übersprungen. Damit können Exporte auch als Backup-Daten benutzt werden.
 
 ## Aktionen bei Buchungen
 
@@ -67,7 +79,7 @@ Wenn man nach einer Spalte sortieren kann, erscheint neben dem Spaltennamen ein 
 
 ## Emails
 
-Im Testbetrieb lassen sich Emails nur an Adressen schicken, die auf @adfc-muenchen.de enden, am besten natürlich an Eure eigene Adresse, sonst seht Ihr sie ja nicht.
+Im Testbetrieb lassen sich Emails nur an Adressen schicken, die auf @adfc-muenchen.de enden, am besten natürlich an Eure eigene Adresse, sonst seht Ihr sie ja nicht. Auf dem Server befindliche Anhänge werden mit der Anmeldebestätigung geschickt.
 
 ## Sourcecode
 
