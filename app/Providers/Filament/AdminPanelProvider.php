@@ -29,6 +29,8 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            // ->registration()
+            ->passwordReset()
             ->colors([
                 'primary' => Color::Amber,
             ])
@@ -52,7 +54,7 @@ class AdminPanelProvider extends PanelProvider
                 Dashboard::class,
             ])
             // ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
-            // Achtung: Neue Widgets erscheinen erst nach php artisan filament:optimize !!
+            // Achtung: Neue Widgets erscheinen erst nach php artisan filament:optimize !! (oder config:cache?)
             ->widgets([
                 AccountWidget::class,
                 FilamentInfoWidget::class,
