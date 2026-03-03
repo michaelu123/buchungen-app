@@ -75,6 +75,7 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->navigationGroups([
+                'Benutzer und Rollen',
                 'Allgemein',
                 'RFSA-Kurse',
                 'RFSF-Kurse',

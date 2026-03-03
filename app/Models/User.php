@@ -7,7 +7,6 @@ namespace App\Models;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
@@ -71,8 +70,8 @@ class User extends Authenticatable implements FilamentUser
             ->implode('');
     }
 
-    function roles(): HasMany
+    public function roles()
     {
-        return $this->hasMany(UserRole::class);
+        return $this->belongsToMany(Role::class);
     }
 }

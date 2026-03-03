@@ -2,11 +2,10 @@
 
 namespace App\Policies;
 
-use App\Models\UserRole;
 use App\Models\User;
 use App\Policies\BasePolicy;
 
-class UserRolePolicy extends BasePolicy
+class RolePolicy extends BasePolicy
 {
 
     public function __construct()

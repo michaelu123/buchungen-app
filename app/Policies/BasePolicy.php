@@ -12,15 +12,15 @@ class BasePolicy
 
   public function permits(User $user): bool
   {
-    $roles = $user->roles->map(fn($role) => $role["role"]);
+    $roles = $user->roles->map(fn($role) => $role["name"]);
     if ($roles->contains("ADMIN")) {
-        return true;
+      return true;
     }
     if ($roles->contains($this->role)) {
-        return true;
+      return true;
     }
     if ($roles->contains('RFS')) {
-        return str_starts_with($this->role, 'RFS');
+      return str_starts_with($this->role, 'RFS');
     }
     return false;
   }

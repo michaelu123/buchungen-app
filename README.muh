@@ -57,7 +57,7 @@ php artisan vendor:publish --tag=filament-config   # then add reverb
 3 Terminals:  1) npm run dev 2) php artisan queue:listen 3) php artisan reverb:start --debug
 
 # nach Änderungen der Konfiguration ? 
-php artisan route:clear;php artisan config:clear ;php artisan cache:clear ;php artisan config:cache ;php artisan route:cache ;php artisan view:cache
+php artisan cache:clear; php artisan optimize; composer dump-autoload
 
 composer require maatwebsite/excel
 php artisan vendor:publish --provider="Maatwebsite\Excel\ExcelServiceProvider" --tag=config
@@ -73,7 +73,7 @@ php artisan make:migration create_rfsfp_buchungen_table --create rfsfp_buchungen
 php artisan make:migration create_rfsfp_kurse_table --create rfsfp_kurse
 
 
-php artisan make:model UserRole -m
+# php artisan make:model Role -m
 php artisan make:policy Technik\KursPolicy --model=Technik\Kurs
 php artisan make:policy Technik\BuchungPolicy --model=Technik\Buchung
 php artisan make:policy RFSA\KursPolicy --model=RFSA\Kurs
