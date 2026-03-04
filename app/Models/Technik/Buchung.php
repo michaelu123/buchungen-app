@@ -10,7 +10,7 @@ class Buchung extends BaseBuchung
     use HasFactory;
 
     public static bool $confirmAutomatically = true;
-    public static bool $requireEmailVerification = false;
+    public static bool $requireEmailVerification = true;
     public static bool $requireAbbuchung = true;
 
     protected $table = "technik_buchungen";

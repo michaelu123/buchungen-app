@@ -4,10 +4,13 @@ use Livewire\Component;
 use App\Models\EmailVerifikation;
 
 new class extends Component {
-    public function mount(string $emailb64): void
+    public function mount(string $param): void
     {
-        $email = base64_decode($emailb64);
-        EmailVerifikation::verifyEmail($email);
+        $arr = base64_decode($param);
+        $obj = json_decode($arr);
+        $email = $obj->email;
+        $class = $obj->class;
+        EmailVerifikation::verifyEmail($email, $class);
     }
 };
 
@@ -15,6 +18,8 @@ new class extends Component {
 // http://buchungen-app.test/emailverifikation/bWljaGFlbC51aGxlbmJlcmdAdC1vbmxpbmUuZGU=
 ?>
 
-<div>
-    Danke für die Bestätigung Ihrer E-Mail-Adresse.
+<div class="flex flex-col items-center justify-center">
+    <h1 class="text-xl font-bold">Email verifiziert</h1>
+
+    <p class="mt-10">Danke für die Bestätigung Ihrer E-Mail-Adresse!</p>
 </div>

@@ -14,7 +14,7 @@ class EmailVerifikation extends Model
     ];
 
 
-    public static function verifyEmail($email): void
+    public static function verifyEmail($email, $class): void
     {
         $now = now();
         if (!EmailVerifikation::where('email', $email)->exists()) {
@@ -22,10 +22,6 @@ class EmailVerifikation extends Model
         } else {
             EmailVerifikation::where('email', $email)->update(['verified' => $now]);
         }
-        // TODO: gezielt verifyEmail aufrufen, wie?
-        \App\Models\Technik\Buchung::verifyEmail($email, $now);
-        \App\Models\RFSA\Buchung::verifyEmail($email, $now);
-        \App\Models\RFSF\Buchung::verifyEmail($email, $now);
-        \App\Models\RFSFP\Buchung::verifyEmail($email, $now);
+        $class::verifyEmail($email, $now);
     }
 }

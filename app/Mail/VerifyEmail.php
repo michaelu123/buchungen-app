@@ -17,9 +17,9 @@ class VerifyEmail extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(public string $email, public string $sender)
+    public function __construct(public string $email, public $buchungClass, public string $sender)
     {
-        $this->emailb64 = base64_encode($email);
+        $this->emailb64 = base64_encode(json_encode(['email' => $email, 'class' => $buchungClass]));
     }
 
     /**

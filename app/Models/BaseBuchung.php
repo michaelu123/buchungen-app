@@ -180,7 +180,7 @@ class BaseBuchung extends Model
         if (!$this->verified) {
             if (!str_ends_with($this->email, "@adfc-muenchen.de"))
                 return; // TODO 
-            Mail::to($this->email)->send(new VerifyEmail($this->email, $this->getFrom()));
+            Mail::to($this->email)->send(new VerifyEmail($this->email, static::class, $this->getFrom()));
             static::notifyWarning('Email nicht bestätigt');
         }
     }
