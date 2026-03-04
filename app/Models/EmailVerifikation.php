@@ -25,5 +25,7 @@ class EmailVerifikation extends Model
         // TODO: gezielt verifyEmail aufrufen, wie?
         \App\Models\Technik\Buchung::verifyEmail($email, $now);
         \App\Models\RFSA\Buchung::verifyEmail($email, $now);
+        \App\Models\RFSF\Buchung::verifyEmail($email, $now);
+        \App\Models\RFSFP\Buchung::verifyEmail($email, $now);
     }
 }

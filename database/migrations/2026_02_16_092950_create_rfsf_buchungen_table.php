@@ -29,6 +29,7 @@ return new class extends Migration {
             $table->string("iban");
             $table->boolean("lastschriftok");
             $table->datetime("verified")->nullable();
+            $table->datetime("anmeldebestätigung")->nullable();
             $table->datetime("eingezogen")->nullable();
             $table->unsignedInteger("betrag")->nullable();
             $table->text("kommentar")->nullable();

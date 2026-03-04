@@ -77,6 +77,8 @@ abstract class BuchungFormBase
                     ->required(),
                 DateTimePicker::make('verified')
                     ->label('Email verifiziert'),
+                DateTimePicker::make('anmeldebestätigung')
+                    ->label('Anmeldebestätigung versendet'),
                 DateTimePicker::make('eingezogen'),
                 TextInput::make('betrag')
                     ->numeric(),

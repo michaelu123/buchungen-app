@@ -1,4 +1,4 @@
-# Buchungen-App Beta (Stand 27.02.2026)
+# Buchungen-App Beta (Stand 04.03.2026)
 
 Die Testphase der Buchungen-App beginnt. Ziel ist es, ohne Google auszukommen. Einerseits aus den bekannten Gründen: Trump kill switch, Google kann uns jederzeit die Freundschaft kündigen, mancher mag vielleicht nicht persönliche Daten in ein Google-Formular eingeben. Aber auch, weil das Zusammenspiel von Google Forms, Sheets, AppsScript recht fragil ist. Außerdem braucht man noch ein zusätzliches Programm, um die Datei zu erzeugen, mit der Martin Stasnik die Abbuchungen durchführt.
 
@@ -51,7 +51,7 @@ Am Ende jeder Tabellenzeile stehen die möglichen Aktionen.
 - Edit: Ändern der Daten. Man kann auch einfach in die Zeile klicken.
 - Delete: Löschen der Zeile.
 - Prüfen: bei Buchungen wird so getan, als ob die Buchung gerade frisch über das Formular erzeugt wurde.
-- Bestätigung senden: Sendet eine Anmeldebestätigung. Bei den Technik-Buchungen wird diee Anmeldebestätigung sofort nach der Email-Verifikation gesendet, be RFS muß sie händisch gesendet werden.
+- Bestätigung senden: Sendet eine Anmeldebestätigung. Bei den Technik-Buchungen wird diee Anmeldebestätigung sofort nach der Email-Verifikation gesendet, bei RFS muß sie händisch gesendet werden. Die Aktion ist inaktiv, wenn eine Notiz gesetzt ist oder schon eine Bestätigung gesendet wurde.
 
 ## Aktionen bei Kursen
 
@@ -87,4 +87,4 @@ Derzeit auf https://github.com/michaelu123/buchungen-app .
 
 ## Zukünftig
 
-Vielleicht die Anmeldungen für die Saisonkarten. Vielleicht Anmeldungen für Codierung oder Werkstatt-Termine, bei denen keine IBAN gefordert wird. Anlegen von Benutzern über UI fehlt noch. Email-Attachments gibt es derzeit nur für RFSA. In den Formularen müssen die Texte zu Teilnahmebedingungen und Datenschutz wahrscheinlich noch aktualisiert werden.
+Vielleicht die Anmeldungen für die Saisonkarten. Vielleicht Anmeldungen für Codierung oder Werkstatt-Termine, bei denen keine IBAN gefordert wird. In den Formularen müssen die Texte zu Teilnahmebedingungen und Datenschutz wahrscheinlich noch aktualisiert werden.

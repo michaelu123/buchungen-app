@@ -41,6 +41,7 @@ class KursTableActions
                     }),
                 Action::make('ebics')
                     ->label('EBICS')
+                    ->hidden(!$this->buchungClass::$requireAbbuchung)
                     ->icon(Heroicon::OutlinedDocumentArrowDown)
                     ->requiresConfirmation()
                     // ->modalHeading("Ebics-Datei erstellen?")

@@ -9,7 +9,9 @@ class Buchung extends BaseBuchung
 {
     use HasFactory;
 
-    protected bool $confirmAutomatically = false;
+    public static bool $confirmAutomatically = false;
+    public static bool $requireEmailVerification = true;
+    public static bool $requireAbbuchung = true;
 
     protected $table = "rfsf_buchungen";
 

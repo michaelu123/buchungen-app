@@ -16,7 +16,6 @@ use Throwable;
 
 use function Livewire\str;
 use function Symfony\Component\String\s;
-
 class BaseBuchung extends Model
 {
     protected $fillable = [
@@ -36,12 +35,15 @@ class BaseBuchung extends Model
         'iban',
         'lastschriftok',
         'verified',
+        'anmeldebestätigung',
         'eingezogen',
         'betrag',
         'kommentar',
     ];
 
-    protected bool $confirmAutomatically; // redefined in subclass
+    public static bool $confirmAutomatically; // redefined in subclass
+    public static bool $requireEmailVerification; // redefined in subclass
+    public static bool $requireAbbuchung; // redefined in subclass
 
     public static function kursClass(): string
     {
@@ -98,6 +100,7 @@ class BaseBuchung extends Model
         $kurs = $kursClass::where('nummer', $this->kursnummer)->first();
         try {
             Mail::to($this->email)->send(new $mailClass($kurs, $this));
+            $this->update(['anmeldebestätigung' => now()]);
         } catch (Throwable $t) {
             Log::error("error " . $t->getMessage());
             Log::error("error " . $t);
@@ -112,7 +115,8 @@ class BaseBuchung extends Model
         $kursBuchungen = $buchungClass::select('kursnummer', DB::raw('count(*) as count'))
             ->whereNull('notiz')
             ->groupBy('kursnummer')
-            ->get()->toArray();
+            ->get()
+            ->toArray();
         $kursPlätze = $kursClass::select('id', 'nummer', 'kursplätze', 'restplätze')
             ->whereNull('notiz')
             ->get()
@@ -168,7 +172,7 @@ class BaseBuchung extends Model
             $ev = EmailVerifikation::where('email', $this->email)->first();
             if ($ev && $ev->verified) {
                 $this->update(['verified' => $ev->verified]);
-                if (!$this->notiz && $this->confirmAutomatically) {
+                if (!$this->notiz && static::$confirmAutomatically) {
                     $this->confirm();
                 }
             }
@@ -219,18 +223,27 @@ class BaseBuchung extends Model
 
     public function check(): void
     {
-        $this->checkIban();
-        $this->checkLastschriftOk();
-        $this->checkVerified();
+        if (static::$requireAbbuchung) {
+            $this->checkIban();
+            $this->checkLastschriftOk();
+        }
+        if (static::$requireEmailVerification) {
+            $this->checkVerified();
+        } else if (!$this->notiz && static::$confirmAutomatically) {
+            $this->confirm();
+        }
         static::checkRestplätze();
     }
 
     public static function verifyEmail($email, $now): void
     {
+        if (!static::$requireEmailVerification) {
+            return;
+        }
         $unverified = static::where('email', $email)->whereNull('verified')->whereNull('notiz')->get();
         $unverified->each(function ($buchung) use ($now): void {
             $buchung->update(['verified' => $now]);
-            if (!$buchung->notiz && $buchung->confirmAutomatically) {
+            if (!$buchung->notiz && static::$confirmAutomatically) {
                 $buchung->confirm();
             }
         });

@@ -90,6 +90,10 @@ abstract class BuchungTableBase
                     ->label('Email verifiziert')
                     ->datetime('d.m.Y H:i:s')
                     ->sortable(),
+                TextColumn::make('anmeldebestätigung')
+                    ->label('Ab versendet')
+                    ->datetime('d.m.Y H:i:s')
+                    ->sortable(),
                 TextColumn::make('eingezogen')
                     ->datetime('d.m.Y H:i:s')
                     ->sortable(),
@@ -169,6 +173,7 @@ abstract class BuchungTableBase
                         ->disabled(
                             fn($record) => filled($record['notiz'])
                             || !filled($record['verified'])
+                            || filled($record['anmeldebestätigung'])
                             || !str_ends_with($record->email, "@adfc-muenchen.de") // TODO
                         )
                         ->icon(Heroicon::OutlinedEnvelope)
