@@ -171,3 +171,5 @@ ALTER TABLE `rfsa_buchungen` ADD CONSTRAINT `rfsac` FOREIGN KEY (`kursnummer`) R
 
 php artisan make:filament-widget UsageWidget  
 Widget erscheint erst nach php artisan filament:optimize !! ( or php artisan filament:cache-components ?)
+
+php artisan make:livewire pages::codier.create
