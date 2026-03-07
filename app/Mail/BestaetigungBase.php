@@ -17,7 +17,7 @@ abstract class BestaetigungBase extends Mailable
   public string $anrede;
   public ?string $kursDetails = null;
 
-  public function __construct(protected object $kurs, protected object $buchung)
+  public function __construct(protected object $kurs, public object $buchung)
   {
     $this->anrede = "Liebe(r) " . $this->buchung->vorname . " " . $this->buchung->nachname;
     if (method_exists($this->kurs, 'kursDetails')) {
@@ -52,7 +52,11 @@ abstract class BestaetigungBase extends Mailable
 
   abstract protected function viewName(): string;
 
-  abstract protected function fromAddress(): string;
+  protected function fromAddress(): string
+  {
+    return $this->buchung->getFrom();
+  }
+
 
   /**
    * Return filesystem paths to attachment files.

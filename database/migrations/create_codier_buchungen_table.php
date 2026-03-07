@@ -26,6 +26,7 @@ return new class extends Migration {
             $table->unsignedInteger("mitgliedsnummer")->nullable();
             $table->datetime("anmeldebestätigung")->nullable();
             $table->text("kommentar")->nullable();
+            $table->unique(['termin_id', 'uhrzeit']);
             $table->timestamps();
         });
     }

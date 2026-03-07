@@ -2,6 +2,7 @@
 
 namespace App\Models\RFSFP;
 
+use App\Mail\RFSFP\Bestaetigung;
 use App\Models\BaseBuchung;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -12,6 +13,8 @@ class Buchung extends BaseBuchung
     public static bool $confirmAutomatically = false;
     public static bool $requireEmailVerification = true;
     public static bool $requireAbbuchung = true;
+    protected static ?string $kursClass = Kurs::class;
+    protected static ?string $bestätigungClass = Bestaetigung::class;
 
     protected $table = "rfsfp_buchungen";
 

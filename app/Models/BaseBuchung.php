@@ -45,19 +45,12 @@ class BaseBuchung extends Model
     public static bool $requireEmailVerification; // redefined in subclass
     public static bool $requireAbbuchung; // redefined in subclass
 
-    public static function kursClass(): string
-    {
-        $ns = (new \ReflectionClass(static::class))->getNamespaceName();
-        $parts = explode('\\', $ns);
-        $segment = end($parts);
-        $kursClass = "App\\Models\\{$segment}\\Kurs";
-        return $kursClass;
-    }
+    protected static ?string $kursClass; // redefined in subclass
+    protected static ?string $bestätigungClass; // redefined in subclass
 
     public function kurs(): BelongsTo
     {
-        $kursClass = self::kursClass();
-        return $this->belongsTo($kursClass, 'kursnummer', 'nummer');
+        return $this->belongsTo(static::$kursClass, 'kursnummer', 'nummer');
     }
 
     public static function createBuchung($data): BaseBuchung
@@ -65,11 +58,10 @@ class BaseBuchung extends Model
         $buchungClass = static::class;
         $buchung = $buchungClass::create($data);
 
-        $kursClass = self::kursClass();
         $kursnummer = $data['kursnummer'];
         $buchungenCount = $buchungClass::where('kursnummer', $kursnummer)
             ->whereNull('notiz')->count();
-        $kurs = $kursClass::where('nummer', $kursnummer)->first();
+        $kurs = static::$kursClass::where('nummer', $kursnummer)->first();
         if ($kurs && $kurs->restplätze > 0) {
             $kurs->restplätze = $kurs->kursplätze - $buchungenCount - 1;
         }
@@ -84,22 +76,25 @@ class BaseBuchung extends Model
 
     public function confirm(): void
     {
-        if ($this->notiz || !$this->verified || !$this->lastschriftok) {
-            static::notifyWarning('Buchung hat eine Notiz oder ist nicht verifiziert oder Lastschrift verweigert');
+        if ($this->notiz) {
+            static::notifyWarning('Buchung hat eine Notiz');
+            return;
+        }
+        if (static::$requireEmailVerification && !$this->verified) {
+            static::notifyWarning('Buchung ist nicht verifiziert');
+            return;
+        }
+        if (static::$requireAbbuchung && !$this->lastschriftok) {
+            static::notifyWarning('Buchung hat Lastschrift verweigert');
             return;
         }
 
-        $ns = (new \ReflectionClass(static::class))->getNamespaceName();
-        $parts = explode('\\', $ns);
-        $segment = end($parts);
-        $kursClass = "App\\Models\\{$segment}\\Kurs";
-        $mailClass = "App\\Mail\\{$segment}\\Bestaetigung";
 
         if (!str_ends_with($this->email, "@adfc-muenchen.de"))
             return; // TODO 
-        $kurs = $kursClass::where('nummer', $this->kursnummer)->first();
+        $kurs = static::$kursClass::where('nummer', $this->kursnummer)->first();
         try {
-            Mail::to($this->email)->send(new $mailClass($kurs, $this));
+            Mail::to($this->email)->send(new static::$bestätigungClass($kurs, $this));
             $this->update(['anmeldebestätigung' => now()]);
         } catch (Throwable $t) {
             Log::error("error " . $t->getMessage());
@@ -111,13 +106,12 @@ class BaseBuchung extends Model
     public static function checkRestplätze(): void
     {
         $buchungClass = static::class;
-        $kursClass = self::kursClass();
         $kursBuchungen = $buchungClass::select('kursnummer', DB::raw('count(*) as count'))
             ->whereNull('notiz')
             ->groupBy('kursnummer')
             ->get()
             ->toArray();
-        $kursPlätze = $kursClass::select('id', 'nummer', 'kursplätze', 'restplätze')
+        $kursPlätze = static::$kursClass::select('id', 'nummer', 'kursplätze', 'restplätze')
             ->whereNull('notiz')
             ->get()
             ->toArray();
@@ -133,13 +127,13 @@ class BaseBuchung extends Model
                         $buchungClass::notifyWarning('Kurs ' . $kurs['nummer'] . ' ist überbucht!');
                     }
                     if ($diff != $restOld) {
-                        $kursClass::find($kurs['id'])->update(['restplätze' => $diff]);
+                        static::$kursClass::find($kurs['id'])->update(['restplätze' => $diff]);
                         $buchungClass::notifyWarning('Restplätze für Kursnummer ' . $kurs['nummer'] . ' von ' . $restOld . ' auf ' . $diff . ' korrigiert');
                     }
                 }
             }
             if (!$buchungenFound && $kurs['restplätze'] != $kurs['kursplätze']) {
-                $kursClass::find($kurs['id'])->update(['restplätze' => $kurs['kursplätze']]);
+                static::$kursClass::find($kurs['id'])->update(['restplätze' => $kurs['kursplätze']]);
                 $buchungClass::notifyWarning('Restplätze für Kursnummer ' . $kurs['nummer'] . ' von ' . $kurs['restplätze'] . ' auf ' . $kurs['kursplätze'] . ' korrigiert');
             }
         }

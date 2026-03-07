@@ -18,11 +18,6 @@ class Bestaetigung extends BestaetigungBase
         return 'mail.rfsfp.bestaetigung';
     }
 
-    protected function fromAddress(): string
-    {
-        return 'radfahrschule_anmeldungen@adfc-muenchen.de';
-    }
-
     protected function attachmentPaths(): array
     {
         return glob(app_path('Mail/RFSFP/Anhaenge/*')) ?: [];

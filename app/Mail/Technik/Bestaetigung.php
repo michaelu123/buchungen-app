@@ -17,9 +17,4 @@ class Bestaetigung extends BestaetigungBase
     {
         return 'mail.technik.bestaetigung';
     }
-
-    protected function fromAddress(): string
-    {
-        return 'technik_anmeldungen@adfc-muenchen.de';
-    }
 }
