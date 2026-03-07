@@ -4,12 +4,13 @@ namespace App\Imports\Technik;
 
 use App\Imports\BuchungenImportBase;
 use App\Models\Technik\Buchung;
+use App\Models\Technik\Kurs;
 
 class BuchungenImport extends BuchungenImportBase
 {
-    protected function getBuchungModelClass(): string
+    public function __construct()
     {
-        return Buchung::class;
+        parent::__construct(Kurs::class, Buchung::class);
     }
 
     protected function transformRow(array $rowData)

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\BuchungenBase\Tables;
 
+use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
@@ -18,6 +19,7 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\Indicator;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Log;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -32,12 +34,59 @@ abstract class BuchungTableBase
 
     abstract protected static function getKursModelClass(): string;
 
+    protected static function nameColumn($useTermin): array
+    {
+        if ($useTermin) {
+            return [
+                TextColumn::make('termin.datum')
+                    ->label('Datum')
+                    ->date('D, d.m')
+                    ->sortable(),
+                TextColumn::make('uhrzeit')
+                    ->label('Uhrzeit')
+                    ->time('H:i')
+                    ->sortable()
+            ];
+        } else {
+            return [
+                TextColumn::make('kursnummer')
+                    ->label('Kursname')
+                    ->searchable()
+                    ->sortable()
+            ];
+        }
+    }
+
+
+    protected static function select($useTermin, $kursClass): Select
+    {
+        if ($useTermin) {
+            $options = $kursClass::whereNull('notiz')
+                ->pluck('datum', 'datum')
+                ->mapWithKeys(function ($datum) {
+                    return [$datum => Carbon::parse($datum)->translatedFormat('D, d.m')];
+                });
+            return
+                Select::make('termin.datum')
+                    ->label('Filtern nach Datum')
+                    ->placeholder('Wähle ein Datum')
+                    ->options($options);
+        } else {
+            return
+                Select::make('nummer')
+                    ->label('Filtern nach Kurs')
+                    ->placeholder('Wähle einen Kurs')
+                    ->options($kursClass::whereNull('notiz')->pluck('nummer', 'nummer')->toArray());
+        }
+    }
+
     public static function configure(Table $table): Table
     {
         $buchungClass = static::getBuchungModelClass();
         $exportClass = static::getBuchungenExportClass();
         $importClass = static::getBuchungenImportClass();
         $kursClass = static::getKursModelClass();
+        $useTermin = str_contains($kursClass, 'Termin');
 
         return $table
             ->striped()
@@ -50,10 +99,7 @@ abstract class BuchungTableBase
                     ->searchable()
                     ->sortable()
                     ->afterStateUpdated(fn() => $buchungClass::checkRestplätze()),
-                TextColumn::make('kursnummer')
-                    ->label('Kursname')
-                    ->searchable()
-                    ->sortable(),
+                ...static::nameColumn($useTermin),
                 TextColumn::make('email')
                     ->searchable()
                     ->sortable(),
@@ -119,10 +165,7 @@ abstract class BuchungTableBase
             ->filters([
                 Filter::make('kurs-filter')
                     ->schema([
-                        Select::make('nummer')
-                            ->label('Filtern nach Kurs')
-                            ->placeholder('Wähle einen Kurs')
-                            ->options($kursClass::whereNull('notiz')->pluck('nummer', 'nummer')->toArray()), // ->live(),
+                        static::select($useTermin, $kursClass), // ->live(),
                         Select::make('notiz')
                             ->label('Filtern nach Notiz')
                             ->placeholder('Wähle mit oder ohne Notiz')
@@ -131,10 +174,13 @@ abstract class BuchungTableBase
                     ->indicateUsing(
                         function (array $data): array {
                             $inds = [];
-                            if ($data['nummer']) {
+                            if (isset($data['termin']['datum'])) {
+                                $inds[] = Indicator::make('Datum')->removeField('datum');
+                            }
+                            if (isset($data['nummer'])) {
                                 $inds[] = Indicator::make('Kurs')->removeField('nummer');
                             }
-                            if ($data['notiz']) {
+                            if (isset($data['notiz'])) {
                                 $inds[] = Indicator::make('Notiz')->removeField('notiz');
                             }
 
@@ -142,11 +188,14 @@ abstract class BuchungTableBase
                         }
                     )
                     ->query(function (Builder $query, array $data): Builder {
-                        $nummer = $data['nummer'];
-                        $notiz = $data['notiz'];
-
+                        $datum = $data['termin']['datum'] ?? null;
+                        $nummer = $data['nummer'] ?? null;
+                        $notiz = $data['notiz'] ?? null;
                         return $query
                             ->when(
+                                $datum,
+                                fn($query) => $query->whereHas('termin', fn($q) => $q->where('datum', $datum))
+                            )->when(
                                 $nummer,
                                 fn($query) => $query->where('kursnummer', $nummer)
                             )->when(

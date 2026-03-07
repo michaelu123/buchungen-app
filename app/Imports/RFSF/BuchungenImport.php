@@ -4,11 +4,12 @@ namespace App\Imports\RFSF;
 
 use App\Imports\BuchungenImportBase;
 use App\Models\RFSF\Buchung;
+use App\Models\RFSF\Kurs;
 
 class BuchungenImport extends BuchungenImportBase
 {
-    protected function getBuchungModelClass(): string
+    public function __construct()
     {
-        return Buchung::class;
+        parent::__construct(Kurs::class, Buchung::class);
     }
 }

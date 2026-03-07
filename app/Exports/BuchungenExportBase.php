@@ -13,6 +13,7 @@ use Maatwebsite\Excel\Events\AfterSheet;
 class BuchungenExportBase implements FromCollection, WithMapping, WithHeadings, ShouldAutoSize, WithEvents
 {
   use Exportable;
+  protected bool $useTermin;
 
   /**
    * $kurs may be an instance of the specific Kurs model or null
@@ -20,6 +21,7 @@ class BuchungenExportBase implements FromCollection, WithMapping, WithHeadings, 
    */
   public function __construct(protected ?object $kurs, protected string $kursClass, protected string $buchungClass)
   {
+    $this->useTermin = str_contains($kursClass, 'Termin');
   }
 
   public function registerEvents(): array
@@ -41,7 +43,11 @@ class BuchungenExportBase implements FromCollection, WithMapping, WithHeadings, 
     }
 
     $buchungClass = $this->buchungClass;
-    return $buchungClass::all();
+    if ($this->useTermin) {
+      return $buchungClass::with("termin")->get();
+    } else {
+      return $buchungClass::all();
+    }
   }
 
   public function map($buchung): array

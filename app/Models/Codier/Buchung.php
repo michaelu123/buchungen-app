@@ -5,6 +5,7 @@ namespace App\Models\Codier;
 use App\Mail\Codier\Bestaetigung;
 use App\Models\BaseBuchung;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Throwable;
@@ -77,5 +78,11 @@ class Buchung extends BaseBuchung
         }
         static::notifySuccess('Bestätigung versendet');
     }
+
+    public function termin(): BelongsTo
+    {
+        return $this->belongsTo(static::$kursClass, 'termin_id', 'id');
+    }
+
 
 }

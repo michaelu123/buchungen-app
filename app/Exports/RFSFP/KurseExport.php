@@ -9,7 +9,7 @@ class KurseExport extends KurseExportBase
 {
     public function __construct()
     {
-        parent::__construct(Kurs::class);
+        parent::__construct(Kurs::class, false);
     }
 
     public function map($kurs): array

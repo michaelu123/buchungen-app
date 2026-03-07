@@ -10,9 +10,11 @@ use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 use Maatwebsite\Excel\Row;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
-abstract class BuchungenImportBase implements OnEachRow, SkipsEmptyRows, WithHeadingRow, WithMultipleSheets
+class BuchungenImportBase implements OnEachRow, SkipsEmptyRows, WithHeadingRow, WithMultipleSheets
 {
-    abstract protected function getBuchungModelClass(): string;
+    public function __construct(protected string $kursModelClass = '', protected string $buchungModelClass = '')
+    {
+    }
 
     public function sheets(): array
     {
@@ -29,6 +31,7 @@ abstract class BuchungenImportBase implements OnEachRow, SkipsEmptyRows, WithHea
     public function onRow(Row $row): void
     {
         $rowData = $row->toArray(null, false, false);
+        $useTermin = str_contains($this->kursModelClass, "Termin");
 
         try {
             if (isset($rowData["email"])) {
@@ -66,14 +69,27 @@ abstract class BuchungenImportBase implements OnEachRow, SkipsEmptyRows, WithHea
                 ];
             }
 
-            $modelClass = $this->getBuchungModelClass();
-            if (
-                $modelClass::where('created_at', $createdAt)
-                    ->where('email', $buchungData['email'])
-                    ->where('kursnummer', $buchungData['kursnummer'])
-                    ->first()
-            ) {
-                return;
+            $modelClass = $this->buchungModelClass;
+            if ($useTermin) {
+                if (
+                    $modelClass::where('created_at', $createdAt)
+                        ->where('email', $buchungData['email'])
+                        ->where('datum', $buchungData['datum'])
+                        ->first()
+                ) {
+                    return;
+                }
+                $kurs = $this->kursModelClass::where('datum', $buchungData['datum'])->where('beginn', $buchungData['beginn'])->first();
+                $buchungData['termin_id'] = $kurs->id;
+            } else {
+                if (
+                    $modelClass::where('created_at', $createdAt)
+                        ->where('email', $buchungData['email'])
+                        ->where('kursnummer', $buchungData['kursnummer'])
+                        ->first()
+                ) {
+                    return;
+                }
             }
 
             (new $modelClass($buchungData))->save();

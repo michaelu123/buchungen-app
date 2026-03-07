@@ -81,6 +81,7 @@ class AdminPanelProvider extends PanelProvider
                 'RFSF-Kurse',
                 'RFSFP-Kurse',
                 'Technik-Kurse',
+                'Codierungs-Termine',
             ]);
     }
 }

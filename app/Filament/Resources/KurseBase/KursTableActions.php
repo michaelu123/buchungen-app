@@ -72,6 +72,7 @@ class KursTableActions
                 DeleteBulkAction::make(),
             ]),
             Action::make('update')
+                ->hidden(str_contains($this->kurseExportClass, "Termin"))
                 ->label('Update Restplätze')
                 ->tableIcon(Heroicon::OutlinedArrowPath)
                 ->action(function (): void {

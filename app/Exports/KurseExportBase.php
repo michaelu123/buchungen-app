@@ -17,7 +17,7 @@ class KurseExportBase implements FromCollection, WithHeadings, ShouldAutoSize, W
   /**
    * $kursClass is the fully-qualified class name for models
    */
-  public function __construct(protected string $kursClass)
+  public function __construct(protected string $kursClass, protected bool $useTermin)
   {
   }
 
@@ -25,7 +25,7 @@ class KurseExportBase implements FromCollection, WithHeadings, ShouldAutoSize, W
   {
     return [
       AfterSheet::class => function (AfterSheet $event): void {
-        $event->sheet->getDelegate()->setTitle('Kurse');
+        $event->sheet->getDelegate()->setTitle($this->useTermin ? 'Termine' : 'Kurse');
       },
     ];
   }

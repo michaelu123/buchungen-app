@@ -17,17 +17,28 @@ abstract class KurseImportBase implements OnEachRow, SkipsEmptyRows, WithHeading
 
     public function sheets(): array
     {
-        return [
-            'Kurse' => new static,
-        ];
+        if (str_contains(static::class, "Termin")) {
+            return [
+                'Termine' => new static,
+            ];
+
+        } else {
+            return [
+                'Kurse' => new static,
+            ];
+
+        }
     }
 
     public function onRow(Row $row): void
     {
         $rowData = $row->toArray(null, false, false);
+        $useTermin = str_contains(static::class, "Termin");
 
         try {
-            if (isset($rowData["nummer"])) {
+            if ($useTermin) {
+                $kursData = $rowData;
+            } else if (isset($rowData["nummer"])) {
                 $kursData = $rowData;
                 $kursData['kursplätze'] = $kursData["kursplatze"];
                 $kursData['restplätze'] = $kursData["restplatze"];
@@ -42,11 +53,14 @@ abstract class KurseImportBase implements OnEachRow, SkipsEmptyRows, WithHeading
                 $kursData = $this->getKursData($rowData, $note);
             }
             $modelClass = $this->getKursModelClass();
-            if (
-                $modelClass::where('nummer', $kursData['nummer'])
-                    ->first()
-            ) {
-                return;
+            if ($useTermin) {
+                if ($modelClass::where('datum', $kursData['datum'])->where('beginn', $kursData['beginn'])->first()) {
+                    return;
+                }
+            } else {
+                if ($modelClass::where('nummer', $kursData['nummer'])->first()) {
+                    return;
+                }
             }
             (new $modelClass($kursData))->save();
         } catch (\Throwable $t) {
