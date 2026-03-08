@@ -135,9 +135,12 @@ php artisan view:cache
 php artisan log:clear
 php artisan cache:clear
 
+npm run build
+
 copy to server:
 artisan
-composer.json
+composer.json, composer.lock
+env.strato
 app/*
 bootstrap/*
 config/*
@@ -146,7 +149,9 @@ public/*  außer hot!
 resources/*
 routes/*
 storage/ app, framework
-vendor/* vielleicht eher composer install aufrufen
+vendor/* alles dauert 1h. Nur die Änderungen, diff composer.lock? 
+für PHP 8.2:  vendor/composer/platform_check  von 804 auf 802, 
+              vendor\azjezz\psl\src\Psl\Internal\Loader82.php nach Loader.php kopieren
 
 
 on server:

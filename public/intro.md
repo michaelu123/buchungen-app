@@ -7,8 +7,8 @@ Was verloren geht, ist die Fähigkeit, leicht neue Spalten einzuführen. Was fr�
 ## URL, Login, Rollen
 
 Die URL ist https://buchungen.adfc-muenchen.de für eine Übersicht aller Anmeldeformulare,
-https://buchungen.adfc-muenchen.de/rfsabuchung (bzw. rfsf, rfsfp, tk) für das jeweilige Formular für Anfänger, Fahrsicherheitstraining, Fahrpraxis der RFS und für Technikkurse. Diese URLS verlangen keine Anmeldung.
-Die Administration der Buchungen erfolgt über die URL https://buchungen.adfc-muenchen.de/admin. Hier wird eine Anmeldung verlangt. Für die Testphase habe ich die Benutzer admin@admin.com, rfs@admin.com, rfsa@admin.com, rfsf@admin.com, rfsfp@admin.com, tk@admin.com eingerichtet. Diese haben jeweils die Benutzerrollen ADMIN, RFS, RFSA, RFSF, RFSFP, TK. Die Rolle ADMIN darf alles bearbeiten, RFSA, RFSF, RFSFP nur die jeweiligen Anmeldungen, und RFS alle 3. Im Regelbetrieb würdet Ihr Euch mit Eurer ADFC-Email-Adresse anmelden, und bekämt die passende Rolle zugewiesen.
+https://buchungen.adfc-muenchen.de/rfsabuchung (bzw. rfsf, rfsfp, tk, codier) für das jeweilige Formular für Anfänger, Fahrsicherheitstraining, Fahrpraxis der RFS, Technikkurse und Codiertermine. Diese URLS verlangen keine Anmeldung.
+Die Administration der Buchungen erfolgt über die URL https://buchungen.adfc-muenchen.de/admin. Hier wird eine Anmeldung verlangt. Für die Testphase habe ich die Benutzer admin@admin.com, rfs@admin.com, rfsa@admin.com, rfsf@admin.com, rfsfp@admin.com, tk@admin.com, codier@admin.com eingerichtet. Diese haben jeweils die Benutzerrollen ADMIN, RFS, RFSA, RFSF, RFSFP, TK, CODIER. Die Rolle ADMIN darf alles bearbeiten, RFSA, RFSF, RFSFP nur die jeweiligen Anmeldungen, und RFS alle 3. Im Regelbetrieb würdet Ihr Euch mit Eurer ADFC-Email-Adresse anmelden, und bekämt die passende Rolle zugewiesen.
 Das Passwort bei allen Benutzern ist xxxx1234. Probiert es aus, was sich ändert, wenn Ihr Euch mit unterschiedlichen Email-Adressen anmeldet.
 
 ## Notiz
@@ -29,13 +29,17 @@ Zwischen Kursen und Buchungen ist in der Datenbank festgelegt, daß eine Buchung
 - man kann Buchungen nur für existierende Kurse anlegen.
 - das Löschen eines Kurses bewirkt das Löschen aller Buchungen für diesen Kurs! Wenn man den Kurs und die dazugehörigen Buchungen noch sehen will, kann man den Kurs stattdessen mit einer Notiz versehen.
 
+## Termine, Buchungen
+
+Für die Codiertermine wird in Codierungs-Termine ein Datum, eine Beginn- und eine Ende-Uhrzeit eingerichtet. Im Formular werden dann im 10-Minuten-Abstand bis 1/2 Stunde vor Ende Termine angeboten. Die Buchung bezieht sich dann auf das Datum und den ausgewählten Termin. Es ist nicht möglich, daß zwei Teilnehmer denselben Termin buchen. Sind für ein Datum alle Termine gebucht, wird das Datum nicht mehr im Formular angeboten. Gibt es an keinem Datum freie Termine, steht eine entsprechende Meldung im Formular.
+
 ## IBAN
 
 Ein Anmelder muß im Formular eine IBAN eingeben. Danach lässt sich die IBAN auf Aktive/Aktiver ändern, was bewirkt, daß die Buchung gültig bleibt, aber nichts abgebucht wird.
 
 ## Excel-Exporte
 
-Für Kurse bedeutet "Excel Export" oberhalb der Tabelle den Export aller Kurse. Am Ende jeder Zeile gibt es unter Aktionen den Menüpunkt Excel, mit dem eine Tabelle **aller Buchungen** für diesen Kurs erstellt wird.
+Für Kurse/Termine bedeutet "Excel Export" oberhalb der Tabelle den Export aller Kurse/Termine. Am Ende jeder Zeile gibt es unter Aktionen den Menüpunkt Excel, mit dem eine Tabelle **aller Buchungen** für diesen Kurs/Termin erstellt wird.
 Für Buchungen bedeutet "Excel Export" oberhalb der Tabelle den Export aller Buchungen.
 
 ## Excel-Importe
@@ -43,6 +47,8 @@ Für Buchungen bedeutet "Excel Export" oberhalb der Tabelle den Export aller Buc
 Man kann eine Google-Backend-Tabelle als Excel-Datei downloaden. Diese kann man hier importieren, erst die Kurse, dann die Buchungen, mit der gleichen Excel-Datei, in der die Tabellenblätter Buchungen und Kurse vorkommen müssen. Wenn Ihr das tut, solltet ihr die importierten Dateien aus Datenschutzgründen schnell wieder löschen. Während der Testphase kann sich ja jeder als admin einloggen und alle Daten sehen. Die Beispieldaten der Kurse und Buchungen enthalten jeweils 10 Kurse und 100 Buchungen mit Fake-Daten, die Ihr beliebig ändern und löschen könnt.
 
 Weiters lassen sich alle mit Excel Export exportierten Daten wieder importieren. Wenn die Import-Daten schon in der DB enthalten sind, werden sie übersprungen. Damit können Exporte auch als Backup-Daten benutzt werden.
+
+Für Termine gibt es keine Google-Importe. Man kann aber mit Excel Export exportierte Tabellen wieder mit Excel Import importieren. Erst die Termine, dann die Buchungen.
 
 ## Aktionen bei Buchungen
 
@@ -60,6 +66,13 @@ Am Ende jeder Tabellenzeile stehen die möglichen Aktionen.
 - Edit, Delete s.o.
 - Excel: Tabelle aller Buchungen für diesen Kurs.
 - Ebics: Damit werden die Abbuchungen für diesen Kurs erstellt (und ein anderes Programm ebics3 überflüssig).
+
+## Aktionen bei Terminen
+
+Am Ende jeder Tabellenzeile stehen die möglichen Aktionen.
+
+- Edit, Delete s.o.
+- Excel: Tabelle aller Buchungen für diesen Termin.
 
 ## Englisch
 

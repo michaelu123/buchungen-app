@@ -34,7 +34,8 @@ new class extends Component implements HasSchemas {
         $dtBeginn = new \DateTime("2000-01-01 " . $beginn);
         $min10 = new \DateInterval("PT10M");
         $min30 = new \DateInterval("PT30M");
-        $dtEnde = new \DateTime("2000-01-01 " . $ende)->sub($min30);
+        $dtEnde = new \DateTime("2000-01-01 " . $ende);
+        $dtEnde = $dtEnde->sub($min30);
         $frei = [];
         for ($dt = $dtBeginn; $dt <= $dtEnde; $dt = $dt->add($min10)) {
             $uhrZeit = $dt->format("H:i");
