@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\KurseBase;
 
+use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
@@ -33,11 +34,12 @@ class KursTableActions
             ActionGroup::make([
                 EditAction::make(),
                 DeleteAction::make(),
-                Action::make('export')
+                Action::make('exportRecord')
                     ->label('Excel')
                     ->icon(Heroicon::OutlinedDocumentArrowDown)
                     ->action(function (Model $kurs): BinaryFileResponse {
-                        return Excel::download(new $this->buchungenExportClass($kurs), $kurs->nummer . '.xlsx');
+                        $name = isset($kurs->nummer) ? $kurs->nummer : Carbon::parse($kurs->datum)->translatedFormat('Y-m-d');
+                        return Excel::download(new $this->buchungenExportClass($kurs), $name . '.xlsx');
                     }),
                 Action::make('ebics')
                     ->label('EBICS')
@@ -78,7 +80,7 @@ class KursTableActions
                 ->action(function (): void {
                     $this->buchungClass::checkRestPlätze();                      // do nothing, just redirect to the create page
                 }),
-            Action::make('export')
+            Action::make('exportToolbar')
                 ->Label('Excel Export')
                 ->tableIcon(Heroicon::OutlinedDocumentArrowDown)
                 ->action(function (): BinaryFileResponse {

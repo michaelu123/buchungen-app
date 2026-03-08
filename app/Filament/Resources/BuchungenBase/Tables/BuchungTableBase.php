@@ -80,6 +80,38 @@ abstract class BuchungTableBase
         }
     }
 
+    public static function kontoFelder($buchungClass): array
+    {
+        if (!$buchungClass::$requireAbbuchung)
+            return [];
+        return [
+            TextColumn::make('kontoinhaber')
+                ->searchable(),
+            TextColumn::make('iban'),
+            IconColumn::make('lastschriftok')
+                ->label('Lastschrift genehmigt')
+                ->boolean(),
+            TextColumn::make('eingezogen')
+                ->datetime('d.m.Y H:i:s')
+                ->sortable(),
+            TextColumn::make('betrag')
+                ->numeric()
+                ->sortable(),
+        ];
+    }
+
+    public static function verifyFeld($buchungClass): array
+    {
+        if (!$buchungClass::$requireEmailVerification)
+            return [];
+        return [
+            TextColumn::make('verified')
+                ->label('Email verifiziert')
+                ->datetime('d.m.Y H:i:s')
+                ->sortable(),
+        ];
+    }
+
     public static function configure(Table $table): Table
     {
         $buchungClass = static::getBuchungModelClass();
@@ -126,25 +158,11 @@ abstract class BuchungTableBase
                 TextColumn::make('telefonnr')
                     ->label('Telefon')
                     ->searchable(),
-                TextColumn::make('kontoinhaber')
-                    ->searchable(),
-                TextColumn::make('iban'),
-                IconColumn::make('lastschriftok')
-                    ->label('Lastschrift genehmigt')
-                    ->boolean(),
-                TextColumn::make('verified')
-                    ->label('Email verifiziert')
-                    ->datetime('d.m.Y H:i:s')
-                    ->sortable(),
+                ...static::kontoFelder($buchungClass),
+                ...static::verifyFeld($buchungClass),
                 TextColumn::make('anmeldebestätigung')
                     ->label('Ab versendet')
                     ->datetime('d.m.Y H:i:s')
-                    ->sortable(),
-                TextColumn::make('eingezogen')
-                    ->datetime('d.m.Y H:i:s')
-                    ->sortable(),
-                TextColumn::make('betrag')
-                    ->numeric()
                     ->sortable(),
                 TextColumn::make('kommentar')
                     ->searchable()
@@ -154,7 +172,6 @@ abstract class BuchungTableBase
                         if (\strlen($state) <= $column->getCharacterLimit()) {
                             return null;
                         }
-
                         return $state;
                     }),
                 TextColumn::make('updated_at')
@@ -221,7 +238,7 @@ abstract class BuchungTableBase
                     Action::make('Bestätigung senden')
                         ->disabled(
                             fn($record) => filled($record['notiz'])
-                            || !filled($record['verified'])
+                            || $buchungClass::$requireEmailVerification && !filled($record['verified'])
                             || filled($record['anmeldebestätigung'])
                             || !str_ends_with($record->email, "@adfc-muenchen.de") // TODO
                         )

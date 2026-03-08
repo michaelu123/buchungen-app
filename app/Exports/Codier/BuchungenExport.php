@@ -30,6 +30,7 @@ class BuchungenExport extends BuchungenExportBase
             $buchung->ort,
             $buchung->strasse_nr,
             $buchung->telefonnr,
+            $buchung->anmeldebestätigung,
             $buchung->kommentar,
         ];
     }
@@ -51,6 +52,7 @@ class BuchungenExport extends BuchungenExportBase
             'Ort',
             'Strasse_Nr',
             'Telefonnr',
+            'Anmeldebestätigung',
             'Kommentar',
         ];
     }

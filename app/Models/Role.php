@@ -17,6 +17,7 @@ class Role extends Model
         'RFSF' => 'RFSF',
         'RFSFP' => 'RFSFP',
         'Technik' => 'TK',
+        'Codier' => 'CODIER',
     ];
 
     public function users()

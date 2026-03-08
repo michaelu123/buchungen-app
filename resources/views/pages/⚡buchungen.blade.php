@@ -28,6 +28,7 @@ new class extends Component {
                 <a href="{{  route('rfsfbuchung')}}">Radfahrschule Fahrsicherheitstraining</a>
                 <a href="{{  route('rfsfpbuchung')}}">Radfahrschule Fahrpraxis-Kurse</a>
                 <a href=" {{  route('tkbuchung')}}">Technik-Kurse</a>
+                <a href=" {{  route('codierbuchung')}}">Codierungs-Termine</a>
             </div>
             <p class="mb-10">
                 Sie finden die Kurse auch in unserem

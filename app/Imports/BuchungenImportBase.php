@@ -65,6 +65,7 @@ class BuchungenImportBase implements OnEachRow, SkipsEmptyRows, WithHeadingRow, 
                     'verified' => $this->fromExcelDateTime($rowData['verifikation']),
                     'eingezogen' => $rowData['eingezogen'],
                     'betrag' => $rowData['zahlungsbetrag'],
+                    'anmeldebestätigung' => $rowData['anmeldebestätigung'],
                     'kommentar' => $rowData['kommentar'],
                 ];
             }
