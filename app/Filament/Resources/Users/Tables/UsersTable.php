@@ -45,9 +45,10 @@ class UsersTable
             ])
             ->filters([
                 SelectFilter::make("role")
+                    ->label("Rolle")
                     ->relationship("roles", "name")
                     ->preload()
-                    ->placeholder(placeholder: "Filter By Role"),
+                    ->placeholder(placeholder: "Nach Rolle filtern"),
             ])
             ->deferFilters(false)
             ->recordActions([

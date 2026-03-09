@@ -60,7 +60,7 @@ new class extends Component implements HasSchemas {
             ->whereNull("notiz")
             ->get()
             ->map(function (Termin $termin): array {
-                $reserviert = $termin->buchungen()->get()->map(fn($b) => $b->uhrzeit)->toArray();
+                $reserviert = $termin->buchungen()->get()->map(fn($b) => substr($b->uhrzeit, 0, 5))->toArray();
                 $frei = $this->nochFrei($termin->beginn, $termin->ende, $reserviert);
                 return [
                     "id" => $termin->id,
@@ -103,6 +103,7 @@ new class extends Component implements HasSchemas {
                     ])
                     ->label("Uhrzeit"),
                 Select::make('anrede')
+                    ->placeholder('Wählen Sie eine Anrede')
                     ->options(["Herr" => "Herr", "Frau" => "Frau", "" => "Keine Angabe"]),
                 TextInput::make('vorname')
                     ->required(),

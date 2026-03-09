@@ -159,10 +159,13 @@ on server:
 APP_ENV=production ?? aktuell noch local
 APP_DEBUG=false
 
-php artisan log:clear
-php artisan cache:clear
-php artisan config:clear
-php artisan config:cache
+# php artisan log:clear
+# php artisan config:cache
+# php artisan route:cache
+# php artisan view:cache  these done by optimize below
+php artisan optimize   
+php artisan filament:optimize
+
 
 php artisan db:seed RFSASeeder
 php artisan db:seed RFSFSeeder

@@ -51,6 +51,7 @@ new class extends Component implements HasSchemas {
                     )
                     ->required(),
                 Select::make('anrede')
+                    ->placeholder('Wählen Sie eine Anrede')
                     ->options(["Herr" => "Herr", "Frau" => "Frau", "" => "Keine Angabe"]),
                 TextInput::make('vorname')
                     ->required(),

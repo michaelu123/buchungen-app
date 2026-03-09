@@ -95,7 +95,7 @@ abstract class BuchungTableBase
                 ->datetime('d.m.Y H:i:s')
                 ->sortable(),
             TextColumn::make('betrag')
-                ->numeric()
+                ->numeric(thousandsSeparator: "")
                 ->sortable(),
         ];
     }
@@ -144,7 +144,7 @@ abstract class BuchungTableBase
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('postleitzahl')
-                    ->numeric()
+                    ->numeric(thousandsSeparator: "")
                     ->sortable(),
                 TextColumn::make('ort')
                     ->searchable()
@@ -153,7 +153,7 @@ abstract class BuchungTableBase
                     ->label('Straße und Hausnummer')
                     ->searchable(),
                 TextColumn::make('mitgliedsnummer')
-                    ->numeric()
+                    ->numeric(thousandsSeparator: "")
                     ->sortable(),
                 TextColumn::make('telefonnr')
                     ->label('Telefon')

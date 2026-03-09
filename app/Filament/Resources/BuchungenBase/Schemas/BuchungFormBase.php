@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\BuchungenBase\Schemas;
 
+use Carbon\Carbon;
 use Closure;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
@@ -16,18 +17,40 @@ abstract class BuchungFormBase
 
     abstract protected static function getKursModelClass(): string;
 
+    protected static function select($kursClass): Select
+    {
+        $useTermin = str_contains($kursClass, 'Termin');
+        if ($useTermin) {
+            $termine = $kursClass::whereNull('notiz')
+                ->pluck('datum', 'datum')
+                ->mapWithKeys(function ($datum) {
+                    return [$datum => Carbon::parse($datum)->translatedFormat('D, d.m')];
+                });
+            return Select::make('datum')
+                ->label('Termin')
+                ->placeholder('Wähle einen Termin')
+                ->options($termine)
+                ->required();
+        } else {
+            $kurse = $kursClass::whereNull('notiz')
+                ->where('restplätze', '>', 0)
+                ->get()
+                ->mapWithKeys(function ($kurs): array {
+                    return [$kurs->nummer => $kurs->kursDetails()];
+                })
+                ->all();
+            return Select::make('kursnummer')
+                ->label('Kursname')
+                ->placeholder('Wähle einen Kurs')
+                ->options($kurse)
+                ->required();
+        }
+    }
+
     public static function configure(Schema $schema): Schema
     {
         $buchungClass = static::getBuchungModelClass();
         $kursClass = static::getKursModelClass();
-
-        $kurse = $kursClass::whereNull('notiz')
-            ->where('restplätze', '>', 0)
-            ->get()
-            ->mapWithKeys(function ($kurs): array {
-                return [$kurs->nummer => $kurs->kursDetails()];
-            })
-            ->all();
 
         return $schema
             ->components([
@@ -37,11 +60,9 @@ abstract class BuchungFormBase
                     ->required(),
                 TextInput::make('mitgliedsnummer')
                     ->rules('digits:8'),
-                Select::make('kursnummer')
-                    ->label('Kursname')
-                    ->options($kurse)
-                    ->required(),
+                static::select($kursClass),
                 Select::make('anrede')
+                    ->placeholder('Wähle eine Anrede')
                     ->options(['Herr' => 'Herr', 'Frau' => 'Frau', '' => 'Keine Angabe']),
                 TextInput::make('vorname')
                     ->required(),
