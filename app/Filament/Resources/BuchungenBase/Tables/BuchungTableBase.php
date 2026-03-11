@@ -63,7 +63,7 @@ abstract class BuchungTableBase
         if ($useTermin) {
             $options = $kursClass::whereNull('notiz')
                 ->pluck('datum', 'datum')
-                ->mapWithKeys(function ($datum) {
+                ->mapWithKeys(function (\DateTimeInterface|\Carbon\WeekDay|\Carbon\Month|string|int|float|null $datum): array {
                     return [$datum => Carbon::parse($datum)->translatedFormat('D, d.m')];
                 });
             return
@@ -82,8 +82,9 @@ abstract class BuchungTableBase
 
     public static function kontoFelder($buchungClass): array
     {
-        if (!$buchungClass::$requireAbbuchung)
+        if (!$buchungClass::$requireAbbuchung) {
             return [];
+        }
         return [
             TextColumn::make('kontoinhaber')
                 ->searchable(),
@@ -102,8 +103,9 @@ abstract class BuchungTableBase
 
     public static function verifyFeld($buchungClass): array
     {
-        if (!$buchungClass::$requireEmailVerification)
+        if (!$buchungClass::$requireEmailVerification) {
             return [];
+        }
         return [
             TextColumn::make('verified')
                 ->label('Email verifiziert')
@@ -230,14 +232,14 @@ abstract class BuchungTableBase
                         $buchungClass::checkRestplätze();
                     }),
                     Action::make('Prüfen')
-                        ->disabled(fn($record) => filled($record['notiz']))
+                        ->disabled(fn($record): bool => filled($record['notiz']))
                         ->icon(Heroicon::OutlinedCheckCircle)
                         ->action(function ($record): void {
                             $record->check();
                         }),
                     Action::make('Bestätigung senden')
                         ->disabled(
-                            fn($record) => filled($record['notiz'])
+                            fn($record): bool => filled($record['notiz'])
                             || $buchungClass::$requireEmailVerification && !filled($record['verified'])
                             || filled($record['anmeldebestätigung'])
                             || !str_ends_with($record->email, "@adfc-muenchen.de") // TODO
@@ -276,7 +278,7 @@ abstract class BuchungTableBase
                                 '.xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                             ]),
                     ])
-                    ->action(function ($data) use ($importClass): \Maatwebsite\Excel\Excel {
+                    ->action(function (array $data) use ($importClass): \Maatwebsite\Excel\Excel {
                         /** @var TemporaryUploadedFile $tuf */
                         $tuf = $data['xlsx'];
                         $path = $tuf->getRealPath();

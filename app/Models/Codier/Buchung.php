@@ -66,8 +66,9 @@ class Buchung extends BaseBuchung
             static::notifyWarning('Buchung hat eine Notiz');
             return;
         }
-        if (!str_ends_with($this->email, "@adfc-muenchen.de"))
-            return; // TODO 
+        if (!str_ends_with($this->email, "@adfc-muenchen.de")) {
+            return;
+        } // TODO 
         $termin = Termin::find($this->termin_id);
         try {
             Mail::to($this->email)->send(new Bestaetigung($termin, $this));

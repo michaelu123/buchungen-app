@@ -13,7 +13,7 @@ class BuchungenImport extends BuchungenImportBase
         parent::__construct(Kurs::class, Buchung::class);
     }
 
-    protected function transformRow(array $rowData)
+    protected function transformRow(array $rowData): array
     {
         $kursnummer = $rowData["welche_kurse_mochtest_du_belegen"];
         $x = strpos($kursnummer, ':');

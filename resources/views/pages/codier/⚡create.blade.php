@@ -29,7 +29,7 @@ new class extends Component implements HasSchemas {
         $this->form->fill();
     }
 
-    private function nochFrei($beginn, $ende, array $reserviert): array
+    private function nochFrei(string $beginn, string $ende, array $reserviert): array
     {
         $dtBeginn = new \DateTime("2000-01-01 " . $beginn);
         $min10 = new \DateInterval("PT10M");
@@ -48,9 +48,10 @@ new class extends Component implements HasSchemas {
 
     private function uhrzeiten($termin_id, Collection $termine): array
     {
-        if ($termin_id == null)
+        if ($termin_id == null) {
             return [];
-        $frei = $termine->filter(fn($t) => $t["id"] == $termin_id);
+        }
+        $frei = $termine->filter(fn($t): bool => $t["id"] == $termin_id);
         return $frei->first()["frei"];
     }
 
@@ -60,7 +61,7 @@ new class extends Component implements HasSchemas {
             ->whereNull("notiz")
             ->get()
             ->map(function (Termin $termin): array {
-                $reserviert = $termin->buchungen()->get()->map(fn($b) => substr($b->uhrzeit, 0, 5))->toArray();
+                $reserviert = $termin->buchungen()->get()->map(fn($b): string => substr($b->uhrzeit, 0, 5))->toArray();
                 $frei = $this->nochFrei($termin->beginn, $termin->ende, $reserviert);
                 return [
                     "id" => $termin->id,
@@ -71,16 +72,16 @@ new class extends Component implements HasSchemas {
                     "frei" => $frei,
                 ];
             })
-            ->reject(fn($t) => empty($t["frei"]));
+            ->reject(fn($t): bool => empty($t["frei"]));
         $termine = new Collection($termine);
-        $termineOptions = $termine->mapWithKeys(function (array $t) {
+        $termineOptions = $termine->mapWithKeys(function (array $t): array {
             return [$t["id"] => Carbon::parse($t["datum"])->translatedFormat('D, d.m.y') . " von " . $t["beginn"] . " bis " . $t["ende"]];
         });
         return $schema
             ->components([
                 Radio::make("termin_id")
                     ->label("Termin")
-                    ->belowLabel(fn()
+                    ->belowLabel(fn(): string
                         => $termine->isEmpty()
                         ? "Leider gibt es aktuell keine freien Termine!"
                         : "Ich möchte mich für folgenden Termin anmelden:")
@@ -91,7 +92,7 @@ new class extends Component implements HasSchemas {
                 Radio::make("uhrzeit")
                     ->inline()
                     ->required()
-                    ->options(fn(Get $get) => $this->uhrzeiten($get('termin_id'), $termine))
+                    ->options(fn(Get $get): array => $this->uhrzeiten($get('termin_id'), $termine))
                     ->unique(
                         Buchung::class,
                         'uhrzeit',

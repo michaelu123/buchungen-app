@@ -38,7 +38,7 @@ abstract class KurseImportBase implements OnEachRow, SkipsEmptyRows, WithHeading
         try {
             if ($useTermin) {
                 $kursData = $rowData;
-            } else if (isset($rowData["nummer"])) {
+            } elseif (isset($rowData["nummer"])) {
                 $kursData = $rowData;
                 $kursData['kursplätze'] = $kursData["kursplatze"];
                 $kursData['restplätze'] = $kursData["restplatze"];
@@ -57,10 +57,8 @@ abstract class KurseImportBase implements OnEachRow, SkipsEmptyRows, WithHeading
                 if ($modelClass::where('datum', $kursData['datum'])->where('beginn', $kursData['beginn'])->first()) {
                     return;
                 }
-            } else {
-                if ($modelClass::where('nummer', $kursData['nummer'])->first()) {
-                    return;
-                }
+            } elseif ($modelClass::where('nummer', $kursData['nummer'])->first()) {
+                return;
             }
             (new $modelClass($kursData))->save();
         } catch (\Throwable $t) {

@@ -10,7 +10,6 @@ use Filament\Actions\EditAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\BulkActionGroup;
-use App\Models\User;
 
 
 
@@ -18,9 +17,6 @@ class UsersTable
 {
     public static function configure(Table $table): Table
     {
-        /** @var User $user */
-        $user = Auth::user();
-
         return $table
             ->columns([
                 TextColumn::make('name')

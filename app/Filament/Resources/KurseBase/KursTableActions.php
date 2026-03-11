@@ -57,7 +57,7 @@ class KursTableActions
                         Toggle::make('einzug')->label('Einzug vermerken?')->default(false)->inlineLabel()->autofocus(),
                     ])
                     ->action(function (array $data, Model $kurs) {
-                        return response()->streamDownload(function () use ($kurs, $data) {
+                        return response()->streamDownload(function () use ($kurs, $data): void {
                             echo $this->createEbics($kurs, $data['einzug']);
                         }, $kurs->nummer . '_ebics.xml', ['Content-type' => 'application/xml']);
                     }),
@@ -103,7 +103,7 @@ class KursTableActions
                             '.xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                         ]),
                 ])
-                ->action(function ($data): \Maatwebsite\Excel\Excel {
+                ->action(function (array $data): \Maatwebsite\Excel\Excel {
                     /** @var TemporaryUploadedFile $tuf */
                     $tuf = $data['xlsx'];
                     $path = $tuf->getRealPath();
@@ -150,7 +150,8 @@ class KursTableActions
             $now = now();
             $buchungenList = $list["buchungenList"];
             $buchungenData = $list["buchungenData"];
-            for ($i = 0; $i < count($buchungenList); $i++) {
+            $counter = count($buchungenList);
+            for ($i = 0; $i < $counter; $i++) {
                 $buchung = $buchungenList[$i];
                 $data = $buchungenData[$i];
                 $buchung->update(['eingezogen' => $now, 'betrag' => $data['betrag']]);
@@ -192,7 +193,7 @@ class KursTableActions
 
     protected function convertToIsoDate(string $ts): string // 06.03.2022 17:28:38 -> 2022-03-06
     {
-        if ($ts[2] == '.' and $ts[5] == '.') {
+        if ($ts[2] == '.' && $ts[5] == '.') {
             return substr($ts, 6, 4) + '-' + substr($ts, 3, 2) + '-' + substr($ts, 0, 2);
         }
         if ($ts[4] == '-' && $ts[7] == '-') {
@@ -282,8 +283,9 @@ class KursTableActions
         $buchungen = $kurs->buchungen()->whereNull("notiz")->whereNotNull("lastschriftok")->whereNotNull("verified")->whereNull("eingezogen")->get();
         foreach ($buchungen as $buchung) {
             $normalizedIban = strtoupper(str_replace(' ', '', $buchung->iban));
-            if (str_starts_with($normalizedIban, "AKTIV"))
+            if (str_starts_with($normalizedIban, "AKTIV")) {
                 continue;
+            }
             $betrag = $buchung->mitgliedsnummer ? $ebicsData["mitgliederpreis"] : $ebicsData["nichtmitgliederpreis"];
             $sum += $betrag;
             $cnt++;
@@ -346,11 +348,10 @@ class KursTableActions
     protected XmlWriter $xmlWriter;
 
     // protected array $xmlt;
-    protected function createXml(Model $kurs, $list)
+    protected function createXml(Model $kurs, array $list): string
     {
         $sum = $list["sum"];
         $cnt = $list["cnt"];
-        $buchungenList = $list["buchungenList"];
         $buchungenData = $list["buchungenData"];
 
         $this->xmlReader = XmlReader::fromString($this->xmlsAbbuchung);
@@ -378,7 +379,7 @@ class KursTableActions
             }
         }
         $newDrcts = $this->fillinBuchungen($template, $buchungenData);
-        if (!empty($newDrcts)) {
+        if ($newDrcts !== []) {
             // attach the new DrctDbtTxInf array to the PmtInf content
             $pmtContent['DrctDbtTxInf'] = $newDrcts;
         }
@@ -392,7 +393,7 @@ class KursTableActions
         return $xmlString;
     }
 
-    private $xmlsAbbuchung = <<<'EOF'
+    private string $xmlsAbbuchung = <<<'EOF'
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.008.001.02" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:iso:std:iso:20022:tech:xsd:pain.008.001.02 pain.008.001.02.xsd">
     <CstmrDrctDbtInitn>

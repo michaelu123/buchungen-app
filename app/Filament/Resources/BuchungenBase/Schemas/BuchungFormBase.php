@@ -23,7 +23,7 @@ abstract class BuchungFormBase
         if ($useTermin) {
             $termine = $kursClass::whereNull('notiz')
                 ->pluck('datum', 'datum')
-                ->mapWithKeys(function ($datum) {
+                ->mapWithKeys(function (\DateTimeInterface|\Carbon\WeekDay|\Carbon\Month|string|int|float|null $datum): array {
                     return [$datum => Carbon::parse($datum)->translatedFormat('D, d.m')];
                 });
             return Select::make('datum')

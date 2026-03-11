@@ -23,7 +23,7 @@ class BuchungenImportBase implements OnEachRow, SkipsEmptyRows, WithHeadingRow, 
         ];
     }
 
-    protected function transformRow(array $rowData)
+    protected function transformRow(array $rowData): array
     {
         return $rowData;
     }
@@ -82,15 +82,13 @@ class BuchungenImportBase implements OnEachRow, SkipsEmptyRows, WithHeadingRow, 
                 }
                 $kurs = $this->kursModelClass::where('datum', $buchungData['datum'])->where('beginn', $buchungData['beginn'])->first();
                 $buchungData['termin_id'] = $kurs->id;
-            } else {
-                if (
-                    $modelClass::where('created_at', $createdAt)
-                        ->where('email', $buchungData['email'])
-                        ->where('kursnummer', $buchungData['kursnummer'])
-                        ->first()
-                ) {
-                    return;
-                }
+            } elseif (
+                $modelClass::where('created_at', $createdAt)
+                    ->where('email', $buchungData['email'])
+                    ->where('kursnummer', $buchungData['kursnummer'])
+                    ->first()
+            ) {
+                return;
             }
 
             (new $modelClass($buchungData))->save();
