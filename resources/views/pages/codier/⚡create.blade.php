@@ -73,7 +73,6 @@ new class extends Component implements HasSchemas {
                 ];
             })
             ->reject(fn($t): bool => empty($t["frei"]));
-        $termine = new Collection($termine);
         $termineOptions = $termine->mapWithKeys(function (array $t): array {
             return [$t["id"] => Carbon::parse($t["datum"])->translatedFormat('D, d.m.y') . " von " . $t["beginn"] . " bis " . $t["ende"]];
         });

@@ -59,16 +59,18 @@ class BaseBuchung extends Model
         $buchung = $buchungClass::create($data);
 
         $kursnummer = $data['kursnummer'];
-        $buchungenCount = $buchungClass::where('kursnummer', $kursnummer)
-            ->whereNull('notiz')->count();
-        $kurs = static::$kursClass::where('nummer', $kursnummer)->first();
-        if ($kurs && $kurs->restplätze > 0) {
-            $kurs->restplätze = $kurs->kursplätze - $buchungenCount - 1;
-        }
-        if ($kurs->restplätze < 0) {
-            throw new \Exception('Keine verfügbaren Plätze für diesen Kurs.');
-        }
-        $kurs->save();
+        DB::transaction(function () use ($buchungClass, $kursnummer) {
+            $buchungenCount = $buchungClass::where('kursnummer', $kursnummer)
+                ->whereNull('notiz')->sharedLock()->count();
+            $kurs = static::$kursClass::where('nummer', $kursnummer)->sharedLock()->first();
+            if ($kurs && $kurs->restplätze > 0) {
+                $kurs->restplätze = $kurs->kursplätze - $buchungenCount - 1;
+            }
+            if ($kurs->restplätze < 0) {
+                throw new \Exception('Keine verfügbaren Plätze für diesen Kurs.');
+            }
+            $kurs->save();
+        });
         $buchungClass::notifySuccess('Buchung erfolgreich angelegt');
         $buchung->check();
         return $buchung;
@@ -106,38 +108,42 @@ class BaseBuchung extends Model
 
     public static function checkRestplätze(): void
     {
-        $buchungClass = static::class;
-        $kursBuchungen = $buchungClass::select('kursnummer', DB::raw('count(*) as count'))
-            ->whereNull('notiz')
-            ->groupBy('kursnummer')
-            ->get()
-            ->toArray();
-        $kursPlätze = static::$kursClass::select('id', 'nummer', 'kursplätze', 'restplätze')
-            ->whereNull('notiz')
-            ->get()
-            ->toArray();
-        foreach ($kursPlätze as $kurs) {
-            $buchungenFound = false;
-            foreach ($kursBuchungen as $buchung) {
-                if ($buchung['kursnummer'] == $kurs['nummer']) {
-                    $buchungenFound = true;
-                    $restOld = $kurs['restplätze'];
-                    $diff = $kurs['kursplätze'] - $buchung['count'];
-                    if ($diff < 0) {
-                        $diff = 0;
-                        $buchungClass::notifyWarning('Kurs ' . $kurs['nummer'] . ' ist überbucht!');
-                    }
-                    if ($diff != $restOld) {
-                        static::$kursClass::find($kurs['id'])->update(['restplätze' => $diff]);
-                        $buchungClass::notifyWarning('Restplätze für Kursnummer ' . $kurs['nummer'] . ' von ' . $restOld . ' auf ' . $diff . ' korrigiert');
+        DB::transaction(function () {
+            $buchungClass = static::class;
+            $kursBuchungen = $buchungClass::select('kursnummer', DB::raw('count(*) as count'))
+                ->whereNull('notiz')
+                ->groupBy('kursnummer')
+                ->sharedLock()
+                ->get()
+                ->toArray();
+            $kursPlätze = static::$kursClass::select('id', 'nummer', 'kursplätze', 'restplätze')
+                ->whereNull('notiz')
+                ->sharedLock()
+                ->get()
+                ->toArray();
+            foreach ($kursPlätze as $kurs) {
+                $buchungenFound = false;
+                foreach ($kursBuchungen as $buchung) {
+                    if ($buchung['kursnummer'] == $kurs['nummer']) {
+                        $buchungenFound = true;
+                        $restOld = $kurs['restplätze'];
+                        $diff = $kurs['kursplätze'] - $buchung['count'];
+                        if ($diff < 0) {
+                            $diff = 0;
+                            $buchungClass::notifyWarning('Kurs ' . $kurs['nummer'] . ' ist überbucht!');
+                        }
+                        if ($diff != $restOld) {
+                            static::$kursClass::find($kurs['id'])->update(['restplätze' => $diff]);
+                            $buchungClass::notifyWarning('Restplätze für Kursnummer ' . $kurs['nummer'] . ' von ' . $restOld . ' auf ' . $diff . ' korrigiert');
+                        }
                     }
                 }
-            }
-            if (!$buchungenFound && $kurs['restplätze'] != $kurs['kursplätze']) {
-                static::$kursClass::find($kurs['id'])->update(['restplätze' => $kurs['kursplätze']]);
-                $buchungClass::notifyWarning('Restplätze für Kursnummer ' . $kurs['nummer'] . ' von ' . $kurs['restplätze'] . ' auf ' . $kurs['kursplätze'] . ' korrigiert');
-            }
-        }
+                if (!$buchungenFound && $kurs['restplätze'] != $kurs['kursplätze']) {
+                    static::$kursClass::find($kurs['id'])->update(['restplätze' => $kurs['kursplätze']]);
+                    $buchungClass::notifyWarning('Restplätze für Kursnummer ' . $kurs['nummer'] . ' von ' . $kurs['restplätze'] . ' auf ' . $kurs['kursplätze'] . ' korrigiert');
+                }
+            };
+        });
     }
 
     public function checkIban(): void

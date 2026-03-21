@@ -5,7 +5,7 @@ use Livewire\Component;
 new class extends Component {
     protected string $view = 'filament.widgets.usage-widget';
     protected int|string|array $columnSpan = 2;
-    public string $content = 'init xxxxxx';
+    public string $content;
 
     public function mount(): void
     {

@@ -100,4 +100,4 @@ Derzeit auf https://github.com/michaelu123/buchungen-app .
 
 ## Zukünftig
 
-Vielleicht die Anmeldungen für die Saisonkarten. Vielleicht Anmeldungen für Codierung oder Werkstatt-Termine, bei denen keine IBAN gefordert wird. In den Formularen müssen die Texte zu Teilnahmebedingungen und Datenschutz wahrscheinlich noch aktualisiert werden.
+Vielleicht die Anmeldungen für die Saisonkarten. Vielleicht Anmeldungen für Werkstatt-Termine, bei denen keine IBAN gefordert wird. In den Formularen müssen die Texte zu Teilnahmebedingungen und Datenschutz wahrscheinlich noch aktualisiert werden.
