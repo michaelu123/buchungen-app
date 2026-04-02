@@ -20,8 +20,10 @@ return new class extends Migration {
             $table->string("nachname");
             $table->integer("postleitzahl");
             $table->string("ort");
-            $table->string("strasse_nr");
+            $table->string("strasse");
+            $table->string("hsnr");
             $table->string("telefonnr");
+            $table->string("ein");
             $table->string("email");
             $table->unsignedInteger("mitgliedsnummer")->nullable();
             $table->datetime("anmeldebestätigung")->nullable();

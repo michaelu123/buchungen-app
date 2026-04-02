@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 class RoleSeeder extends Seeder
 {
     private const ROLES = [
-        'yAdmin' => 'YADMIN',
+        'Admin' => 'ADMIN',
     ];
     /**
      * Seed the application's database.
@@ -28,7 +28,7 @@ class RoleSeeder extends Seeder
         ]);
         DB::table('role_user')->insert([
             'user_id' => $user->id,
-            'role' => $roles[Role::ROLES['Admin']]->id,
+            'role_id' => $roles[Role::ROLES['Admin']]->id,
         ]);
     }
 }

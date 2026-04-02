@@ -114,6 +114,17 @@ abstract class BuchungTableBase
         ];
     }
 
+    protected static function einFeld($useTermin): array
+    {
+        if (!$useTermin) {
+            return [];
+        }
+        return [
+            TextInputColumn::make('ein')
+                ->label('EIN'),
+        ];
+    }
+
     public static function configure(Table $table): Table
     {
         $buchungClass = static::getBuchungModelClass();
@@ -151,9 +162,13 @@ abstract class BuchungTableBase
                 TextColumn::make('ort')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('strasse_nr')
-                    ->label('Straße und Hausnummer')
+                TextColumn::make('strasse')
+                    ->label('Straße')
                     ->searchable(),
+                TextColumn::make('hsnr')
+                    ->label('Hausnummer')
+                    ->searchable(),
+                ...static::einFeld($useTermin),
                 TextColumn::make('mitgliedsnummer')
                     ->numeric(thousandsSeparator: "")
                     ->sortable(),

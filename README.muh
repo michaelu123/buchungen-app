@@ -171,7 +171,9 @@ php artisan db:seed RFSASeeder
 php artisan db:seed RFSFSeeder
 php artisan db:seed RFSFPSeeder
 php artisan db:seed Technik
+php artisan make:queue-table   
 
+# nur für MSSql, für Sqlite mit DB Browser ändern
 ALTER TABLE `technik_buchungen` ADD CONSTRAINT `tkc` FOREIGN KEY (`kursnummer`) REFERENCES `technik_kurse`(`nummer`) ON DELETE CASCADE ON UPDATE RESTRICT;
 ALTER TABLE `rfsf_buchungen` ADD CONSTRAINT `rfsfc` FOREIGN KEY (`kursnummer`) REFERENCES `rfsf_kurse`(`nummer`) ON DELETE CASCADE ON UPDATE RESTRICT;
 ALTER TABLE `rfsfp_buchungen` ADD CONSTRAINT `rfsfpc` FOREIGN KEY (`kursnummer`) REFERENCES `rfsfp_kurse`(`nummer`) ON DELETE CASCADE ON UPDATE RESTRICT;
@@ -181,3 +183,4 @@ php artisan make:filament-widget UsageWidget
 Widget erscheint erst nach php artisan filament:optimize !! ( or php artisan filament:cache-components ?)
 
 php artisan make:livewire pages::codier.create
+php artisan make:livewire pages::codier.abmelden

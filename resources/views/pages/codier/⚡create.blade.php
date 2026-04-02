@@ -61,7 +61,7 @@ new class extends Component implements HasSchemas {
             ->whereNull("notiz")
             ->get()
             ->map(function (Termin $termin): array {
-                $reserviert = $termin->buchungen()->get()->map(fn($b): string => substr($b->uhrzeit, 0, 5))->toArray();
+                $reserviert = $termin->buchungen()->wherenull('notiz')->get()->map(fn($b): string => substr($b->uhrzeit, 0, 5))->toArray();
                 $frei = $this->nochFrei($termin->beginn, $termin->ende, $reserviert);
                 return [
                     "id" => $termin->id,
@@ -114,9 +114,11 @@ new class extends Component implements HasSchemas {
                     ->numeric(),
                 TextInput::make('ort')
                     ->required(),
-                TextInput::make('strasse_nr')
-                    ->label('Straße und Hausnummer')
+                TextInput::make('strasse')
+                    ->label('Straße')
                     ->required(),
+                TextInput::make('hsnr')
+                    ->label('Hausnummer'),
                 TextInput::make('telefonnr')
                     ->belowLabel("Bitte geben Sie eine Telefonnummer an, unter der wir Sie erreichen können, falls es Rückfragen zu Ihrer Anmeldung gibt.")
                     ->label('Telefon')

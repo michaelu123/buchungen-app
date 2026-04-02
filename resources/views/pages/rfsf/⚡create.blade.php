@@ -61,9 +61,11 @@ new class extends Component implements HasSchemas {
                     ->numeric(),
                 TextInput::make('ort')
                     ->required(),
-                TextInput::make('strasse_nr')
-                    ->label('Straße und Hausnummer')
+                TextInput::make('strasse')
+                    ->label('Straße')
                     ->required(),
+                TextInput::make('hsnr')
+                    ->label('Hausnummer'),
                 TextInput::make('telefonnr')
                     ->belowLabel("Bitte geben Sie eine Telefonnummer an, unter der wir Sie erreichen können, falls es Rückfragen zu Ihrer Anmeldung gibt.")
                     ->label('Telefon')

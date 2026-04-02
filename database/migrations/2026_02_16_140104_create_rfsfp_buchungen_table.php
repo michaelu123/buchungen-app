@@ -15,15 +15,14 @@ return new class extends Migration {
             $table->text('notiz')->nullable();
             $table->string("email");
             $table->unsignedInteger("mitgliedsnummer")->nullable();
-            // aktuell kursnummer von Hand von bigint auf varchar ändern!
-            // $table->foreignId("kursnummer")->constrained("rfsfp_kurse", "nummer")->onDelete("cascade");
-            $table->string("kursnummer")->constrained("rfsfp_kurse", "nummer")->onDelete("cascade");
+            $table->string("kursnummer"); // ->constrained("rfsfp_kurse", "nummer")->onDelete("cascade");
             $table->string("anrede")->nullable();
             $table->string("vorname");
             $table->string("nachname");
             $table->integer("postleitzahl");
             $table->string("ort");
-            $table->string("strasse_nr");
+            $table->string("strasse");
+            $table->string("hsnr");
             $table->string("telefonnr");
             $table->string("kontoinhaber");
             $table->string("iban");

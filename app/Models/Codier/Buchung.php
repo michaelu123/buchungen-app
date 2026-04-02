@@ -6,6 +6,7 @@ use App\Mail\Codier\Bestaetigung;
 use App\Models\BaseBuchung;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Throwable;
@@ -22,7 +23,9 @@ class Buchung extends BaseBuchung
         'nachname',
         'postleitzahl',
         'ort',
-        'strasse_nr',
+        'strasse',
+        'hsnr',
+        'ein',
         'telefonnr',
         'email',
         'mitgliedsnummer',
@@ -53,7 +56,25 @@ class Buchung extends BaseBuchung
 
     public static function createBuchung($data): Buchung
     {
+        function decode(string $s)
+        {
+            return utf8_decode($s);
+        }
+
         $data["kursnummer"] = $data["termin_id"];
+        $einResp = Http::get("https://fa-technik-adfc.de/ein", [
+            "name" => decode($data["ort"]),
+            "str" => decode($data["strasse"]),
+            "hsnr" => $data["hsnr"] ?? "1",
+            "n1" => decode($data["vorname"]),
+            "n2" => decode($data["nachname"]),
+        ]);
+        $status = $einResp->status();
+        $ein = $einResp->body();
+        // Log::info("status " . $status . ", body " . $ein);
+        $pos = strpos($ein, "<big><big>");
+        $ein = substr($ein, $pos + 25, 16);
+        $data["ein"] = $ein;
         $buchung = Buchung::create($data);
         Buchung::notifySuccess('Termin erfolgreich gebucht');
         $buchung->check();
@@ -85,5 +106,7 @@ class Buchung extends BaseBuchung
         return $this->belongsTo(static::$kursClass, 'termin_id', 'id');
     }
 
+    //    https://fa-technik-adfc.de/ein?name=' . $city . ';str=' . $street . ';hsnr=' . $housenumber . ';n1=' . $first_name . ';n2=' . $last_name;
+//    https://fa-technik-adfc.de/ein?name=München;str=Ludwigshöher%20Str;hsnr=43;n1=Michael;n2=Uhlenberg;
 
 }
