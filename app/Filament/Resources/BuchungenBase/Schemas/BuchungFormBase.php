@@ -2,15 +2,12 @@
 
 namespace App\Filament\Resources\BuchungenBase\Schemas;
 
-use App\Models\Codier\Buchung;
-use Carbon\Carbon;
 use Closure;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
 abstract class BuchungFormBase
@@ -97,18 +94,10 @@ abstract class BuchungFormBase
         ];
     }
 
-    protected static function einFeld($kursClass): array
+    protected static function zusatzFelder(): array
     {
-        $useTermin = str_contains($kursClass, 'Termin');
-        if (!$useTermin) {
-            return [];
-        }
-        return [
-            TextInput::make('ein')
-                ->label('EIN'),
-        ];
+        return [];
     }
-
 
     public static function configure(Schema $schema): Schema
     {
@@ -141,13 +130,13 @@ abstract class BuchungFormBase
                     ->required(),
                 TextInput::make('hsnr')
                     ->label('Hausnummer'),
-                ...static::einFeld($kursClass),
                 TextInput::make('telefonnr')
                     ->label('Telefon')
                     ->tel()
                     ->required(),
                 ...static::abbuchungFelder(),
                 ...static::verificationFelder(),
+                ...static::zusatzFelder(),
                 DateTimePicker::make('anmeldebestätigung')
                     ->label('Anmeldebestätigung versendet'),
                 Textarea::make('kommentar'),

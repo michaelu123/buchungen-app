@@ -7,6 +7,7 @@ use App\Filament\Resources\BuchungenBase\Tables\BuchungTableBase;
 use App\Imports\Codier\BuchungenImport;
 use App\Models\Codier\Buchung;
 use App\Models\Codier\Termin;
+use Filament\Tables\Columns\TextInputColumn;
 
 class BuchungTable extends BuchungTableBase
 {
@@ -29,4 +30,13 @@ class BuchungTable extends BuchungTableBase
     {
         return Termin::class;
     }
+
+    protected static function zusatzFelder(): array
+    {
+        return [
+            TextInputColumn::make('ein')
+                ->label('EIN'),
+        ];
+    }
+
 }

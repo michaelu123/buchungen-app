@@ -22,33 +22,10 @@ class BuchungForm extends BuchungFormBase
         return Kurs::class;
     }
 
-    protected static function abbuchungFelder(): array
+    protected static function zusatzFelder(): array
     {
-        $buchungClass = static::getBuchungModelClass();
-        if (!$buchungClass::$requireAbbuchung)
-            return [];
         return [
-            TextInput::make('kontoinhaber')
-                ->required(),
-            TextInput::make('iban')
-                ->label('IBAN oder Aktive/er')
-                ->rules([
-                    fn(): Closure => function ($attribute, $value, Closure $fail) use ($buchungClass): void {
-                        if (!$buchungClass::test_iban($value)) {
-                            $fail('Die IBAN ist ungültig.');
-                        }
-                    },
-                ])
-                ->required(),
-            Checkbox::make('lastschriftok')
-                ->label('Lastschrift genehmigt (oder Buchung ungültig!)')
-                ->default(true)
-                ->required(),
             TextInput::make('ermäßigung'),
-            DateTimePicker::make('eingezogen'),
-            TextInput::make('betrag')
-                ->numeric(),
         ];
     }
-
 }

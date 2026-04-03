@@ -114,16 +114,11 @@ abstract class BuchungTableBase
         ];
     }
 
-    protected static function einFeld($useTermin): array
+    protected static function zusatzFelder(): array
     {
-        if (!$useTermin) {
-            return [];
-        }
-        return [
-            TextInputColumn::make('ein')
-                ->label('EIN'),
-        ];
+        return [];
     }
+
 
     public static function configure(Table $table): Table
     {
@@ -168,7 +163,6 @@ abstract class BuchungTableBase
                 TextColumn::make('hsnr')
                     ->label('Hausnummer')
                     ->searchable(),
-                ...static::einFeld($useTermin),
                 TextColumn::make('mitgliedsnummer')
                     ->numeric(thousandsSeparator: "")
                     ->sortable(),
@@ -177,6 +171,7 @@ abstract class BuchungTableBase
                     ->searchable(),
                 ...static::kontoFelder($buchungClass),
                 ...static::verifyFeld($buchungClass),
+                ...static::zusatzFelder(),
                 TextColumn::make('anmeldebestätigung')
                     ->label('Ab versendet')
                     ->datetime('d.m.Y H:i:s')

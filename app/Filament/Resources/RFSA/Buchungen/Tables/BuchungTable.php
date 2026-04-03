@@ -7,7 +7,6 @@ use App\Filament\Resources\BuchungenBase\Tables\BuchungTableBase;
 use App\Imports\RFSA\BuchungenImport;
 use App\Models\RFSA\Buchung;
 use App\Models\RFSA\Kurs;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 
 class BuchungTable extends BuchungTableBase
@@ -32,26 +31,10 @@ class BuchungTable extends BuchungTableBase
         return Kurs::class;
     }
 
-    public static function kontoFelder($buchungClass): array
+    protected static function zusatzFelder(): array
     {
-        if (!$buchungClass::$requireAbbuchung) {
-            return [];
-        }
         return [
-            TextColumn::make('kontoinhaber')
-                ->searchable(),
-            TextColumn::make('iban'),
-            IconColumn::make('lastschriftok')
-                ->label('Lastschrift genehmigt')
-                ->boolean(),
             TextColumn::make('ermäßigung'),
-            TextColumn::make('eingezogen')
-                ->datetime('d.m.Y H:i:s')
-                ->sortable(),
-            TextColumn::make('betrag')
-                ->numeric(thousandsSeparator: "")
-                ->sortable(),
         ];
     }
-
 }
