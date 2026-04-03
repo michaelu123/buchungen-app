@@ -35,6 +35,7 @@ class BaseBuchung extends Model
         'kontoinhaber',
         'iban',
         'lastschriftok',
+        'ermäßigung',
         'verified',
         'anmeldebestätigung',
         'eingezogen',

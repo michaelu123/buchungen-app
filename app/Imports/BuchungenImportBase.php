@@ -25,6 +25,18 @@ class BuchungenImportBase implements OnEachRow, SkipsEmptyRows, WithHeadingRow, 
 
     protected function transformRow(array $rowData): array
     {
+        $s = $rowData["strasse_und_hausnummer"];
+        $parts = explode(" ", $s);
+        $n = count($parts);
+        if ($n == 1) {
+            $strasse = $s;
+            $hsnr = "";
+        } else {
+            $strasse = implode(" ", array_slice($parts, 0, $n - 1));
+            $hsnr = $parts[$n - 1];
+        }
+        $rowData["strasse"] = $strasse;
+        $rowData["hsnr"] = $hsnr;
         return $rowData;
     }
 
@@ -63,10 +75,11 @@ class BuchungenImportBase implements OnEachRow, SkipsEmptyRows, WithHeadingRow, 
                     'kontoinhaber' => $rowData['lastschrift_name_des_kontoinhabers'],
                     'iban' => $rowData['lastschrift_iban_kontonummer'],
                     'lastschriftok' => filled($rowData['zustimmung_zur_sepa_lastschrift']),
+                    'ermäßigung' => $rowData["ermassigung"],
                     'verified' => $this->fromExcelDateTime($rowData['verifikation']),
                     'eingezogen' => $rowData['eingezogen'],
                     'betrag' => $rowData['zahlungsbetrag'],
-                    'anmeldebestätigung' => $rowData['anmeldebestätigung'],
+                    'anmeldebestätigung' => $rowData['anmeldebestatigung'],
                     'kommentar' => $rowData['kommentar'],
                 ];
             }

@@ -27,6 +27,7 @@ return new class extends Migration {
             $table->string("kontoinhaber");
             $table->string("iban");
             $table->boolean("lastschriftok");
+            $table->string("ermäßigung");
             $table->datetime("verified")->nullable();
             $table->datetime("anmeldebestätigung")->nullable();
             $table->datetime("eingezogen")->nullable();
