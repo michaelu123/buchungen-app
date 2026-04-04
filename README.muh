@@ -104,7 +104,6 @@ php artisan migrate --path=database\migrations\2026_02_16_140107_create_rfsfp_ku
 php artisan migrate --path=database\migrations\2026_02_16_140104_create_rfsfp_buchungen_table.php
 php artisan migrate --path=database\migrations\2026_02_08_190846_create_technik_kurs_table.php
 php artisan migrate --path=database\migrations\2026_02_08_190953_create_technik_buchungs_table.php
-dann in den buchungen-Tabellen kursnummer von bigint auf varchar ändern
 
 php artisan db:seed RFSASeeder
 php artisan db:seed RFSFSeeder
@@ -117,23 +116,52 @@ links "Finanzübersicht, auf Mehr klicken, Sammelaufträge, dann Dateiübergabe
 oder mit Sammelüberweisung, Sammellastschrift mit Vorlage oder einzeln ausfüllen,
 dann "Prüfen", dann "Exportieren", um XML-Datei als Vorlage zu erhalten.
 
+Gemini abmelden: https://gemini.google.com/app , profile, abmelden
+
 
 php artisan make:import RFSA\BuchungenImport --model=RFSA\Buchung  # etc
 
-Gemini abmelden: https://gemini.google.com/app , profile, abmelden
+
+
+php artisan make:filament-widget UsageWidget  
+Widget erscheint erst nach php artisan filament:optimize !! ( or php artisan filament:cache-components ?)
+
+php artisan make:livewire pages::codier.create
+php artisan make:livewire pages::codier.abmelden
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 Deployment:
 auf strato: lokale Weiterleitung nach /buchungen/public 
 
 on this machine:
-php artisan optimize:clear
-php artisan optimize
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
 php artisan log:clear
 php artisan cache:clear
+php artisan optimize:clear
+php artisan optimize
 
 npm run build
 
@@ -155,9 +183,7 @@ für PHP 8.2:  vendor/composer/platform_check  von 804 auf 802,
 
 
 on server:
-.env:
-APP_ENV=production ?? aktuell noch local
-APP_DEBUG=false
+copy env.strato .env
 
 # php artisan log:clear
 # php artisan config:cache
@@ -166,21 +192,19 @@ APP_DEBUG=false
 php artisan optimize   
 php artisan filament:optimize
 
+falls DB neu:
+# php artisan migrate:fresh !!!!
+# nur für MSSql, für Sqlite mit DB Browser ändern
+# codier_buchungen are done in migration
+# mit phpmyadmin
+ALTER TABLE `rfsa_buchungen` ADD CONSTRAINT `rfsac` FOREIGN KEY (`kursnummer`) REFERENCES `rfsa_kurse`(`nummer`) ON DELETE CASCADE ON UPDATE RESTRICT;
+ALTER TABLE `rfsf_buchungen` ADD CONSTRAINT `rfsfc` FOREIGN KEY (`kursnummer`) REFERENCES `rfsf_kurse`(`nummer`) ON DELETE CASCADE ON UPDATE RESTRICT;
+ALTER TABLE `rfsfp_buchungen` ADD CONSTRAINT `rfsfpc` FOREIGN KEY (`kursnummer`) REFERENCES `rfsfp_kurse`(`nummer`) ON DELETE CASCADE ON UPDATE RESTRICT;
+ALTER TABLE `technik_buchungen` ADD CONSTRAINT `tkc` FOREIGN KEY (`kursnummer`) REFERENCES `technik_kurse`(`nummer`) ON DELETE CASCADE ON UPDATE RESTRICT;
 
+php artisan db:seed RoleSeeder
 php artisan db:seed RFSASeeder
 php artisan db:seed RFSFSeeder
 php artisan db:seed RFSFPSeeder
-php artisan db:seed Technik
-php artisan make:queue-table   
+php artisan db:seed TechnikSeeder
 
-# nur für MSSql, für Sqlite mit DB Browser ändern
-ALTER TABLE `technik_buchungen` ADD CONSTRAINT `tkc` FOREIGN KEY (`kursnummer`) REFERENCES `technik_kurse`(`nummer`) ON DELETE CASCADE ON UPDATE RESTRICT;
-ALTER TABLE `rfsf_buchungen` ADD CONSTRAINT `rfsfc` FOREIGN KEY (`kursnummer`) REFERENCES `rfsf_kurse`(`nummer`) ON DELETE CASCADE ON UPDATE RESTRICT;
-ALTER TABLE `rfsfp_buchungen` ADD CONSTRAINT `rfsfpc` FOREIGN KEY (`kursnummer`) REFERENCES `rfsfp_kurse`(`nummer`) ON DELETE CASCADE ON UPDATE RESTRICT;
-ALTER TABLE `rfsa_buchungen` ADD CONSTRAINT `rfsac` FOREIGN KEY (`kursnummer`) REFERENCES `rfsa_kurse`(`nummer`) ON DELETE CASCADE ON UPDATE RESTRICT;
-
-php artisan make:filament-widget UsageWidget  
-Widget erscheint erst nach php artisan filament:optimize !! ( or php artisan filament:cache-components ?)
-
-php artisan make:livewire pages::codier.create
-php artisan make:livewire pages::codier.abmelden

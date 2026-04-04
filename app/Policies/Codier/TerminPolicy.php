@@ -4,7 +4,7 @@ namespace App\Policies\Codier;
 
 use App\Policies\BasePolicy;
 
-class KursPolicy extends BasePolicy
+class TerminPolicy extends BasePolicy
 {
     public function __construct()
     {
