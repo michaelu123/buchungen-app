@@ -39,12 +39,11 @@ class Kurs extends Model
         return $this->nummer . ": " . $this->titel . " am " . Carbon::parse($this->datum)->translatedFormat('D, d.m');
     }
 
-    public function ebicsData(): array
+    public function ebicsData(Buchung $buchung): array
     {
         return [
-            "mitgliederpreis" => 10,
-            "nichtmitgliederpreis" => 20,
-            "mandat" => "M-TK-" . now()->year,
+            $buchung->mitgliedsnummer ? 10 : 20,
+            "M-TK-" . now()->year,
         ];
     }
 }

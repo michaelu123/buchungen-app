@@ -23,7 +23,7 @@ return new class extends Migration {
             $table->string("strasse");
             $table->string("hsnr");
             $table->string("telefonnr");
-            $table->string("ein");
+            $table->string("ein")->nullable();
             $table->string("email");
             $table->unsignedInteger("mitgliedsnummer")->nullable();
             $table->datetime("anmeldebestätigung")->nullable();

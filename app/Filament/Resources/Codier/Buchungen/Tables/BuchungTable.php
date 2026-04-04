@@ -7,6 +7,8 @@ use App\Filament\Resources\BuchungenBase\Tables\BuchungTableBase;
 use App\Imports\Codier\BuchungenImport;
 use App\Models\Codier\Buchung;
 use App\Models\Codier\Termin;
+use Filament\Actions\Action;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextInputColumn;
 
 class BuchungTable extends BuchungTableBase
@@ -31,7 +33,7 @@ class BuchungTable extends BuchungTableBase
         return Termin::class;
     }
 
-    protected static function zusatzFelder(): array
+    public static function zusatzFelder(): array
     {
         return [
             TextInputColumn::make('ein')
@@ -39,4 +41,16 @@ class BuchungTable extends BuchungTableBase
         ];
     }
 
+    public static function zusatzAktionen(): array
+    {
+        return [
+            Action::make('retryEIN')
+                ->label("EIN laden")
+                ->disabled(fn($record): bool => filled($record['notiz']) || filled($record['ein']))
+                ->icon(Heroicon::OutlinedCloudArrowDown)
+                ->action(function ($record): void {
+                    $record->retryEIN();
+                }),
+        ];
+    }
 }

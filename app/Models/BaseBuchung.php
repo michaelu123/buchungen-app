@@ -61,7 +61,7 @@ class BaseBuchung extends Model
         $buchung = $buchungClass::create($data);
 
         $kursnummer = $data['kursnummer'];
-        DB::transaction(function () use ($buchungClass, $kursnummer) {
+        DB::transaction(function () use ($buchungClass, $kursnummer): void {
             $buchungenCount = $buchungClass::where('kursnummer', $kursnummer)
                 ->whereNull('notiz')->sharedLock()->count();
             $kurs = static::$kursClass::where('nummer', $kursnummer)->sharedLock()->first();
@@ -110,7 +110,7 @@ class BaseBuchung extends Model
 
     public static function checkRestplätze(): void
     {
-        DB::transaction(function () {
+        DB::transaction(function (): void {
             $buchungClass = static::class;
             $kursBuchungen = $buchungClass::select('kursnummer', DB::raw('count(*) as count'))
                 ->whereNull('notiz')

@@ -45,7 +45,6 @@ abstract class KurseImportBase implements OnEachRow, SkipsEmptyRows, WithHeading
             } else {
                 // Get the underlying PhpSpreadsheet Worksheet from the row delegate to access the cell and its comment
                 // MUH: this works only because config/excel.php contains 'imports' => ['read_only' => false],
-                /** @var \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $worksheet */
                 $worksheet = $row->getDelegate()->getWorksheet();
                 $comment = $worksheet->getComment([1, $row->getIndex()]);
                 $note = $comment->getText()->getPlainText();

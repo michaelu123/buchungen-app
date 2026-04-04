@@ -74,27 +74,24 @@ class Kurs extends Model
         return $this->nummer . " (" . $titel . "): " . $this->uhrzeit . ", " . $this->termine(true) . ", Ersatztermin: " . $this->termine(false) . ", Kursort: " . $this->kursort;
     }
 
-    public function ebicsData(): array
+    public function ebicsData(Buchung $buchung): array
     {
         if ($this->nummer[-1] == 'G') {
             return [
-                "mitgliederpreis" => 29,
-                "nichtmitgliederpreis" => 39,
-                "mandat" => "M-RFSF-G-" . now()->year,
+                $buchung->mitgliedsnummer ? 29 : 39,
+                "M-RFSF-G-" . now()->year,
             ];
         }
         if ($this->nummer[-1] == 'A') {
             return [
-                "mitgliederpreis" => 39,
-                "nichtmitgliederpreis" => 52,
-                "mandat" => "M-RFSF-A-" . now()->year,
+                $buchung->mitgliedsnummer ? 39 : 52,
+                "M-RFSF-A-" . now()->year,
             ];
         }
         if ($this->nummer[-1] == 'S') {
             return [
-                "mitgliederpreis" => 29,
-                "nichtmitgliederpreis" => 39,
-                "mandat" => "M-RFSF-S-" . now()->year,
+                $buchung->mitgliedsnummer ? 29 : 39,
+                "M-RFSF-S-" . now()->year,
             ];
         }
         return [];

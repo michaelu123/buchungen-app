@@ -15,9 +15,8 @@
   <p>
     {{ $zahlungsText }}
   </p>
-
   <p>
-    @if (str_contains($kurs->name, "RIEM"))
+    @if (str_contains($kurs->nummer, "RIEM"))
       Ihr Kurs findet in Riem statt. Treffpunkt ist Willy-Brandt-Allee 26 / Ecke Heinrich-Böll-Str., 81829 München.<br />
       Die nächste U-Bahn-Haltestelle ist die “Messestadt Ost", Ausgang „Heinrich-Böll-Str.“<br />
       <a href="https://w3w.co/herd.ansprechend.lebhaft">Karte</a><br />

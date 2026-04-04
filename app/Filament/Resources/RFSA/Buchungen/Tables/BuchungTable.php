@@ -31,7 +31,7 @@ class BuchungTable extends BuchungTableBase
         return Kurs::class;
     }
 
-    protected static function zusatzFelder(): array
+    public static function zusatzFelder(): array
     {
         return [
             TextColumn::make('ermäßigung'),

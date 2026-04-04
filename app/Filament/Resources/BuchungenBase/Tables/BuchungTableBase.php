@@ -19,7 +19,6 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\Indicator;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Log;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -80,7 +79,7 @@ abstract class BuchungTableBase
         }
     }
 
-    public static function kontoFelder($buchungClass): array
+    protected static function kontoFelder($buchungClass): array
     {
         if (!$buchungClass::$requireAbbuchung) {
             return [];
@@ -101,7 +100,7 @@ abstract class BuchungTableBase
         ];
     }
 
-    public static function verifyFeld($buchungClass): array
+    protected static function verifyFeld($buchungClass): array
     {
         if (!$buchungClass::$requireEmailVerification) {
             return [];
@@ -114,11 +113,15 @@ abstract class BuchungTableBase
         ];
     }
 
-    protected static function zusatzFelder(): array
+    public static function zusatzFelder(): array
     {
         return [];
     }
 
+    public static function zusatzAktionen(): array
+    {
+        return [];
+    }
 
     public static function configure(Table $table): Table
     {
@@ -258,6 +261,7 @@ abstract class BuchungTableBase
                         ->action(function ($record): void {
                             $record->confirm();
                         }),
+                    ...static::zusatzAktionen(),
                 ])->label('Aktionen')->button()->color('primary'),
             ])
             ->toolbarActions([

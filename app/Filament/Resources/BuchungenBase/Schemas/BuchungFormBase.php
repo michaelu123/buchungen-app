@@ -58,8 +58,9 @@ abstract class BuchungFormBase
     protected static function abbuchungFelder(): array
     {
         $buchungClass = static::getBuchungModelClass();
-        if (!$buchungClass::$requireAbbuchung)
+        if (!$buchungClass::$requireAbbuchung) {
             return [];
+        }
         return [
             TextInput::make('kontoinhaber')
                 ->required(),
@@ -86,8 +87,9 @@ abstract class BuchungFormBase
     protected static function verificationFelder(): array
     {
         $buchungClass = static::getBuchungModelClass();
-        if (!$buchungClass::$requireEmailVerification)
+        if (!$buchungClass::$requireEmailVerification) {
             return [];
+        }
         return [
             DateTimePicker::make('verified')
                 ->label('Email verifiziert'),
@@ -101,9 +103,6 @@ abstract class BuchungFormBase
 
     public static function configure(Schema $schema): Schema
     {
-        $buchungClass = static::getBuchungModelClass();
-        $kursClass = static::getKursModelClass();
-
         return $schema
             ->components([
                 TextInput::make('notiz'),

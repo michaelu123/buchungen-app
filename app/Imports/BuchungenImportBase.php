@@ -28,7 +28,7 @@ class BuchungenImportBase implements OnEachRow, SkipsEmptyRows, WithHeadingRow, 
         $s = $rowData["strasse_und_hausnummer"];
         $parts = explode(" ", $s);
         $n = count($parts);
-        if ($n == 1) {
+        if ($n === 1) {
             $strasse = $s;
             $hsnr = "";
         } else {
@@ -53,7 +53,6 @@ class BuchungenImportBase implements OnEachRow, SkipsEmptyRows, WithHeadingRow, 
                 $rowData = $this->transformRow($rowData);
                 // Get the underlying PhpSpreadsheet Worksheet from the row delegate to access the cell and its comment
                 // MUH: this works only because config/excel.php contains 'imports' => ['read_only' => false],
-                /** @var \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $worksheet */
                 $worksheet = $row->getDelegate()->getWorksheet();
                 $comment = $worksheet->getComment([1, $row->getIndex()]);
                 $note = $comment->getText()->getPlainText();

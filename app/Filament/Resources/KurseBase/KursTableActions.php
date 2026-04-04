@@ -279,21 +279,21 @@ class KursTableActions
         $buchungenData = [];
         $sum = 0.0;
         $cnt = 0;
-        $ebicsData = $kurs->ebicsData();
         $buchungen = $kurs->buchungen()->whereNull("notiz")->whereNotNull("lastschriftok")->whereNotNull("verified")->whereNull("eingezogen")->get();
         foreach ($buchungen as $buchung) {
             $normalizedIban = strtoupper(str_replace(' ', '', $buchung->iban));
             if (str_starts_with($normalizedIban, "AKTIV")) {
                 continue;
             }
-            $betrag = $buchung->mitgliedsnummer ? $ebicsData["mitgliederpreis"] : $ebicsData["nichtmitgliederpreis"];
+            $ebd = $kurs->ebicsData($buchung);
+            [$betrag, $mandat] = $kurs->ebicsData($buchung);
             $sum += $betrag;
             $cnt++;
             $buchungenData[] = [
                 "datum" => $buchung->created_at->format('Y-m-d'),
                 "betrag" => $betrag,
                 "iban" => $buchung->iban,
-                "mandat" => $ebicsData["mandat"],
+                "mandat" => $mandat,
                 "kontoinhaber" => $buchung->kontoinhaber,
             ];
             $buchungenList[] = $buchung;

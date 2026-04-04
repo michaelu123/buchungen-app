@@ -8,7 +8,7 @@ use Livewire\Component;
 new class extends Component {
     public string $msg = "";
 
-    public function mount(string $encid)
+    public function mount(string $encid): void
     {
         $id = Crypt::decryptString($encid);
         $buchung = Buchung::with("termin")->find($id);
