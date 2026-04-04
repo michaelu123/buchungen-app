@@ -71,6 +71,9 @@ new class extends Component implements HasSchemas {
                     ->label('Telefon')
                     ->tel()
                     ->required(),
+                Radio::make("ermäßigung")
+                    ->belowLabel("Sind Sie arbeitslos, beziehen Sie Bürgergeld, studieren Sie oder gehen Sie noch zur Schule, und haben deshalb Anspruch auf die Ermäßigung?")
+                    ->options(["Ja" => "Ja", "Nein" => "Nein"]),
                 TextInput::make('kontoinhaber')
                     ->belowLabel("Bitte geben Sie den Namen des Kontoinhabers an, von dem die Lastschrift erfolgen soll.")
                     ->required(),
@@ -190,9 +193,11 @@ EOD))
     </x-slot>
     <div>
         <p class="mb-10">
-            Sie können sich für einen der unten genannten Kurse anmelden.<br><br>
-
-            Die Teilnahmegebühr für den Kurs (16 Unterrichtseinheiten) beträgt € 120,00.<br><br>
+            Sie können sich für einen der unten genannten Kurse anmelden.<br>
+            Die Teilnahmegebühr für den Kurs (16 Unterrichtseinheiten) beträgt € 120,00.<br>
+            Falls Sie arbeitslos sind, Bürgergeld beziehen, studieren oder noch zur Schule gehen, bieten wir Ihnen dank
+            der
+            Unterstützung der Schwalbe Stiftung den ermäßigten Beitrag von € 40 an.<br><br>
 
             Die Bezahlung erfolgt durch Lastschrift, bitte halten Sie dafür die IBAN-Kontonummer bereit. Wir belasten
             Ihr Konto erst, nachdem wir die Anmeldung per E-Mail bestätigt haben.<br><br>
