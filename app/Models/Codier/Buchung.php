@@ -74,7 +74,7 @@ class Buchung extends BaseBuchung
             ]);
             $status = $einResp->status();
             $ein = $einResp->body();
-            Log::info("status " . $status . ", body " . $ein);
+            // Log::info("status " . $status . ", body " . $ein);
             $pos = strpos($ein, "<big><big>");
             $ein = substr($ein, $pos + 25, 16);
             $data["ein"] = $ein;

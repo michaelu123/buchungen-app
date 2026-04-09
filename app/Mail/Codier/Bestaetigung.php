@@ -20,4 +20,10 @@ class Bestaetigung extends BestaetigungBase
     {
         return 'mail.codier.bestaetigung';
     }
+
+    protected function attachmentPaths(): array
+    {
+        return glob(app_path('Mail/Codier/Anhaenge/*')) ?: [];
+    }
+
 }

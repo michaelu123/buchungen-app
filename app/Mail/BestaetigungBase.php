@@ -19,7 +19,7 @@ abstract class BestaetigungBase extends Mailable
 
   public function __construct(public object $kurs, public object $buchung)
   {
-    $this->anrede = "Liebe(r) " . $this->buchung->vorname . " " . $this->buchung->nachname;
+    $this->anrede = "Hallo " . $this->buchung->vorname . " " . $this->buchung->nachname;
     if (method_exists($this->kurs, 'kursDetails')) {
       $this->kursDetails = $this->kurs->kursDetails();
     }
