@@ -1,0 +1,1 @@
+<p>sknummer {{ $buchung->sknummer }} </p>

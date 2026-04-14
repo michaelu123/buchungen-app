@@ -29,6 +29,8 @@ new class extends Component {
                 <a href="{{  route('rfsfpbuchung')}}">Radfahrschule Fahrpraxis-Kurse</a>
                 <a href=" {{  route('tkbuchung')}}">Technik-Kurse</a>
                 <a href=" {{  route('codierbuchung')}}">Codierungs-Termine</a>
+                <a href=" {{  route('codierbuchung')}}">Codierungs-Termine</a>
+                <a href=" {{  route('skbuchung')}}">Saisonkarten-Bestellung</a>
             </div>
             <p class="mb-10">
                 Sie finden die Kurse auch in unserem
