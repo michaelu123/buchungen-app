@@ -84,21 +84,27 @@ EOD
             <img src="/ADFC_MUENCHEN.PNG" alt="">
         </div>
     </x-slot>
-    <div>
-        <p class="mb-10">
-            Mit diesem Formular können Sie eine Saisonkarte für Tagestouren des ADFC München bestellen.
-            Für die Karte wird ein Betrag von {{ $this->basisdaten->betrag }}€ per Lastschrift eingezogen.
-            Halten Sie dafür bitte Ihre IBAN-Kontonummer bereit.
-            Die Saisonkarte wird an die angegebene Email-Adresse gesendet.
+    @if ($this->basisdaten->offen)
+        <div>
+            <p class="mb-10">
+                Mit diesem Formular können Sie eine Saisonkarte für Tagestouren des ADFC München bestellen.
+                Für die Karte wird ein Betrag von {{ $this->basisdaten->betrag }}€ per Lastschrift eingezogen.
+                Halten Sie dafür bitte Ihre IBAN-Kontonummer bereit.
+                Die Saisonkarte wird an die angegebene Email-Adresse gesendet.
+            </p>
+            <form wire:submit="create">
+                {{ $this->form }}
+
+                <x-filament::button type="submit" class="mt-4">
+                    Bestellen
+                </x-filament::button>
+            </form>
+
+            <x-filament-actions::modals />
+        </div>
+    @else
+        <p class="my-10 text-center">
+            Momentan können keine Saisonkarten bestellt werden.
         </p>
-        <form wire:submit="create">
-            {{ $this->form }}
-
-            <x-filament::button type="submit" class="mt-4">
-                Bestellen
-            </x-filament::button>
-        </form>
-
-        <x-filament-actions::modals />
-    </div>
+    @endif
 </x-filament::section>
