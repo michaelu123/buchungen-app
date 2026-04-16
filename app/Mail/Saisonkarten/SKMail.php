@@ -2,6 +2,7 @@
 
 namespace App\Mail\Saisonkarten;
 
+use App\Models\Saisonkarten\BasisDaten;
 use App\Models\Saisonkarten\Buchung;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
@@ -10,13 +11,16 @@ use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Crypt;
 
 class SKMail extends Mailable
 {
     use Queueable, SerializesModels;
+    public string $encNr;
 
-    public function __construct(public Buchung $buchung)
+    public function __construct(public Buchung $buchung, public BasisDaten $basisdaten)
     {
+        $this->encNr = Crypt::encryptString(implode(",", [$buchung->sknummer, $basisdaten->jahr]));
     }
 
     public function envelope(): Envelope
@@ -41,6 +45,10 @@ class SKMail extends Mailable
      */
     public function attachments(): array
     {
-        return [Attachment::fromPath($this->buchung->skPath)];
+        return [
+            Attachment::fromPath($this->buchung->pngPath),
+            Attachment::fromPath($this->buchung->jpgPath),
+            Attachment::fromPath($this->buchung->pdfPath),
+        ];
     }
 }

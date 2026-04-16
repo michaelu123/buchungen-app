@@ -133,6 +133,8 @@ php artisan make:livewire pages::codier.abmelden
 php artisan make:migration create_sk_buchungen_table --create sk_buchungen
 php artisan make:migration create_sk_basisdaten_table --create sk_basisdaten
 php artisan make:livewire pages::saisonkarten.create
+php artisan make:controller SkDownloadController
+
 
 
 

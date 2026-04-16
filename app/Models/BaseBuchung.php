@@ -176,9 +176,6 @@ class BaseBuchung extends Model
             $ev = EmailVerifikation::where('email', $this->email)->first();
             if ($ev && $ev->verified) {
                 $this->update(['verified' => $ev->verified]);
-                if (!$this->notiz && static::$confirmAutomatically) {
-                    $this->confirm();
-                }
             }
         }
         if (!$this->verified) {
@@ -234,7 +231,8 @@ class BaseBuchung extends Model
         }
         if (static::$requireEmailVerification) {
             $this->checkVerified();
-        } elseif (!$this->notiz && static::$confirmAutomatically) {
+        }
+        if (!$this->notiz && static::$confirmAutomatically) {
             $this->confirm();
         }
         static::checkRestplätze();

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\SkDownloadController;
 use Illuminate\Support\Facades\Route;
 
 // Route::get('/', function (): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View {
@@ -20,6 +21,7 @@ Route::livewire("rfsfpbuchung", "pages::rfsfp.create")->name("rfsfpbuchung");
 Route::livewire("codierbuchung", "pages::codier.create")->name("codierbuchung");
 Route::livewire("codierabmeldung/{encid}", "pages::codier.abmelden")->name("codier.abmelden");
 Route::livewire("skbuchung", "pages::saisonkarten.create")->name("skbuchung");
+Route::get("skdownload/{encNr}/{type}", [SkDownloadController::class, "download"])->name("skdownload");
 
 Route::livewire("phpinfo", "pages::phpinfo")->name("phpinfo");
 
