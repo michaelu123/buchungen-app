@@ -28,6 +28,30 @@ class KursTableActions
     {
     }
 
+    public function getEbicsAction(Model $model)
+    {
+        return Action::make('ebics')
+            ->label('EBICS')
+            ->hidden(!$this->buchungClass::$requireAbbuchung)
+            ->icon(Heroicon::OutlinedDocumentArrowDown)
+            ->requiresConfirmation()
+            // ->modalHeading("Ebics-Datei erstellen?")
+            ->modalDescription('Ebics-Datei erstellen?')
+            ->modalSubmitActionLabel('Ja, erstellen')
+            ->fillForm($model->fillForm())
+            ->schema([
+                TextInput::make('eingezogen1')->label('Schon eingezogen:')->readonly()->inlineLabel(),
+                TextInput::make('eingezogen2')->label('Noch einzuziehen:')->readonly()->inlineLabel(),
+                TextInput::make('unverifiziert')->label('Nicht verifizierte Email:')->readonly()->inlineLabel(),
+                Toggle::make('einzug')->label('Einzug vermerken?')->default(false)->inlineLabel()->autofocus(),
+            ])
+            ->action(function (array $data) use ($model) {
+                return response()->streamDownload(function () use ($model, $data): void {
+                    echo $this->createEbics($model, $data['einzug']);
+                }, 'saisonkarten_ebics.xml', ['Content-type' => 'application/xml']);
+            });
+    }
+
     public function getRecordActions(): array
     {
         return [
@@ -145,7 +169,7 @@ class KursTableActions
     public function createEbics(Model $kurs, bool $einzug): string
     {
         $list = $this->getBuchungen($kurs);
-        $xmlString = $this->createXml($kurs, $list);
+        $xmlString = $this->createXml($list);
         if ($einzug) {
             $now = now();
             $buchungenList = $list["buchungenList"];
@@ -285,7 +309,6 @@ class KursTableActions
             if (str_starts_with($normalizedIban, "AKTIV")) {
                 continue;
             }
-            $ebd = $kurs->ebicsData($buchung);
             [$betrag, $mandat] = $kurs->ebicsData($buchung);
             $sum += $betrag;
             $cnt++;
@@ -348,7 +371,7 @@ class KursTableActions
     protected XmlWriter $xmlWriter;
 
     // protected array $xmlt;
-    protected function createXml(Model $kurs, array $list): string
+    protected function createXml(array $list): string
     {
         $sum = $list["sum"];
         $cnt = $list["cnt"];

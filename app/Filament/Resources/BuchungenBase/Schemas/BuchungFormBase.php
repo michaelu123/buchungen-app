@@ -96,6 +96,33 @@ abstract class BuchungFormBase
         ];
     }
 
+    protected static function personFelder(): array
+    {
+        return [
+            Select::make('anrede')
+                ->placeholder('Wähle eine Anrede')
+                ->options(['Herr' => 'Herr', 'Frau' => 'Frau', '' => 'Keine Angabe']),
+            TextInput::make('vorname')
+                ->required(),
+            TextInput::make('nachname')
+                ->required(),
+            TextInput::make('postleitzahl')
+                ->required()
+                ->numeric(),
+            TextInput::make('ort')
+                ->required(),
+            TextInput::make('strasse')
+                ->label('Straße')
+                ->required(),
+            TextInput::make('hsnr')
+                ->label('Hausnummer'),
+            TextInput::make('telefonnr')
+                ->label('Telefon')
+                ->tel()
+                ->required(),
+        ];
+    }
+
     protected static function zusatzFelder(): array
     {
         return [];
@@ -112,27 +139,7 @@ abstract class BuchungFormBase
                 TextInput::make('mitgliedsnummer')
                     ->rules('digits:8'),
                 // ...static::select($kursClass),
-                Select::make('anrede')
-                    ->placeholder('Wähle eine Anrede')
-                    ->options(['Herr' => 'Herr', 'Frau' => 'Frau', '' => 'Keine Angabe']),
-                TextInput::make('vorname')
-                    ->required(),
-                TextInput::make('nachname')
-                    ->required(),
-                TextInput::make('postleitzahl')
-                    ->required()
-                    ->numeric(),
-                TextInput::make('ort')
-                    ->required(),
-                TextInput::make('strasse')
-                    ->label('Straße')
-                    ->required(),
-                TextInput::make('hsnr')
-                    ->label('Hausnummer'),
-                TextInput::make('telefonnr')
-                    ->label('Telefon')
-                    ->tel()
-                    ->required(),
+                ...static::personFelder(),
                 ...static::abbuchungFelder(),
                 ...static::verificationFelder(),
                 ...static::zusatzFelder(),

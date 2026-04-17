@@ -74,9 +74,13 @@ class Buchung extends BaseBuchung
             ]);
             $status = $einResp->status();
             $ein = $einResp->body();
-            // Log::info("status " . $status . ", body " . $ein);
+            Log::info("status " . $status . ", body " . $ein);
             $pos = strpos($ein, "<big><big>");
-            $ein = substr($ein, $pos + 25, 16);
+            if ($pos) {
+                $ein = substr($ein, $pos + 25, 16);
+            } else {
+                $ein = "?";
+            }
             $data["ein"] = $ein;
         } catch (ConnectionException $e) {
             Log::error("timeout getting EIN: " . $e);

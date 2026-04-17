@@ -135,6 +135,8 @@ php artisan make:migration create_sk_basisdaten_table --create sk_basisdaten
 php artisan make:livewire pages::saisonkarten.create
 php artisan make:controller SkDownloadController
 
+php artisan make:filament-resource Saisonkarten\BasisDaten --generate
+php artisan make:filament-resource Saisonkarten\Buchung --generate
 
 
 

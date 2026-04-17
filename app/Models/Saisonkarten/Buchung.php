@@ -166,6 +166,7 @@ Ohne Mitgliedsausweis ist die Saisonkarte nicht gültig.'
         } // TODO
 
         $basisdaten = BasisDaten::first();
+        static::createSK($this, $basisdaten);
         try {
             Mail::to($this->email)->send(new SKMail($this, $basisdaten));
             $this->update(['gesendet' => now()]);

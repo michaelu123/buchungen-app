@@ -34,7 +34,7 @@ class AdminPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
-            ->sidebarWidth('14rem')
+            ->sidebarWidth('16rem')
             ->maxContentWidth('Full')
             ->sidebarCollapsibleOnDesktop()
             ->databaseNotifications(true)
@@ -82,6 +82,7 @@ class AdminPanelProvider extends PanelProvider
                 'RFSFP-Kurse',
                 'Technik-Kurse',
                 'Codierungs-Termine',
+                'Saisonkarten',
             ]);
     }
 }
