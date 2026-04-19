@@ -57,7 +57,7 @@ php artisan vendor:publish --tag=filament-config   # then add reverb
 3 Terminals:  1) npm run dev 2) php artisan queue:listen 3) php artisan reverb:start --debug
 
 # nach Änderungen der Konfiguration ? 
-php artisan cache:clear; php artisan optimize; composer dump-autoload
+php artisan cache:clear; php artisan optimize; php artisan filament:optimize; composer dump-autoload
 
 composer require maatwebsite/excel
 php artisan vendor:publish --provider="Maatwebsite\Excel\ExcelServiceProvider" --tag=config
