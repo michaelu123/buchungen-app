@@ -98,10 +98,10 @@ class Buchung extends BaseBuchung
         try {
             if ($url) {
                 Log::info("1get " . $url);
-                // $x = strpos($url, "ags=") + 4;
-                // $url = substr($url, 0, $x) . urlencode(utf8_decode(substr($url, $x)));
-                // Log::info("2get " . $url);
-                $resp = Http::retry(3, 1000)->get($url);
+                // If I decode the URL as a whole, and call Http::get(url), I get an error
+                $urlParts = parse_url($url);
+                $queryParams = self::decode($urlParts["query"]);
+                $resp = Http::retry(3, 1000)->get("https://fa-technik-adfc.de/ein", $queryParams);
                 Log::info("2get " . $url);
             } else {
                 Log::info("3get " . $url);
