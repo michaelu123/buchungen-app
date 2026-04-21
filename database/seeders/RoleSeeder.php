@@ -88,5 +88,15 @@ class RoleSeeder extends Seeder
             'user_id' => $user->id,
             'role_id' => $roles[Role::ROLES['Technik']]->id,
         ]);
+
+        $user = User::factory()->create([
+            'name' => 'Saisonkarten',
+            'email' => 'sk@admin.com',
+            'password' => 'xxxx1234',
+        ]);
+        DB::table('role_user')->insert([
+            'user_id' => $user->id,
+            'role_id' => $roles[Role::ROLES['Saisonkarten']]->id,
+        ]);
     }
 }

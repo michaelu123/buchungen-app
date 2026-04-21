@@ -1,4 +1,4 @@
-# Buchungen-App Beta (Stand 04.03.2026)
+# Buchungen-App Beta (Stand 21.04.2026)
 
 Die Testphase der Buchungen-App beginnt. Ziel ist es, ohne Google auszukommen. Einerseits aus den bekannten Gründen: Trump kill switch, Google kann uns jederzeit die Freundschaft kündigen, mancher mag vielleicht nicht persönliche Daten in ein Google-Formular eingeben. Aber auch, weil das Zusammenspiel von Google Forms, Sheets, AppsScript recht fragil ist. Außerdem braucht man noch ein zusätzliches Programm, um die Datei zu erzeugen, mit der Martin Stasnik die Abbuchungen durchführt.
 
@@ -100,4 +100,4 @@ Derzeit auf https://github.com/michaelu123/buchungen-app .
 
 ## Zukünftig
 
-Vielleicht die Anmeldungen für die Saisonkarten. Vielleicht Anmeldungen für Werkstatt-Termine, bei denen keine IBAN gefordert wird. In den Formularen müssen die Texte zu Teilnahmebedingungen und Datenschutz wahrscheinlich noch aktualisiert werden.
+In den Formularen müssen die Texte zu Teilnahmebedingungen und Datenschutz wahrscheinlich noch aktualisiert werden.

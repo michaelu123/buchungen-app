@@ -18,6 +18,7 @@ class Role extends Model
         'RFSFP' => 'RFSFP',
         'Technik' => 'TK',
         'Codier' => 'CODIER',
+        'Saisonkarten' => 'SK',
     ];
 
     public function users()

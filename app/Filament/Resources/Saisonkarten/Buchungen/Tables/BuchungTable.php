@@ -53,7 +53,6 @@ class BuchungTable extends BuchungTableBase
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('email')
-                    ->label('Email address')
                     ->searchable(),
                 TextColumn::make('mitgliedsname')
                     ->searchable(),
@@ -79,7 +78,8 @@ class BuchungTable extends BuchungTableBase
             ])
             ->recordActions([
                 EditAction::make(),
-                Action::make('SK senden')
+                Action::make('sksenden')
+                    ->label("SK senden")
                     ->disabled(
                         fn($record): bool => filled($record['notiz'])
                         || Buchung::$requireEmailVerification && !filled($record['verified'])

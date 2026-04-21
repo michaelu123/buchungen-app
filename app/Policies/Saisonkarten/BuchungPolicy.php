@@ -9,6 +9,6 @@ class BuchungPolicy extends BasePolicy
 
     public function __construct()
     {
-        parent::__construct("ADMIN");
+        parent::__construct("SK");
     }
 }
