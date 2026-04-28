@@ -1,10 +1,11 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -13,26 +14,26 @@ return new class extends Migration {
         Schema::create('rfsa_buchungen', function (Blueprint $table) {
             $table->id();
             $table->text('notiz')->nullable();
-            $table->string("email");
-            $table->unsignedInteger("mitgliedsnummer")->nullable();
-            $table->string("kursnummer"); // ->constrained("rfsa_kurse", "nummer")->onDelete("cascade");
-            $table->string("anrede")->nullable();
-            $table->string("vorname");
-            $table->string("nachname");
-            $table->integer("postleitzahl");
-            $table->string("ort");
-            $table->string("strasse");
-            $table->string("hsnr");
-            $table->string("telefonnr");
-            $table->string("kontoinhaber");
-            $table->string("iban");
-            $table->boolean("lastschriftok");
-            $table->string("ermäßigung");
-            $table->datetime("verified")->nullable();
-            $table->datetime("anmeldebestätigung")->nullable();
-            $table->datetime("eingezogen")->nullable();
-            $table->unsignedInteger("betrag")->nullable();
-            $table->text("kommentar")->nullable();
+            $table->string('email');
+            $table->unsignedInteger('mitgliedsnummer')->nullable();
+            $table->string('kursnummer'); // ->constrained("rfsa_kurse", "nummer")->onDelete("cascade");
+            $table->string('anrede')->nullable();
+            $table->string('vorname');
+            $table->string('nachname');
+            $table->integer('postleitzahl');
+            $table->string('ort');
+            $table->string('strasse');
+            $table->string('hsnr');
+            $table->string('telefonnr');
+            $table->string('kontoinhaber');
+            $table->string('iban');
+            $table->boolean('lastschriftok');
+            $table->string('ermäßigung')->nullable();
+            $table->datetime('verified')->nullable();
+            $table->datetime('anmeldebestätigung')->nullable();
+            $table->datetime('eingezogen')->nullable();
+            $table->unsignedInteger('betrag')->nullable();
+            $table->text('kommentar')->nullable();
             $table->timestamps();
         });
     }

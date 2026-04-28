@@ -3,14 +3,12 @@
 namespace App\Filament\Pages;
 
 use BackedEnum;
-use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
-use Filament\Schemas\Components\Actions;
-use Filament\Schemas\Components\Form as FormComponent;
 use Filament\Schemas\Schema;
+use Livewire\Attributes\On;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use UnitEnum;
 
@@ -39,35 +37,33 @@ class SammelÜberweisung extends Page implements HasForms
     {
         return $schema
             ->components([
-                FormComponent::make([
-                    FileUpload::make('file')
-                        ->label('XLSX-Datei auswählen oder hierher ziehen')
-                        ->required()
-                        ->acceptedFileTypes(['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'])
-                        ->mimeTypeMap([
-                            '.xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                        ])
-                        ->preserveFilenames()
-                        ->storeFiles(false),
-                ])
-                    ->livewireSubmitHandler('process')
-                    ->footer([
-                        Actions::make([
-                            Action::make('process')
-                                ->label('Ebics-Datei herunterladen')
-                                ->submit('process')
-                                ->color('primary'),
-                        ]),
-                    ]),
-            ])
-            ->statePath('data');
+                FileUpload::make('xlsx')
+                    ->label('XLSX-Datei auswählen oder hierher ziehen')
+                    ->required()
+                    ->acceptedFileTypes(['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'])
+                    ->mimeTypeMap([
+                        '.xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    ])
+                    ->preserveFilenames()
+                    ->storeFiles(false)
+                    ->live()
+                    ->afterStateUpdated(function ($livewire) {
+                        $livewire->dispatch('process-upload');
+                    })
+            ])->statePath('data');
+    }
+
+    #[On('process-upload')]
+    public function processUpload(): mixed
+    {
+        return $this->process();
     }
 
     public function process(): mixed
     {
         $this->form->validate();
         $data = $this->form->getState();
-        $file = $data['file'];
+        $file = $data['xlsx'];
 
         if (!$file) {
             return null;
