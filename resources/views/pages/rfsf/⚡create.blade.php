@@ -210,7 +210,7 @@ EOD))
             Sie finden die Kurse auch in
             unserem
             <a class="underline text-blue-600 hover:text-blue-800 visited:text-purple-600" target="_blank"
-                href="https://touren-termine.adfc.de/suche?fromNow=true&eventType=Termin&includedTags=11&latLng=48.1351253%2C11.5819806&place=M%C3%BCnchen">
+                href="https://touren-termine.adfc.de/suche?fromNow=true&eventType=Termin&includedTags=11&includeSubsidiary=true&unitKey=152059">
                 Termin-Portal
             </a>.
         </p>
