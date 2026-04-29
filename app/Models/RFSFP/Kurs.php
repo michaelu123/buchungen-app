@@ -72,6 +72,7 @@ class Kurs extends Model
         return [
             $buchung->mitgliedsnummer ? 20 : 35,
             "M-RFSFP-" . now()->year,
+            "ADFC Radfahrschule",
         ];
     }
 }

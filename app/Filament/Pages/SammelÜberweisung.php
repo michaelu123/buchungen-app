@@ -2,6 +2,8 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Resources\KurseBase\KursTableActions;
+use App\Imports\SammelImport;
 use BackedEnum;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -10,7 +12,9 @@ use Filament\Pages\Page;
 use Filament\Schemas\Schema;
 use Livewire\Attributes\On;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Maatwebsite\Excel\Facades\Excel;
 use UnitEnum;
+
 
 class SammelÜberweisung extends Page implements HasForms
 {
@@ -65,42 +69,24 @@ class SammelÜberweisung extends Page implements HasForms
         $data = $this->form->getState();
         $file = $data['xlsx'];
 
-        if (!$file) {
-            return null;
-        }
-
-        // In Filament 4/5, if multiple(false) is default, $file should be the object
-        // if storeFiles(false) is used.
-
-        // If it's an array (which can happen with some configurations)
-        if (is_array($file)) {
-            $file = array_values($file)[0] ?? null;
-        }
-
         if (!$file || !($file instanceof TemporaryUploadedFile)) {
             return null;
         }
 
         $path = $file->getRealPath();
-        $originalName = $file->getClientOriginalName();
-        $fileName = pathinfo($originalName, PATHINFO_FILENAME);
+        try {
+            $originalName = $file->getClientOriginalName();
+            $fileName = pathinfo($originalName, PATHINFO_FILENAME);
 
-        $content = file_get_contents($path);
-        $transformedContent = $this->createEbics($content);
-        unlink($path);
-        unlink($path . ".json");
-
-        $newName = $fileName . '_ebics.xml';
-
-        // Use a temporary file path
-        $tempPath = storage_path('app/temp/' . uniqid() . '_' . $newName);
-
-        if (!is_dir(dirname($tempPath))) {
-            mkdir(dirname($tempPath), 0755, true);
+            $si = new SammelImport();
+            Excel::import($si, $path);
+            $ebicsXml = $this->createEbics($si->getList());
+        } finally {
+            unlink($path);
+            unlink($path . ".json");
         }
 
-        file_put_contents($tempPath, $transformedContent);
-
+        $newName = $fileName . '_ebics.xml';
         $this->form->fill();
 
         \Filament\Notifications\Notification::make()
@@ -108,13 +94,17 @@ class SammelÜberweisung extends Page implements HasForms
             ->success()
             ->send();
 
-        return response()->download($tempPath, $newName)->deleteFileAfterSend();
+        return response()->streamDownload(function () use ($ebicsXml): void {
+            echo $ebicsXml;
+        }, $newName, ['Content-type' => 'application/xml']);
     }
 
-    protected function createEbics(string $content): string
+
+    protected function createEbics(array $list): string
     {
-        // Placeholder for transformation logic
-        // For example, convert to uppercase
-        return strtoupper($content);
+        // TODO: factor out Ebics generation from KursTableActions
+        $kta = new KursTableActions("", "", "", "");
+        $xml = $kta->createXml($list, true);
+        return $xml;
     }
 }

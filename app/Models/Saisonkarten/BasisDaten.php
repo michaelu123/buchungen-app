@@ -55,6 +55,7 @@ class BasisDaten extends Model
         return [
             22,
             "M-SK-" . now()->year,
+            "ADFC Saisonkarte",
         ];
     }
 

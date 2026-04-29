@@ -80,18 +80,21 @@ class Kurs extends Model
             return [
                 $buchung->mitgliedsnummer ? 29 : 39,
                 "M-RFSF-G-" . now()->year,
+                "ADFC Radfahrschule",
             ];
         }
         if ($this->nummer[-1] == 'A') {
             return [
                 $buchung->mitgliedsnummer ? 39 : 52,
                 "M-RFSF-A-" . now()->year,
+                "ADFC Radfahrschule",
             ];
         }
         if ($this->nummer[-1] == 'S') {
             return [
                 $buchung->mitgliedsnummer ? 29 : 39,
                 "M-RFSF-S-" . now()->year,
+                "ADFC Radfahrschule",
             ];
         }
         return [];

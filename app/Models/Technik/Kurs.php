@@ -44,6 +44,7 @@ class Kurs extends Model
         return [
             $buchung->mitgliedsnummer ? 10 : 20,
             "M-TK-" . now()->year,
+            "ADFC Technikkurs",
         ];
     }
 }

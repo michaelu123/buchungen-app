@@ -90,6 +90,7 @@ class Kurs extends Model
         return [
             $buchung->ermäßigung ? 40 : 120,
             "M-RFSA-" . now()->year,
+            "ADFC Radfahrschule",
         ];
     }
 }

@@ -24,8 +24,14 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class KursTableActions
 {
-    public function __construct(public string $buchungenExportClass, public string $kurseExportClass, public string $importClass, public string $buchungClass)
-    {
+    public bool $sammel = false;
+
+    public function __construct(
+        public string $buchungenExportClass,
+        public string $kurseExportClass,
+        public string $importClass,
+        public string $buchungClass,
+    ) {
     }
 
     public function getEbicsAction(Model $model)
@@ -169,7 +175,7 @@ class KursTableActions
     public function createEbics(Model $kurs, bool $einzug): string
     {
         $list = $this->getBuchungen($kurs);
-        $xmlString = $this->createXml($list);
+        $xmlString = $this->createXml($list, false);
         if ($einzug) {
             $now = now();
             $buchungenList = $list["buchungenList"];
@@ -194,7 +200,7 @@ class KursTableActions
 
     protected function randomId(int $length): string
     {
-        $r1 = $this->ascii_uppercase[random_int(0, \strlen($this->ascii_uppercase))];  // first a letter
+        $r1 = $this->ascii_uppercase[random_int(0, \strlen($this->ascii_uppercase) - 1)];  // first a letter
         $r2 = '';
         for ($i = 0; $i < $length - 1; $i++) { // then any mixture of capital letters and numbers
             $r2 .= $this->charset[random_int(0, strlen($this->digits))];
@@ -272,7 +278,7 @@ class KursTableActions
     {
         $ctrlSums = $this->findElements($rootContent, 'CtrlSum');
         foreach ($ctrlSums as $elem) {
-            $elem->setContent(number_format($summe, 2));
+            $elem->setContent(number_format($summe, 2, ".", ""));
         }
 
         $nbOfTxs = $this->findElements($rootContent, 'NbOfTxs');
@@ -290,10 +296,16 @@ class KursTableActions
 
         }
         $day2 = $day1->addDays(2);
-        $reqdColltnDt = $this->findElements($rootContent, 'ReqdColltnDt');
-        foreach ($reqdColltnDt as $elem) {
-            $elem->setContent($day2->format('Y-m-d'));
-
+        if ($this->sammel) {
+            $dts = $this->findElements($rootContent, 'Dt');
+            foreach ($dts as $dt) {
+                $dt->setContent($day2->format('Y-m-d'));
+            }
+        } else {
+            $reqdColltnDt = $this->findElements($rootContent, 'ReqdColltnDt');
+            foreach ($reqdColltnDt as $elem) {
+                $elem->setContent($day2->format('Y-m-d'));
+            }
         }
     }
 
@@ -309,7 +321,7 @@ class KursTableActions
             if (str_starts_with($normalizedIban, "AKTIV")) {
                 continue;
             }
-            [$betrag, $mandat] = $kurs->ebicsData($buchung);
+            [$betrag, $mandat, $zweck] = $kurs->ebicsData($buchung);
             $sum += $betrag;
             $cnt++;
             $buchungenData[] = [
@@ -317,6 +329,7 @@ class KursTableActions
                 "betrag" => $betrag,
                 "iban" => $buchung->iban,
                 "mandat" => $mandat,
+                "zweck" => $zweck,
                 "kontoinhaber" => $buchung->kontoinhaber,
             ];
             $buchungenList[] = $buchung;
@@ -343,7 +356,7 @@ class KursTableActions
             }
 
             // set debtor name (Dbtr->Nm)
-            $dbtrs = $this->findElements($clone->getContent(), 'Dbtr');
+            $dbtrs = $this->findElements($clone->getContent(), $this->sammel ? 'Cdtr' : 'Dbtr');
             if (count($dbtrs) > 0) {
                 $dbtr = $dbtrs[0];
                 foreach ($this->findElements($dbtr->getContent(), 'Nm') as $nm) {
@@ -354,6 +367,11 @@ class KursTableActions
             // set IBAN (DbtrAcct->Id->IBAN)
             foreach ($this->findElements($clone->getContent(), 'IBAN') as $ibanElem) {
                 $ibanElem->setContent($b['iban']);
+            }
+
+            // set IBAN (DbtrAcct->Id->IBAN)
+            foreach ($this->findElements($clone->getContent(), 'Ustrd') as $ibanElem) {
+                $ibanElem->setContent($b['zweck']);
             }
 
             // set MndtId (DrctDbtTx->MndtRltdInf->MndtId)
@@ -371,13 +389,14 @@ class KursTableActions
     protected XmlWriter $xmlWriter;
 
     // protected array $xmlt;
-    protected function createXml(array $list): string
+    public function createXml(array $list, bool $sammel): string
     {
+        $this->sammel = $sammel;
         $sum = $list["sum"];
         $cnt = $list["cnt"];
         $buchungenData = $list["buchungenData"];
 
-        $this->xmlReader = XmlReader::fromString($this->xmlsAbbuchung);
+        $this->xmlReader = XmlReader::fromString($sammel ? $this->xmlsÜberweisung : $this->xmlsAbbuchung);
 
         $elements = $this->xmlReader->elements();
         $document = $elements['Document'];
@@ -388,7 +407,7 @@ class KursTableActions
         $this->fillinDates($rootContent);
 
         // Replace template DrctDbtTxInf with one entry per booking
-        $drctTemplates = $this->findElements($rootContent, 'DrctDbtTxInf');
+        $drctTemplates = $this->findElements($rootContent, $sammel ? 'CdtTrfTxInf' : 'DrctDbtTxInf');
         $template = $drctTemplates[0];
 
         // find the parent PmtInf elements and remove existing DrctDbtTxInf entries
@@ -397,14 +416,14 @@ class KursTableActions
         $pmtContent = $pmtInf->getContent();
         // remove any existing DrctDbtTxInf entries
         foreach ($pmtContent as $k => $v) {
-            if ($k === 'DrctDbtTxInf') {
+            if ($k === 'CdtTrfTxInf' || $k === 'DrctDbtTxInf') {
                 unset($pmtContent[$k]);
             }
         }
         $newDrcts = $this->fillinBuchungen($template, $buchungenData);
         if ($newDrcts !== []) {
             // attach the new DrctDbtTxInf array to the PmtInf content
-            $pmtContent['DrctDbtTxInf'] = $newDrcts;
+            $pmtContent[$sammel ? 'CdtTrfTxInf' : 'DrctDbtTxInf'] = $newDrcts;
         }
         $pmtInf->setContent($pmtContent);
 
@@ -504,4 +523,70 @@ class KursTableActions
     </CstmrDrctDbtInitn>
 </Document>  
 EOF;
+
+    private string $xmlsÜberweisung = <<<'EOF'
+<?xml version="1.0" encoding="UTF-8" ?>
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.001.001.09" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:iso:std:iso:20022:tech:xsd:pain.001.001.09 pain.001.001.09.xsd">
+    <CstmrCdtTrfInitn>
+        <GrpHdr>
+            <MsgId>MSG26022a8fb83cf1a515099ade7bdc3afc</MsgId>
+            <CreDtTm>2024-12-18T18:29:36.079Z</CreDtTm>
+            <NbOfTxs>1</NbOfTxs>
+            <CtrlSum>0.01</CtrlSum>
+            <InitgPty>
+                <Nm>ALLG. DEUTSCHER FAHRRAD-CLUB KREISVERBAND MÜNCH. ADFC</Nm>
+            </InitgPty>
+        </GrpHdr>
+        <PmtInf>
+            <PmtInfId>VID-1705419118069KOv1HjY5</PmtInfId>
+            <PmtMtd>TRF</PmtMtd>
+            <NbOfTxs>1</NbOfTxs>
+            <CtrlSum>0.01</CtrlSum>
+            <PmtTpInf>
+                <SvcLvl>
+                    <Cd>SEPA</Cd>
+                </SvcLvl>
+            </PmtTpInf>
+            <ReqdExctnDt>
+                <Dt>1999-01-01</Dt>
+            </ReqdExctnDt>
+            <Dbtr>
+                <Nm>ALLG. DEUTSCHER FAHRRAD-CLUB KREISVERBAND MÜNCH. ADFC</Nm>
+            </Dbtr>
+            <DbtrAcct>
+                <Id>
+                    <IBAN>DE62701500000904157781</IBAN>
+                </Id>
+            </DbtrAcct>
+            <DbtrAgt>
+                <FinInstnId>
+                    <BICFI>SSKMDEMMXXX</BICFI>
+                </FinInstnId>
+            </DbtrAgt>
+            <ChrgBr>SLEV</ChrgBr>
+            <CdtTrfTxInf>
+                <PmtId>
+                    <EndToEndId>NOTPROVIDED</EndToEndId>
+                </PmtId>
+                <Amt>
+                    <InstdAmt Ccy="EUR">0.01</InstdAmt>
+                </Amt>
+                <Cdtr>
+                    <Nm>Andrea Halbig</Nm>
+                </Cdtr>
+                <CdtrAcct>
+                    <Id>
+                        <IBAN>DE11701694640000408697</IBAN>
+                    </Id>
+                </CdtrAcct>
+                <RmtInf>
+                    <Ustrd>Übungsleiterpauschale</Ustrd>
+                </RmtInf>
+            </CdtTrfTxInf>
+        </PmtInf>
+    </CstmrCdtTrfInitn>
+</Document>
+EOF;
+
+
 }
