@@ -3,8 +3,8 @@
 namespace App\Mail\RFSFP;
 
 use App\Mail\BestaetigungBase;
-use App\Models\RFSFP\Kurs;
 use App\Models\RFSFP\Buchung;
+use App\Models\RFSFP\Kurs;
 
 class Bestaetigung extends BestaetigungBase
 {
@@ -20,6 +20,6 @@ class Bestaetigung extends BestaetigungBase
 
     protected function attachmentPaths(): array
     {
-        return glob(app_path('Mail/RFSFP/Anhaenge/*')) ?: [];
+        return glob(storage_path('app/private/mail-attachments/RFSFP/*')) ?: [];
     }
 }

@@ -3,8 +3,8 @@
 namespace App\Mail\RFSA;
 
 use App\Mail\BestaetigungBase;
-use App\Models\RFSA\Kurs;
 use App\Models\RFSA\Buchung;
+use App\Models\RFSA\Kurs;
 
 class Bestaetigung extends BestaetigungBase
 {
@@ -13,7 +13,7 @@ class Bestaetigung extends BestaetigungBase
     public function __construct(Kurs $kurs, Buchung $buchung)
     {
         parent::__construct($kurs, $buchung);
-        $this->zahlungsText = "Wir ziehen die Teilnahmegebühr von " . ($buchung->ermäßigung == "Ja" ? 40 : 120) . "€ in den nächsten Tagen ein.";
+        $this->zahlungsText = 'Wir ziehen die Teilnahmegebühr von '.($buchung->ermäßigung == 'Ja' ? 40 : 120).'€ in den nächsten Tagen ein.';
     }
 
     protected function viewName(): string
@@ -23,6 +23,6 @@ class Bestaetigung extends BestaetigungBase
 
     protected function attachmentPaths(): array
     {
-        return glob(app_path('Mail/RFSA/Anhaenge/*')) ?: [];
+        return glob(storage_path('app/private/mail-attachments/RFSA/*')) ?: [];
     }
 }

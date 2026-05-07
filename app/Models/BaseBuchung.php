@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Mail\FalscheIban;
 use App\Mail\VerifyEmail;
+use Carbon\CarbonInterface;
 use Filament\Notifications\Events\DatabaseNotificationsSent;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Model;
@@ -239,7 +240,7 @@ class BaseBuchung extends Model
         static::checkRestplätze();
     }
 
-    public static function verifyEmail($email, $now): void
+    public static function verifyEmail(string $email, CarbonInterface $now): void
     {
         if (!static::$requireEmailVerification) {
             return;

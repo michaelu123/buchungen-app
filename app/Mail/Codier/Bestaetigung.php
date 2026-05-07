@@ -10,10 +10,11 @@ use Illuminate\Support\Facades\Crypt;
 class Bestaetigung extends BestaetigungBase
 {
     public string $abmeldeUrl;
+
     public function __construct(public Termin $termin, Buchung $buchung)
     {
         parent::__construct($termin, $buchung);
-        $this->abmeldeUrl = route("codier.abmelden", ["encid" => Crypt::encryptString($buchung->id)]);
+        $this->abmeldeUrl = route('codier.abmelden', ['encid' => Crypt::encryptString($buchung->id)]);
     }
 
     protected function viewName(): string
@@ -23,7 +24,6 @@ class Bestaetigung extends BestaetigungBase
 
     protected function attachmentPaths(): array
     {
-        return glob(app_path('Mail/Codier/Anhaenge/*')) ?: [];
+        return glob(storage_path('app/private/mail-attachments/Codier/*')) ?: [];
     }
-
 }
