@@ -37,22 +37,47 @@ class KursTable
                 TextColumn::make('kursort')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('kursplätze')->numeric(),
-                TextColumn::make('restplätze')->numeric(),
-                TextColumn::make('kommentar')->searchable()->limit(30)->tooltip(function (TextColumn $column): ?string {
-                    $state = $column->getState();
-                    if (\strlen($state) <= $column->getCharacterLimit()) {
-                        return null;
-                    }return $state;
-                }),
-                TextColumn::make('trainer')->label("Trainer:in")->searchable(),
-                TextColumn::make('co_trainer')->label("Co-Trainer:in")->searchable(),
-                TextColumn::make('hospitant')->label("Hospitant:in")->searchable(),
-                TextColumn::make('liste_verschicken')->searchable(),
-                TextColumn::make('abgesagt_am')->label("Abgesagt am")->searchable(),
-                TextColumn::make('abgesagt_wg')->label("Abgesagt wegen")->searchable(),
-                TextColumn::make('created_at')->dateTime("d.m.Y H:i:s")->sortable()->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')->dateTime("d.m.Y H:i:s")->sortable()->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('kursplätze')
+                    ->numeric(),
+                TextColumn::make('restplätze')
+                    ->numeric(),
+                TextColumn::make('kommentar')
+                    ->searchable()
+                    ->limit(30)
+                    ->tooltip(function (TextColumn $column): ?string {
+                        $state = $column->getState();
+                        if (\strlen($state) <= $column->getCharacterLimit()) {
+                            return null;
+                        }return $state;
+                    }),
+                TextColumn::make('trainer')
+                    ->label("Trainer:in")
+                    ->searchable(),
+                TextColumn::make('co_trainer')
+                    ->label("Co-Trainer:in")
+                    ->searchable(),
+                TextColumn::make('hospitant')
+                    ->label("Hospitant:in")
+                    ->searchable(),
+                TextColumn::make('liste_verschicken')
+                    ->searchable(),
+                TextColumn::make('abgesagt_am')
+                    ->label("Abgesagt am")
+                    ->searchable(),
+                TextColumn::make('abgesagt_wg')
+                    ->label("Abgesagt wegen")
+                    ->searchable(),
+                TextColumn::make('status')
+                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('created_at')
+                    ->dateTime("d.m.Y H:i:s")
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('updated_at')
+                    ->dateTime("d.m.Y H:i:s")
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //

@@ -28,8 +28,7 @@ class KursForm
                     ->required(),
                 DatePicker::make('ersatztermin')
                     ->native(false)
-                    ->displayFormat("D, d.m")
-                    ->required(),
+                    ->displayFormat("D, d.m"),
                 // TextInput::make('kursort')
                 //     ->required(),
                 TextInput::make('kursplätze')

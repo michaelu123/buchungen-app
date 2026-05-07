@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->text('notiz')->nullable();
             $table->string('nummer')->unique();
             $table->date('datum');
-            $table->date('ersatztermin');
+            $table->date('ersatztermin')->nullable();
             $table->string('uhrzeit');
             // $table->string('kursort');
             $table->unsignedTinyInteger('kursplätze');

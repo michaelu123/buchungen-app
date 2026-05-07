@@ -49,11 +49,14 @@ class KursTable
                         }
                         return $state;
                     }),
-                TextColumn::make('trainer')->label("Trainer:in")
+                TextColumn::make('trainer')
+                    ->label("Trainer:in")
                     ->searchable(),
-                TextColumn::make('co_trainer')->label("Co-Trainer:in")
+                TextColumn::make('co_trainer')
+                    ->label("Co-Trainer:in")
                     ->searchable(),
-                TextColumn::make('hospitant')->label("Hospitant:in")
+                TextColumn::make('hospitant')
+                    ->label("Hospitant:in")
                     ->searchable(),
                 TextColumn::make('liste_verschicken')
                     ->searchable(),
@@ -62,6 +65,9 @@ class KursTable
                     ->searchable(),
                 TextColumn::make('abgesagt_wg')
                     ->label("Abgesagt wegen")
+                    ->searchable(),
+                TextColumn::make('status')
+                    ->sortable()
                     ->searchable(),
                 TextColumn::make('created_at')
                     ->dateTime("d.m.Y H:i:s")

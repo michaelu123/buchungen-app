@@ -65,6 +65,9 @@ class KursTable
                 TextColumn::make('abgesagt_wg')
                     ->label('Abgesagt wegen')
                     ->searchable(),
+                TextColumn::make('status')
+                    ->sortable()
+                    ->searchable(),
                 TextColumn::make('created_at')
                     ->dateTime('d.m.Y H:i:s')
                     ->sortable()
