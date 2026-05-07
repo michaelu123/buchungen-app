@@ -2,13 +2,13 @@
 
 namespace App\Filament\Resources\RFSFP\Kurse\Pages;
 
+use App\Filament\Resources\KurseBase\EditKurseBase;
 use Illuminate\Database\Eloquent\Model;
-use Filament\Resources\Pages\EditRecord;
 use Filament\Actions\DeleteAction;
 use App\Models\RFSFP\Buchung;
 use App\Filament\Resources\RFSFP\Kurse\KursResource;
 
-class EditKurs extends EditRecord
+class EditKurs extends EditKurseBase
 {
     protected static string $resource = KursResource::class;
 

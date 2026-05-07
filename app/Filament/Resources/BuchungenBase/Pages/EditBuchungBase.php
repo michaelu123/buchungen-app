@@ -29,4 +29,9 @@ abstract class EditBuchungBase extends EditRecord
 
         return $buchung;
     }
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
 }

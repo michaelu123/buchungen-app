@@ -33,7 +33,7 @@ abstract class BuchungTableBase
 
     abstract protected static function getKursModelClass(): string;
 
-    protected static function nameColumn($useTermin): array
+    protected static function nameColumn(bool $useTermin): array
     {
         if ($useTermin) {
             return [
@@ -57,7 +57,7 @@ abstract class BuchungTableBase
     }
 
 
-    protected static function select($useTermin, $kursClass): Select
+    protected static function select(bool $useTermin, string $kursClass): Select
     {
         if ($useTermin) {
             $options = $kursClass::whereNull('notiz')
@@ -79,7 +79,7 @@ abstract class BuchungTableBase
         }
     }
 
-    protected static function kontoFelder($buchungClass): array
+    protected static function kontoFelder(string $buchungClass): array
     {
         if (!$buchungClass::$requireAbbuchung) {
             return [];
@@ -100,7 +100,7 @@ abstract class BuchungTableBase
         ];
     }
 
-    protected static function verifyFeld($buchungClass): array
+    protected static function verifyFeld(string $buchungClass): array
     {
         if (!$buchungClass::$requireEmailVerification) {
             return [];
