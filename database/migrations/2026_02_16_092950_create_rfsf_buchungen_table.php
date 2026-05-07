@@ -31,6 +31,7 @@ return new class extends Migration {
             $table->datetime("anmeldebestätigung")->nullable();
             $table->datetime("eingezogen")->nullable();
             $table->unsignedInteger("betrag")->nullable();
+            $table->text('mitteilung')->nullable();
             $table->text("kommentar")->nullable();
             $table->timestamps();
         });

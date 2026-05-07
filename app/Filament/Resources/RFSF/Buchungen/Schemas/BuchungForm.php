@@ -5,6 +5,7 @@ namespace App\Filament\Resources\RFSF\Buchungen\Schemas;
 use App\Filament\Resources\BuchungenBase\Schemas\BuchungFormBase;
 use App\Models\RFSF\Buchung;
 use App\Models\RFSF\Kurs;
+use Filament\Forms\Components\Textarea;
 
 class BuchungForm extends BuchungFormBase
 {
@@ -16,5 +17,12 @@ class BuchungForm extends BuchungFormBase
     protected static function getKursModelClass(): string
     {
         return Kurs::class;
+    }
+
+    protected static function zusatzFelder(): array
+    {
+        return [
+            Textarea::make('mitteilung'),
+        ];
     }
 }

@@ -40,6 +40,7 @@ class BaseBuchung extends Model
         'anmeldebestätigung',
         'eingezogen',
         'betrag',
+        'mitteilung',
         'kommentar',
     ];
 

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Filament\Forms\Components\TextInput;
 use Carbon\CarbonImmutable;
+use Filament\Tables\Columns\Column;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -50,6 +51,9 @@ class AppServiceProvider extends ServiceProvider
         );
         TextInput::configureUsing(function (TextInput $component): void {
             $component->trim();
+        });
+        Column::configureUsing(function (Column $column): void {
+            $column->toggleable();
         });
     }
 }

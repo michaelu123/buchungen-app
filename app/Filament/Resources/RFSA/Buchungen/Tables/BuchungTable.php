@@ -35,6 +35,16 @@ class BuchungTable extends BuchungTableBase
     {
         return [
             TextColumn::make('ermäßigung'),
+            TextColumn::make('mitteilung')
+                ->searchable()
+                ->limit(30)
+                ->tooltip(function (TextColumn $column): ?string {
+                    $state = $column->getState();
+                    if (\strlen($state) <= $column->getCharacterLimit()) {
+                        return null;
+                    }
+                    return $state;
+                }),
         ];
     }
 }

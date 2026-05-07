@@ -10,6 +10,7 @@ use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Checkbox;
 use App\Models\RFSF\Kurs;
 use App\Models\RFSF\Buchung;
+use Filament\Forms\Components\Textarea;
 
 new class extends Component implements HasSchemas {
     // noinspection PhpUnusedAliasInspection
@@ -171,6 +172,11 @@ EOD
                     ->default(true)
                     ->accepted()
                     ->required(),
+                Textarea::make("mitteilung")
+                    ->belowLabel("Falls Sie uns noch etwas mitteilen möchten:")
+                    ->rows(2)
+                    ->autosize()
+                    ->maxLength(2000),
             ])->statePath('data');
     }
 

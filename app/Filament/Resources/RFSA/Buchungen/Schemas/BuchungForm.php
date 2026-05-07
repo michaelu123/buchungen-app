@@ -5,9 +5,7 @@ namespace App\Filament\Resources\RFSA\Buchungen\Schemas;
 use App\Filament\Resources\BuchungenBase\Schemas\BuchungFormBase;
 use App\Models\RFSA\Buchung;
 use App\Models\RFSA\Kurs;
-use Closure;
-use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 
 class BuchungForm extends BuchungFormBase
@@ -26,6 +24,7 @@ class BuchungForm extends BuchungFormBase
     {
         return [
             TextInput::make('ermäßigung'),
+            Textarea::make('mitteilung'),
         ];
     }
 }
