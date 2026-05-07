@@ -41,9 +41,6 @@ class ManageMailAttachments extends Page
         if ($roles->contains("ADMIN")) {
             return true;
         }
-        if ($roles->contains('RFS')) {
-            return true;
-        }
         return false;
     }
 

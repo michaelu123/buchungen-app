@@ -10,6 +10,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\On;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Maatwebsite\Excel\Facades\Excel;
@@ -35,6 +36,15 @@ class SammelÜberweisung extends Page implements HasForms
     public function mount(): void
     {
         $this->form->fill();
+    }
+
+    public static function canAccess(): bool
+    {
+        $roles = Auth::user()->roles->map(fn($role) => $role["name"]);
+        if ($roles->contains("ADMIN")) {
+            return true;
+        }
+        return false;
     }
 
     public function form(Schema $schema): Schema
