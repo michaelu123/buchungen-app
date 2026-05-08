@@ -79,7 +79,8 @@ class BuchungenImportBase implements OnEachRow, SkipsEmptyRows, WithHeadingRow, 
                     'eingezogen' => $rowData['eingezogen'],
                     'betrag' => $rowData['zahlungsbetrag'],
                     'anmeldebestätigung' => $rowData['anmeldebestatigung'],
-                    'kommentar' => $rowData['kommentar'],
+                    'mitteilung' => $rowData['mitteilung'],
+                    'kommentar' => $rowData['bemerkung'],
                 ];
             }
 

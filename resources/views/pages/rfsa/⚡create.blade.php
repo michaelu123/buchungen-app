@@ -29,10 +29,11 @@ new class extends Component implements HasSchemas {
     public function form(Schema $schema): Schema
     {
         $kurse = Kurs::whereNull("notiz")
-            ->where("restplätze", ">", 0)
+            // ->where("restplätze", ">", 0)
             ->get()
             ->mapWithKeys(function (Kurs $kurs): array {
-                return [$kurs->nummer => $kurs->kursDetails() . ", freie Plätze: " . $kurs->restplätze];
+                $msg = $kurs->restplätze > 0 ? ", freie Plätze: " . $kurs->restplätze : ", ausgebucht";
+                return [$kurs->nummer => $kurs->kursDetails() . $msg];
             })->all();
         return $schema
             ->components([

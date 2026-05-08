@@ -224,7 +224,7 @@ class KursTableActions
     protected function convertToIsoDate(string $ts): string // 06.03.2022 17:28:38 -> 2022-03-06
     {
         if ($ts[2] == '.' && $ts[5] == '.') {
-            return substr($ts, 6, 4) + '-' + substr($ts, 3, 2) + '-' + substr($ts, 0, 2);
+            return substr($ts, 6, 4) . '-' . substr($ts, 3, 2) . '-' . substr($ts, 0, 2);
         }
         if ($ts[4] == '-' && $ts[7] == '-') {
             return $ts;

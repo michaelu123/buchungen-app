@@ -72,6 +72,7 @@ class BuchungenExportBase implements FromCollection, WithMapping, WithHeadings, 
       $buchung->verified,
       $buchung->eingezogen,
       $buchung->betrag,
+      $buchung->mitteilung,
       $buchung->kommentar,
     ];
   }
@@ -98,6 +99,7 @@ class BuchungenExportBase implements FromCollection, WithMapping, WithHeadings, 
       'Verified',
       'Eingezogen',
       'Betrag',
+      'Mitteilung',
       'Kommentar',
     ];
   }

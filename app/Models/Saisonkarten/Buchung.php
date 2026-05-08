@@ -82,10 +82,12 @@ class Buchung extends BaseBuchung
         $p = str_replace('/', '_', $name);
         $p = str_replace('\\', '_', $p);
         $p = str_replace(' ', '_', $p);
-        $skPath = $skPath . '/Saisonkarte_' . $skNummer . '_' . $p;
-        $pngPath = $skPath . '.png';
-        $jpgPath = $skPath . '.jpg';
-        $pdfPath = $skPath . '.pdf';
+        $p = str_replace('\t', '_', $p);
+        $skName = 'Saisonkarte_' . $skNummer . '_' . $p;
+        $skPath = $skPath . '/' . $skName;
+        $pngPath = $skPath . '/' . $skName . '.png';
+        $jpgPath = $skPath . '/' . $skName . '.jpg';
+        $pdfPath = $skPath . '/' . $skName . '.pdf';
 
         if (file_exists($pngPath) && file_exists($jpgPath) && file_exists($pdfPath)) {
             $buchung->pngPath = $pngPath;
@@ -108,7 +110,7 @@ class Buchung extends BaseBuchung
         $betrag = $basisdaten->betrag;
 
         imagefttext($img, 50, 0, 800, 100, 0, $oswr, $year);
-        imagefttext($img, 50, 0, 640, 180, 0, $oswr, 'Saisonkarte');
+        imagefttext($img, 50, 0, 640, 180, 0, $oswr, 'TEST Saisonkarte UNGÜLTIG!!!'); // TODO
         imagefttext($img, 50, 0, 800, 260, 0, $oswr, sprintf('#%3d', $skNummer));
         imagefttext($img, 30, 0, 40, 350, 0, $oswr, sprintf('Name: %s', $name));
         imagefttext($img, 30, 0, 40, 420, 0, $oswr, sprintf('Mitgliedsnummer: %d', $nummer));
