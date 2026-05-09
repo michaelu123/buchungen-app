@@ -12,6 +12,7 @@ use Filament\Actions\EditAction;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Model;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -25,6 +26,8 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 class KursTableActions
 {
     public bool $sammel = false;
+
+    protected array $fillFormCache = [];
 
     public function __construct(
         public string $buchungenExportClass,
@@ -43,12 +46,14 @@ class KursTableActions
             ->requiresConfirmation()
             // ->modalHeading("Ebics-Datei erstellen?")
             ->modalDescription('Ebics-Datei erstellen?')
+            ->modalSubmitAction(fn(Action $action) => $action->hidden(filled($this->fillForm($model)['zeichensatz'])))
             ->modalSubmitActionLabel('Ja, erstellen')
-            ->fillForm($model->fillForm())
+            ->fillForm($this->fillForm($model))
             ->schema([
                 TextInput::make('eingezogen1')->label('Schon eingezogen:')->readonly()->inlineLabel(),
                 TextInput::make('eingezogen2')->label('Noch einzuziehen:')->readonly()->inlineLabel(),
                 TextInput::make('unverifiziert')->label('Nicht verifizierte Email:')->readonly()->inlineLabel(),
+                TextInput::make('zeichensatz')->label('Zeichensatz:')->readonly()->inlineLabel()->hidden(fn(Get $get): bool => !filled($get('zeichensatz'))),
                 Toggle::make('einzug')->label('Einzug vermerken?')->default(false)->inlineLabel()->autofocus(),
             ])
             ->action(function (array $data) use ($model) {
@@ -69,6 +74,7 @@ class KursTableActions
                     ->icon(Heroicon::OutlinedDocumentArrowDown)
                     ->action(function (Model $kurs): BinaryFileResponse {
                         $name = isset($kurs->nummer) ? $kurs->nummer : Carbon::parse($kurs->datum)->translatedFormat('Y-m-d');
+
                         return Excel::download(new $this->buchungenExportClass($kurs), $name . '.xlsx');
                     }),
                 Action::make('ebics')
@@ -79,11 +85,13 @@ class KursTableActions
                     // ->modalHeading("Ebics-Datei erstellen?")
                     ->modalDescription('Ebics-Datei erstellen?')
                     ->modalSubmitActionLabel('Ja, erstellen')
+                    ->modalSubmitAction(fn(Action $action, Model $kurs) => $action->hidden(filled($this->fillForm($kurs)['zeichensatz'])))
                     ->fillForm(fn(Model $kurs): array => $this->fillForm($kurs))
                     ->schema([
                         TextInput::make('eingezogen1')->label('Schon eingezogen:')->readonly()->inlineLabel(),
                         TextInput::make('eingezogen2')->label('Noch einzuziehen:')->readonly()->inlineLabel(),
                         TextInput::make('unverifiziert')->label('Nicht verifizierte Email:')->readonly()->inlineLabel(),
+                        TextInput::make('zeichensatz')->label('Zeichensatz:')->readonly()->inlineLabel()->hidden(fn(Get $get): bool => !filled($get('zeichensatz'))),
                         Toggle::make('einzug')->label('Einzug vermerken?')->default(false)->inlineLabel()->autofocus(),
                     ])
                     ->action(function (array $data, Model $kurs) {
@@ -104,7 +112,7 @@ class KursTableActions
                 DeleteBulkAction::make(),
             ]),
             Action::make('update')
-                ->hidden(str_contains($this->kurseExportClass, "Termin"))
+                ->hidden(str_contains($this->kurseExportClass, 'Termin'))
                 ->label('Update Restplätze')
                 ->tableIcon(Heroicon::OutlinedArrowPath)
                 ->action(function (): void {
@@ -117,7 +125,8 @@ class KursTableActions
                     $ns = (new \ReflectionClass($this->kurseExportClass))->getNamespaceName();
                     $parts = explode('\\', $ns);
                     $segment = end($parts);
-                    return Excel::download(new $this->kurseExportClass(null), $segment . "_" . 'Kurse.xlsx');
+
+                    return Excel::download(new $this->kurseExportClass(null), $segment . '_' . 'Kurse.xlsx');
                 }),
 
             Action::make('import')
@@ -139,6 +148,7 @@ class KursTableActions
                     $path = $tuf->getRealPath();
                     $excel = Excel::import(new $this->importClass, $path);
                     $res = $tuf->delete();
+
                     return $excel;
                 }),
         ];
@@ -146,9 +156,16 @@ class KursTableActions
 
     protected function fillForm(Model $kurs): array
     {
+        $cacheKey = $kurs->getTable() . '_' . $kurs->getKey();
+
+        if (isset($this->fillFormCache[$cacheKey])) {
+            return $this->fillFormCache[$cacheKey];
+        }
+
         $schonEingezogen = 0;
         $nochZuEinziehen = 0;
         $unverifiziert = 0;
+        $zeichenSatz = [];
 
         foreach ($kurs->buchungen()->get() as $buchung) {
             // dd($buchung->notiz, !$buchung->lastschriftok, !$buchung->iban, !$buchung->verified, $buchung->eingezogen);
@@ -163,12 +180,16 @@ class KursTableActions
             if (!$buchung->verified) {
                 $unverifiziert++;
             }
+            if (!$this->isLatin($buchung->kontoinhaber)) {
+                $zeichenSatz[] = $buchung->kontoinhaber;
+            }
         }
 
-        return [
+        return $this->fillFormCache[$cacheKey] = [
             'eingezogen1' => $schonEingezogen,
             'eingezogen2' => $nochZuEinziehen,
             'unverifiziert' => $unverifiziert,
+            'zeichensatz' => implode(',', $zeichenSatz),
         ];
     }
 
@@ -178,8 +199,8 @@ class KursTableActions
         $xmlString = $this->createXml($list, false);
         if ($einzug) {
             $now = now();
-            $buchungenList = $list["buchungenList"];
-            $buchungenData = $list["buchungenData"];
+            $buchungenList = $list['buchungenList'];
+            $buchungenData = $list['buchungenData'];
             $counter = count($buchungenList);
             for ($i = 0; $i < $counter; $i++) {
                 $buchung = $buchungenList[$i];
@@ -187,6 +208,7 @@ class KursTableActions
                 $buchung->update(['eingezogen' => $now, 'betrag' => $data['betrag']]);
             }
         }
+
         return $xmlString;
     }
 
@@ -278,7 +300,7 @@ class KursTableActions
     {
         $ctrlSums = $this->findElements($rootContent, 'CtrlSum');
         foreach ($ctrlSums as $elem) {
-            $elem->setContent(number_format($summe, 2, ".", ""));
+            $elem->setContent(number_format($summe, 2, '.', ''));
         }
 
         $nbOfTxs = $this->findElements($rootContent, 'NbOfTxs');
@@ -315,27 +337,28 @@ class KursTableActions
         $buchungenData = [];
         $sum = 0.0;
         $cnt = 0;
-        $buchungen = $kurs->buchungen()->whereNull("notiz")->whereNotNull("lastschriftok")->whereNotNull("verified")->whereNull("eingezogen")->get();
+        $buchungen = $kurs->buchungen()->whereNull('notiz')->whereNotNull('lastschriftok')->whereNotNull('verified')->whereNull('eingezogen')->get();
         foreach ($buchungen as $buchung) {
             $normalizedIban = strtoupper(str_replace(' ', '', $buchung->iban));
-            if (str_starts_with($normalizedIban, "AKTIV")) {
+            if (str_starts_with($normalizedIban, 'AKTIV')) {
                 continue;
             }
             [$betrag, $mandat, $zweck] = $kurs->ebicsData($buchung);
             $sum += $betrag;
             $cnt++;
             $buchungenData[] = [
-                "datum" => $buchung->created_at->format('Y-m-d'),
-                "betrag" => $betrag,
-                "iban" => $buchung->iban,
-                "mandat" => $mandat,
-                "zweck" => $zweck,
-                "kontoinhaber" => $buchung->kontoinhaber,
+                'datum' => $buchung->created_at->format('Y-m-d'),
+                'betrag' => $betrag,
+                'iban' => $buchung->iban,
+                'mandat' => $mandat,
+                'zweck' => $zweck,
+                'kontoinhaber' => $buchung->kontoinhaber,
             ];
             $buchungenList[] = $buchung;
 
         }
-        return ["sum" => $sum, "cnt" => $cnt, "buchungenList" => $buchungenList, "buchungenData" => $buchungenData];
+
+        return ['sum' => $sum, 'cnt' => $cnt, 'buchungenList' => $buchungenList, 'buchungenData' => $buchungenData];
     }
 
     protected function fillinBuchungen(Element $template, array $buchungen): array
@@ -381,6 +404,7 @@ class KursTableActions
 
             $newDrcts[] = $clone;
         }
+
         return $newDrcts;
     }
 
@@ -392,9 +416,9 @@ class KursTableActions
     public function createXml(array $list, bool $sammel): string
     {
         $this->sammel = $sammel;
-        $sum = $list["sum"];
-        $cnt = $list["cnt"];
-        $buchungenData = $list["buchungenData"];
+        $sum = $list['sum'];
+        $cnt = $list['cnt'];
+        $buchungenData = $list['buchungenData'];
 
         $this->xmlReader = XmlReader::fromString($sammel ? $this->xmlsÜberweisung : $this->xmlsAbbuchung);
 
@@ -432,6 +456,7 @@ class KursTableActions
         $root->setAttributes($document->getAttributes());
         // $root->setNamespaces($document->getNamespaces());
         $xmlString = $this->xmlWriter->write($root, $rootContent);
+
         return $xmlString;
     }
 
@@ -587,6 +612,4 @@ EOF;
     </CstmrCdtTrfInitn>
 </Document>
 EOF;
-
-
 }
