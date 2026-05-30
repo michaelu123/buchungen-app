@@ -21,4 +21,7 @@ return RectorConfig::configure()
     // ->withCodeQualityLevel(111);
     ->withPreparedSets(typeDeclarations: true)
     ->withPreparedSets(deadCode: true)
-    ->withPreparedSets(codeQuality: true);
+    ->withPreparedSets(codeQuality: true)
+    ->withSkip([
+        \Rector\TypeDeclaration\Rector\StmtsAwareInterface\DeclareStrictTypesRector::class,
+    ]);

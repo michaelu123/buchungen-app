@@ -3,6 +3,7 @@
         "gemini",
         "copilot"
     ],
+    "cloud": false,
     "guidelines": true,
     "herd_mcp": true,
     "mcp": true,
@@ -11,6 +12,8 @@
     ],
     "sail": false,
     "skills": [
+        "fortify-development",
+        "laravel-best-practices",
         "fluxui-development",
         "livewire-development",
         "pest-testing",

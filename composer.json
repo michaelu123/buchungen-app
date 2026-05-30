@@ -3,32 +3,35 @@
     "name": "laravel/livewire-starter-kit",
     "type": "project",
     "description": "The official Laravel starter kit for Livewire.",
-    "keywords": ["laravel", "framework"],
+    "keywords": [
+        "laravel",
+        "framework"
+    ],
     "license": "MIT",
     "require": {
         "php": "^8.2",
-        "filament/filament": "5.0",
-        "laravel/fortify": "^1.30",
-        "laravel/framework": "^12.0",
-        "laravel/tinker": "^2.11",
-        "livewire/flux": "^2.9.0",
-        "livewire/livewire": "^4.0",
-        "maatwebsite/excel": "^3.1",
-        "saloonphp/xml-wrangler": "^1.4"
+        "filament/filament": "^5.6.6",
+        "laravel/fortify": "^1.37.2",
+        "laravel/framework": "^13.12.0",
+        "laravel/tinker": "^3.0.2",
+        "livewire/flux": "^2.14.1",
+        "livewire/livewire": "^4.3.0",
+        "maatwebsite/excel": "^3.1.69",
+        "saloonphp/xml-wrangler": "^1.5.0"
     },
     "require-dev": {
-        "barryvdh/laravel-debugbar": "^4.0",
-        "barryvdh/laravel-ide-helper": "^3.6",
-        "fakerphp/faker": "^1.23",
-        "laravel/boost": "^2.1",
-        "laravel/pail": "^1.2.2",
-        "laravel/pint": "^1.24",
-        "laravel/sail": "^1.41",
-        "mockery/mockery": "^1.6",
-        "nunomaduro/collision": "^8.6",
-        "pestphp/pest": "^4.3",
-        "pestphp/pest-plugin-laravel": "^4.0",
-        "rector/rector": "^2.3"
+        "barryvdh/laravel-debugbar": "^4.2.8",
+        "barryvdh/laravel-ide-helper": "^3.7.0",
+        "fakerphp/faker": "^1.24.1",
+        "laravel/boost": "^2.4.8",
+        "laravel/pail": "^1.2.7",
+        "laravel/pint": "^1.29.1",
+        "laravel/sail": "^1.61.0",
+        "mockery/mockery": "^1.6.12",
+        "nunomaduro/collision": "^8.9.4",
+        "pestphp/pest": "^4.7.0",
+        "pestphp/pest-plugin-laravel": "^4.1.0",
+        "rector/rector": "^2.4.5"
     },
     "autoload": {
         "psr-4": {
