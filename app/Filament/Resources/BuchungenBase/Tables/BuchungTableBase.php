@@ -48,8 +48,8 @@ abstract class BuchungTableBase
             ];
         } else {
             return [
-                TextColumn::make('kursnummer')
-                    ->label('Kursname')
+                TextColumn::make('kurs.nummer')
+                    ->label('Kursnummer')
                     ->searchable()
                     ->sortable()
             ];

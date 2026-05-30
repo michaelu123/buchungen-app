@@ -9,11 +9,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Checkbox;
 use App\Models\Codier\Buchung;
-use App\Models\Codier\Termin;
-use Carbon\Carbon;
 use Filament\Schemas\Components\Utilities\Get;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules\Unique;
 
 new class extends Component implements HasSchemas {
@@ -29,53 +25,11 @@ new class extends Component implements HasSchemas {
         $this->form->fill();
     }
 
-    private function nochFrei(string $beginn, string $ende, array $reserviert): array
-    {
-        $dtBeginn = new \DateTime("2000-01-01 " . $beginn);
-        $min10 = new \DateInterval("PT10M");
-        $min30 = new \DateInterval("PT30M");
-        $dtEnde = new \DateTime("2000-01-01 " . $ende);
-        $dtEnde = $dtEnde->sub($min30);
-        $frei = [];
-        for ($dt = $dtBeginn; $dt <= $dtEnde; $dt = $dt->add($min10)) {
-            $uhrZeit = $dt->format("H:i");
-            if (!in_array($uhrZeit, $reserviert)) {
-                $frei[$uhrZeit] = $uhrZeit;
-            }
-        }
-        return $frei;
-    }
-
-    private function uhrzeiten($termin_id, Collection $termine): array
-    {
-        if ($termin_id == null) {
-            return [];
-        }
-        $frei = $termine->filter(fn($t): bool => $t["id"] == $termin_id);
-        return $frei->first()["frei"];
-    }
 
     public function form(Schema $schema): Schema
     {
-        $termine = Termin::with("buchungen")
-            ->whereNull("notiz")
-            ->get()
-            ->map(function (Termin $termin): array {
-                $reserviert = $termin->buchungen()->wherenull('notiz')->get()->map(fn($b): string => substr($b->uhrzeit, 0, 5))->toArray();
-                $frei = $this->nochFrei($termin->beginn, $termin->ende, $reserviert);
-                return [
-                    "id" => $termin->id,
-                    "datum" => $termin->datum,
-                    "beginn" => $termin->beginn,
-                    "ende" => $termin->ende,
-                    "reserviert" => $reserviert,
-                    "frei" => $frei,
-                ];
-            })
-            ->reject(fn($t): bool => empty($t["frei"]));
-        $termineOptions = $termine->mapWithKeys(function (array $t): array {
-            return [$t["id"] => Carbon::parse($t["datum"])->translatedFormat('D, d.m.y') . " von " . $t["beginn"] . " bis " . $t["ende"]];
-        });
+        $termine = Buchung::getTermine();
+        $termineOptions = Buchung::getTermineOptions($termine);
         return $schema
             ->components([
                 Radio::make("termin_id")
@@ -91,7 +45,7 @@ new class extends Component implements HasSchemas {
                 Radio::make("uhrzeit")
                     ->inline()
                     ->required()
-                    ->options(fn(Get $get): array => $this->uhrzeiten($get('termin_id'), $termine))
+                    ->options(fn(Get $get): array => Buchung::uhrzeiten($get('termin_id'), "", $termine))
                     ->unique(
                         Buchung::class,
                         'uhrzeit',

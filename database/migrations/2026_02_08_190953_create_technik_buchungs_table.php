@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->text('notiz')->nullable();
             $table->string("email");
             $table->unsignedInteger("mitgliedsnummer")->nullable();
-            $table->string("kursnummer"); // ->constrained("technik_kurse", "nummer")->onDelete("cascade");
+            $table->foreignId("kurs_id")->constrained("technik_kurse");
             $table->string("anrede")->nullable();
             $table->string("vorname");
             $table->string("nachname");

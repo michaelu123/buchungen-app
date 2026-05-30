@@ -4,14 +4,15 @@ namespace App\Models\Codier;
 
 use App\Mail\Codier\Bestaetigung;
 use App\Models\BaseBuchung;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\URL;
 use Throwable;
 
 class Buchung extends BaseBuchung
@@ -203,4 +204,67 @@ class Buchung extends BaseBuchung
     {
         return $this->belongsTo(static::$kursClass, 'termin_id', 'id');
     }
+
+    private static function nochFrei(string $beginn, string $ende, array $reserviert): array
+    {
+        $dtBeginn = new \DateTime("2000-01-01 " . $beginn);
+        $min10 = new \DateInterval("PT10M");
+        $min30 = new \DateInterval("PT30M");
+        $dtEnde = new \DateTime("2000-01-01 " . $ende);
+        $dtEnde = $dtEnde->sub($min30);
+        $frei = [];
+        for ($dt = $dtBeginn; $dt <= $dtEnde; $dt = $dt->add($min10)) {
+            $uhrZeit = $dt->format("H:i");
+            if (!in_array($uhrZeit, $reserviert)) {
+                $frei[$uhrZeit] = $uhrZeit;
+            }
+        }
+        return $frei;
+    }
+
+    public static function uhrzeiten(int|null $termin_id, string $uhrzeit, Collection $termine): array
+    {
+        if ($termin_id == null) {
+            return [];
+        }
+        $frei = $termine->filter(fn($t): bool => $t["id"] == $termin_id);
+        $res = $frei->first()["frei"];
+        if ($uhrzeit != "") {
+            $res[$uhrzeit] = $uhrzeit;
+        }
+        asort($res);
+        return $res;
+    }
+
+    public static function getTermine(): Collection
+    {
+        $termine = Termin::with("buchungen")
+            ->whereNull("notiz")
+            ->get()
+            ->map(function (Termin $termin): array {
+                $reserviert = $termin->buchungen()->wherenull('notiz')->get()->map(fn($b): string => substr($b->uhrzeit, 0, 5))->toArray();
+                $frei = static::nochFrei($termin->beginn, $termin->ende, $reserviert);
+                return [
+                    "id" => $termin->id,
+                    "datum" => $termin->datum,
+                    "beginn" => $termin->beginn,
+                    "ende" => $termin->ende,
+                    "reserviert" => $reserviert,
+                    "frei" => $frei,
+                ];
+            })
+            ->reject(fn($t): bool => empty($t["frei"]));
+        return $termine;
+    }
+
+    public static function getTermineOptions(Collection $termine): Collection
+    {
+        $termineOptions = $termine->mapWithKeys(function (array $t): array {
+            return [$t["id"] => Carbon::parse($t["datum"])->translatedFormat('D, d.m.y') . " von " . $t["beginn"] . " bis " . $t["ende"]];
+        });
+        return $termineOptions;
+    }
+
+
+
 }

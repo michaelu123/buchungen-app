@@ -31,7 +31,7 @@ new class extends Component implements HasSchemas {
             ->where("restplätze", ">", 0)
             ->get()
             ->mapWithKeys(function (Kurs $kurs): array {
-                return [$kurs->nummer => $kurs->nummer . ": " . $kurs->titel . " am " . date("d.m.Y", strtotime($kurs->datum)) . ", freie Plätze: " . $kurs->restplätze];
+                return [$kurs->id => $kurs->nummer . ": " . $kurs->titel . " am " . date("d.m.Y", strtotime($kurs->datum)) . ", freie Plätze: " . $kurs->restplätze];
             })
             ->all();
         return $schema
@@ -43,7 +43,7 @@ new class extends Component implements HasSchemas {
                 TextInput::make('mitgliedsnummer')
                     ->belowLabel("Falls Sie ADFC-Mitglied sind, bitte hier die Mitgliedsnummer angeben, für den ermäßigten Preis. Sonst leer lassen.")
                     ->rules("digits:8"),
-                Radio::make("kursnummer")
+                Radio::make("kurs_id")
                     ->label("Kurs")
                     ->belowLabel("Ich möchte mich für folgenden Kurs anmelden:")
                     ->options(

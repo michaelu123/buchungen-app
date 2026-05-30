@@ -24,7 +24,7 @@ class BaseBuchung extends Model
         'notiz',
         'email',
         'mitgliedsnummer',
-        'kursnummer',
+        'kurs_id',
         'anrede',
         'vorname',
         'nachname',
@@ -54,7 +54,7 @@ class BaseBuchung extends Model
 
     public function kurs(): BelongsTo
     {
-        return $this->belongsTo(static::$kursClass, 'kursnummer', 'nummer');
+        return $this->belongsTo(static::$kursClass, 'kurs_id', 'id');
     }
 
     public static function createBuchung(array $data): BaseBuchung
@@ -62,11 +62,11 @@ class BaseBuchung extends Model
         $buchungClass = static::class;
         $buchung = $buchungClass::create($data);
 
-        $kursnummer = $data['kursnummer'];
-        DB::transaction(function () use ($buchungClass, $kursnummer): void {
-            $buchungenCount = $buchungClass::where('kursnummer', $kursnummer)
+        $kurs_id = $data['kurs_id'];
+        DB::transaction(function () use ($buchungClass, $kurs_id): void {
+            $buchungenCount = $buchungClass::where('kurs_id', $kurs_id)
                 ->whereNull('notiz')->sharedLock()->count();
-            $kurs = static::$kursClass::where('nummer', $kursnummer)->sharedLock()->first();
+            $kurs = static::$kursClass::find($kurs_id)->sharedLock()->first();
             if ($kurs && $kurs->restplätze > 0) {
                 $kurs->restplätze = $kurs->kursplätze - $buchungenCount - 1;
             }
@@ -114,9 +114,9 @@ class BaseBuchung extends Model
     {
         DB::transaction(function (): void {
             $buchungClass = static::class;
-            $kursBuchungen = $buchungClass::select('kursnummer', DB::raw('count(*) as count'))
+            $kursBuchungen = $buchungClass::select('kurs_id', DB::raw('count(*) as count'))
                 ->whereNull('notiz')
-                ->groupBy('kursnummer')
+                ->groupBy('kurs_id')
                 ->sharedLock()
                 ->get()
                 ->toArray();
@@ -128,7 +128,7 @@ class BaseBuchung extends Model
             foreach ($kursPlätze as $kurs) {
                 $buchungenFound = false;
                 foreach ($kursBuchungen as $buchung) {
-                    if ($buchung['kursnummer'] == $kurs['nummer']) {
+                    if ($buchung['kurs_id'] == $kurs['id']) {
                         $buchungenFound = true;
                         $restOld = $kurs['restplätze'];
                         $diff = $kurs['kursplätze'] - $buchung['count'];

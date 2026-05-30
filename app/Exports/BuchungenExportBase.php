@@ -52,10 +52,11 @@ class BuchungenExportBase implements FromCollection, WithMapping, WithHeadings, 
 
   public function map($buchung): array
   {
+    $kursnummer = $this->kursClass::find($buchung->kurs_id)->nummer;
     return [
       $buchung->created_at,
       $buchung->notiz,
-      $buchung->kursnummer,
+      $kursnummer,
       $buchung->email,
       $buchung->mitgliedsnummer,
       $buchung->anrede,

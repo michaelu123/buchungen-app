@@ -3,11 +3,12 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Collection;
+use Override;
 
 abstract class BaseBuchungFactory extends Factory
 {
   public abstract function getNummern(int $r): string;
-
 
   /**
    * Define the model's default state.
@@ -21,7 +22,7 @@ abstract class BaseBuchungFactory extends Factory
       "notiz" => fake()->optional($weight = 0.1)->word(),
       "email" => fake()->email(),
       "mitgliedsnummer" => fake()->randomNumber(8, true),
-      "kursnummer" => $this->getNummern($r),
+      "kurs_id" => $this->getNummern($r),
       "anrede" => $r < 5 ? "Frau" : "Herr",
       "vorname" => fake()->firstName($r < 5 ? "female" : ($r < 9 ? "male" : null)),
       "nachname" => fake()->lastName,
