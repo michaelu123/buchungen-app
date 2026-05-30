@@ -40,7 +40,7 @@ class Kurs extends Model
 
     public function buchungen(): HasMany
     {
-        return $this->hasMany(Buchung::class, "kursnummer", "nummer");
+        return $this->hasMany(Buchung::class, "kurs_id", "id");
     }
 
     public function termine($tage): string

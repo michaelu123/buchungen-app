@@ -72,10 +72,10 @@ abstract class BuchungTableBase
                     ->options($options);
         } else {
             return
-                Select::make('nummer')
+                Select::make('kurs_id')
                     ->label('Filtern nach Kurs')
                     ->placeholder('Wähle einen Kurs')
-                    ->options($kursClass::whereNull('notiz')->pluck('nummer', 'nummer')->toArray());
+                    ->options($kursClass::whereNull('notiz')->pluck('nummer', 'id')->toArray());
         }
     }
 
@@ -209,8 +209,8 @@ abstract class BuchungTableBase
                             if (isset($data['termin']['datum'])) {
                                 $inds[] = Indicator::make('Datum')->removeField('datum');
                             }
-                            if (isset($data['nummer'])) {
-                                $inds[] = Indicator::make('Kurs')->removeField('nummer');
+                            if (isset($data['kurs_id'])) {
+                                $inds[] = Indicator::make('Kurs')->removeField('kurs_id');
                             }
                             if (isset($data['notiz'])) {
                                 $inds[] = Indicator::make('Notiz')->removeField('notiz');
@@ -221,15 +221,15 @@ abstract class BuchungTableBase
                     )
                     ->query(function (Builder $query, array $data): Builder {
                         $datum = $data['termin']['datum'] ?? null;
-                        $nummer = $data['nummer'] ?? null;
+                        $kurs_id = $data['kurs_id'] ?? null;
                         $notiz = $data['notiz'] ?? null;
                         return $query
                             ->when(
                                 $datum,
                                 fn($query) => $query->whereHas('termin', fn($q) => $q->where('datum', $datum))
                             )->when(
-                                $nummer,
-                                fn($query) => $query->where('kursnummer', $nummer)
+                                $kurs_id,
+                                fn($query) => $query->where('kurs_id', $kurs_id)
                             )->when(
                                 $notiz,
                                 fn($query) => $notiz == 'leer' ?

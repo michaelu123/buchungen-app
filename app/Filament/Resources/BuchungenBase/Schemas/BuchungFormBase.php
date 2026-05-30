@@ -10,6 +10,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\Rules\Unique;
@@ -41,37 +42,42 @@ abstract class BuchungFormBase
             // ];
             $termine = $buchungClass::getTermine();
             $termineOptions = $buchungClass::getTermineOptions($termine);
+
             return [
-                Select::make("termin_id")
-                    ->label("Termin")
-                    ->belowLabel(fn(): string
-                        => $termine->isEmpty()
-                        ? "Leider gibt es aktuell keine freien Termine!"
-                        : "Ich möchte mich für folgenden Termin anmelden:")
+                Select::make('termin_id')
+                    ->label('Termin')
+                    ->belowLabel(fn (): string => $termine->isEmpty()
+                        ? 'Leider gibt es aktuell keine freien Termine!'
+                        : 'Ich möchte mich für folgenden Termin anmelden:')
                     ->options($termineOptions)
                     ->live()
+                    ->afterStateUpdated(function (Get $get, Set $set, ?Model $record) {
+                        if ($get('termin_id') == $record->termin_id) {
+                            $set('uhrzeit', $record->uhrzeit);
+                        } else {
+                            $set('uhrzeit', null);
+                        }
+                    })
                     ->partiallyRenderComponentsAfterStateUpdated(['uhrzeit'])
                     ->required(),
-                Select::make("uhrzeit")
+                Select::make('uhrzeit')
                     ->required()
-                    ->options(fn(Get $get, Model $record): array => $buchungClass::uhrzeiten(
+                    ->options(fn (Get $get, Model $record): array => $buchungClass::uhrzeiten(
                         $get('termin_id'),
-                        $record->termin_id == $get('termin_id') ? $get('uhrzeit') : "",
+                        $record->termin_id == $get('termin_id') ? $get('uhrzeit') : '',
                         $termine
                     ))
                     ->unique(
                         $buchungClass,
                         'uhrzeit',
-                        modifyRuleUsing: fn(Unique $rule, Get $get): Unique => $rule->where('termin_id', $get('termin_id'))
+                        modifyRuleUsing: fn (Unique $rule, Get $get): Unique => $rule->where('termin_id', $get('termin_id'))
                     )
                     ->validationMessages([
                         'unique' => 'Die Uhrzeit wurde inzwischen vergeben, bitte wählen Sie eine andere.',
                         'in' => 'Die Uhrzeit wurde inzwischen vergeben, bitte wählen Sie eine andere.',
                     ])
-                    ->label("Uhrzeit"),
+                    ->label('Uhrzeit'),
             ];
-
-
 
         } else {
             $kurse = $kursClass::whereNull('notiz')
@@ -81,12 +87,13 @@ abstract class BuchungFormBase
                     return [$kurs->id => $kurs->kursDetails()];
                 })
                 ->all();
+
             return [
                 Select::make('kurs_id')
                     ->label('Kursname')
                     ->placeholder('Wähle einen Kurs')
                     ->options($kurse)
-                    ->required()
+                    ->required(),
             ];
         }
     }
@@ -94,17 +101,18 @@ abstract class BuchungFormBase
     protected static function abbuchungFelder(): array
     {
         $buchungClass = static::getBuchungModelClass();
-        if (!$buchungClass::$requireAbbuchung) {
+        if (! $buchungClass::$requireAbbuchung) {
             return [];
         }
+
         return [
             TextInput::make('kontoinhaber')
                 ->required(),
             TextInput::make('iban')
                 ->label('IBAN oder Aktive/er')
                 ->rules([
-                    fn(): Closure => function ($attribute, $value, Closure $fail) use ($buchungClass): void {
-                        if (!$buchungClass::test_iban($value)) {
+                    fn (): Closure => function ($attribute, $value, Closure $fail) use ($buchungClass): void {
+                        if (! $buchungClass::test_iban($value)) {
                             $fail('Die IBAN ist ungültig.');
                         }
                     },
@@ -123,9 +131,10 @@ abstract class BuchungFormBase
     protected static function verificationFelder(): array
     {
         $buchungClass = static::getBuchungModelClass();
-        if (!$buchungClass::$requireEmailVerification) {
+        if (! $buchungClass::$requireEmailVerification) {
             return [];
         }
+
         return [
             DateTimePicker::make('verified')
                 ->label('Email verifiziert'),

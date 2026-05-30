@@ -170,7 +170,6 @@ class Buchung extends BaseBuchung
 
     public static function createBuchung(array $data): Buchung
     {
-        $data['kursnummer'] = $data['termin_id'];
         static::getEIN($data);
         $buchung = Buchung::create($data);
         Buchung::notifySuccess('Termin erfolgreich gebucht');

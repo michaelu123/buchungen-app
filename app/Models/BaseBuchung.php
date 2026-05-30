@@ -99,7 +99,7 @@ class BaseBuchung extends Model
         if (!str_ends_with($this->email, "@adfc-muenchen.de")) {
             return;
         } // TODO 
-        $kurs = static::$kursClass::where('nummer', $this->kursnummer)->first();
+        $kurs = static::$kursClass::find($this->kurs_id);
         try {
             Mail::to($this->email)->send(new static::$bestätigungClass($kurs, $this));
             $this->update(['anmeldebestätigung' => now()]);

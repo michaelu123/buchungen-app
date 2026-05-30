@@ -40,6 +40,15 @@ class BuchungenImportBase implements OnEachRow, SkipsEmptyRows, WithHeadingRow, 
         return $rowData;
     }
 
+    private array $kursnummer2id = [];
+    protected function kursIdFor(string $kursnummer): int|null
+    {
+        if (empty($this->kursnummer2id)) {
+            $this->kursnummer2id = $this->kursModelClass::pluck("id", "nummer")->toArray();
+        }
+        return $this->kursnummer2id[$kursnummer] ?? null;
+    }
+
     public function onRow(Row $row): void
     {
         $rowData = $row->toArray(null, false, false);
@@ -49,6 +58,8 @@ class BuchungenImportBase implements OnEachRow, SkipsEmptyRows, WithHeadingRow, 
             if (isset($rowData["email"])) {
                 $buchungData = $rowData;
                 $createdAt = $buchungData['created_at'] = $buchungData['zeitstempel'];
+                $kurs = $this->kursModelClass::where("nummer", $buchungData['kursnummer'])->first();
+                $buchungData["kurs_id"] = $kurs->id;
             } else {
                 $rowData = $this->transformRow($rowData);
                 // Get the underlying PhpSpreadsheet Worksheet from the row delegate to access the cell and its comment
@@ -74,14 +85,23 @@ class BuchungenImportBase implements OnEachRow, SkipsEmptyRows, WithHeadingRow, 
                     'kontoinhaber' => $rowData['lastschrift_name_des_kontoinhabers'],
                     'iban' => $rowData['lastschrift_iban_kontonummer'],
                     'lastschriftok' => filled($rowData['zustimmung_zur_sepa_lastschrift']),
-                    'ermäßigung' => $rowData["ermassigung"],
                     'verified' => $this->fromExcelDateTime($rowData['verifikation']),
                     'eingezogen' => $rowData['eingezogen'],
                     'betrag' => $rowData['zahlungsbetrag'],
                     'anmeldebestätigung' => $rowData['anmeldebestatigung'],
-                    'mitteilung' => $rowData['mitteilung'],
                     'kommentar' => $rowData['bemerkung'],
                 ];
+                if ($rowData["ermassigung"] ?? false) { // zur Zeit nur RFSA
+                    $buchungData['ermäßigung'] = $rowData["ermassigung"];
+                }
+                if ($rowData["mitteilung"] ?? false) { // zur Zeit nur RFSA/F/FP
+                    $buchungData['mitteilung'] = $rowData['mitteilung'];
+                }
+                $kurs_id = $this->kursIdFor($buchungData['kursnummer']);
+                if ($kurs_id == null) {
+                    return;
+                }
+                $buchungData["kurs_id"] = $this->kursIdFor($buchungData['kursnummer']);
             }
 
             $modelClass = $this->buchungModelClass;
@@ -99,7 +119,7 @@ class BuchungenImportBase implements OnEachRow, SkipsEmptyRows, WithHeadingRow, 
             } elseif (
                 $modelClass::where('created_at', $createdAt)
                     ->where('email', $buchungData['email'])
-                    ->where('kursnummer', $buchungData['kursnummer'])
+                    ->where('kurs_id', $buchungData['kurs_id'])
                     ->first()
             ) {
                 return;

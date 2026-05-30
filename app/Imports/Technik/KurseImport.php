@@ -23,7 +23,6 @@ class KurseImport extends KurseImportBase
             'restplätze' => $row['restplatze'],
             'leiter' => $row['kursleiter'],
             'leiter2' => $row[6],
-            // 'kommentar' => $row['bemerkungen'],
         ];
     }
 }
