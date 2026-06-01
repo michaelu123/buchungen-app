@@ -10,6 +10,7 @@ use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Checkbox;
 use App\Models\Technik\Kurs;
 use App\Models\Technik\Buchung;
+use Illuminate\Support\Facades\Log;
 
 new class extends Component implements HasSchemas {
     // noinspection PhpUnusedAliasInspection
@@ -28,10 +29,13 @@ new class extends Component implements HasSchemas {
     public function form(Schema $schema): Schema
     {
         $kurse = Kurs::whereNull("notiz")
-            ->where("restplätze", ">", 0)
+            ->orderBy("datum")
+            //            ->where("restplätze", ">", 0)
             ->get()
             ->mapWithKeys(function (Kurs $kurs): array {
-                return [$kurs->id => $kurs->nummer . ": " . $kurs->titel . " am " . date("d.m.Y", strtotime($kurs->datum)) . ", freie Plätze: " . $kurs->restplätze];
+                $free = $kurs->restplätze > 0;
+                $msg = $free ? ", freie Plätze: " . $kurs->restplätze : ", ausgebucht";
+                return [($free ? $kurs->id : 0) => $kurs->nummer . ": " . $kurs->titel . " am " . date("d.m.Y", strtotime($kurs->datum)) . $msg];
             })
             ->all();
         return $schema
@@ -49,6 +53,7 @@ new class extends Component implements HasSchemas {
                     ->options(
                         $kurse,
                     )
+                    ->disableOptionWhen(fn(int $value): bool => $value == 0)
                     ->required(),
                 Select::make('anrede')
                     ->placeholder('Wählen Sie eine Anrede')

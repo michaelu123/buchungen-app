@@ -51,9 +51,11 @@ class KursTable
                     }),
                 TextColumn::make('trainer')
                     ->label("Trainer:in")
+                    ->sortable()
                     ->searchable(),
                 TextColumn::make('co_trainer')
                     ->label("Co-Trainer:in")
+                    ->sortable()
                     ->searchable(),
                 TextColumn::make('hospitant')
                     ->label("Hospitant:in")

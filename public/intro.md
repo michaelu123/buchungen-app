@@ -1,6 +1,6 @@
-# Buchungen-App Beta (Stand 21.04.2026)
+# Buchungen-App Beta (Stand 01.06.2026)
 
-Die Testphase der Buchungen-App beginnt. Ziel ist es, ohne Google auszukommen. Einerseits aus den bekannten Gründen: Trump kill switch, Google kann uns jederzeit die Freundschaft kündigen, mancher mag vielleicht nicht persönliche Daten in ein Google-Formular eingeben. Aber auch, weil das Zusammenspiel von Google Forms, Sheets, AppsScript recht fragil ist. Außerdem braucht man noch ein zusätzliches Programm, um die Datei zu erzeugen, mit der Martin Stasnik die Abbuchungen durchführt.
+Die Testphase der Buchungen-App läuft. Ziel ist es, ohne Google auszukommen. Einerseits aus den bekannten Gründen: Trump kill switch, Google kann uns jederzeit die Freundschaft kündigen, mancher mag vielleicht nicht persönliche Daten in ein Google-Formular eingeben. Aber auch, weil das Zusammenspiel von Google Forms, Sheets, AppsScript recht fragil ist. Außerdem braucht man noch ein zusätzliches Programm, um die Datei zu erzeugen, mit der Martin Stasnik die Abbuchungen durchführt.
 
 Was verloren geht, ist die Fähigkeit, leicht neue Spalten einzuführen. Was früher Spalten in Google Sheets waren, sind jetzt Datenbankfelder. Neue Felter bedeuten Datenbank-Änderungen und erhebliche Änderungen im Programmcode. Deshalb wäre es wünschenswert, wenn die Tester frühzeitig ihre Wünsche in Bezug auf zusätzliche Felder kundtun würden.
 
@@ -23,17 +23,17 @@ Das Kommentarfeld kann auch für längere Kommentare genutzt werden. Die Suchfun
 
 Indem Ihr in Kurse verschiedene Kurse hinzufügt oder ändert, ändert sich das Buchungsformular. Indem Ihr Buchungen löscht oder eine Notiz hinzufügt, oder über das Formular neue Buchungen erstellt, ändern sich die Restplätze und damit auch das Buchungsformular. Der Knopf "Update Restplätze" ist i.a. nicht notwendig.
 
-Zwischen Kursen und Buchungen ist in der Datenbank festgelegt, daß eine Buchung immer auf einen existierenden Kurs verweisen muß (referential integrity, on delete cascade). Das hat mehrere Folgen:
+Zwischen Kursen und Buchungen ist in der Datenbank festgelegt, daß eine Buchung immer auf einen existierenden Kurs verweisen muß (referential integrity). Das hat mehrere Folgen:
 
-- man kann die Kursnummer eines Kurses nicht ändern.
 - man kann Buchungen nur für existierende Kurse anlegen.
-- das Löschen eines Kurses bewirkt das Löschen aller Buchungen für diesen Kurs! Wenn man den Kurs und die dazugehörigen Buchungen noch sehen will, kann man den Kurs stattdessen mit einer Notiz versehen.
+- ein Kurs kann nur gelöscht werden, wenn vorher alle Buchungen für diesen Kurs (auch die mit einer Notiz) gelöscht werden.
+- beim Importieren von Excel-Dateien immer erst die Kurse, dann die Buchungen importieren.
 
 ## Termine, Buchungen
 
 Für die Codiertermine wird in Codierungs-Termine ein Datum, eine Beginn- und eine Ende-Uhrzeit eingerichtet. Im Formular werden dann im 10-Minuten-Abstand bis 1/2 Stunde vor Ende Termine angeboten. Die Buchung bezieht sich dann auf das Datum und den ausgewählten Termin. Es ist nicht möglich, daß zwei Teilnehmer denselben Termin buchen. Sind für ein Datum alle Termine gebucht, wird das Datum nicht mehr im Formular angeboten. Gibt es an keinem Datum freie Termine, steht eine entsprechende Meldung im Formular.
 
-## IBAN
+## IBAN, Aktive/Aktiver
 
 Ein Anmelder muß im Formular eine IBAN eingeben. Danach lässt sich die IBAN auf Aktive/Aktiver ändern, was bewirkt, daß die Buchung gültig bleibt, aber nichts abgebucht wird.
 
@@ -57,7 +57,7 @@ Am Ende jeder Tabellenzeile stehen die möglichen Aktionen.
 - Edit: Ändern der Daten. Man kann auch einfach in die Zeile klicken.
 - Delete: Löschen der Zeile.
 - Prüfen: bei Buchungen wird so getan, als ob die Buchung gerade frisch über das Formular erzeugt wurde.
-- Bestätigung senden: Sendet eine Anmeldebestätigung. Bei den Technik-Buchungen wird diee Anmeldebestätigung sofort nach der Email-Verifikation gesendet, bei RFS muß sie händisch gesendet werden. Die Aktion ist inaktiv, wenn eine Notiz gesetzt ist oder schon eine Bestätigung gesendet wurde.
+- Bestätigung senden: Sendet eine Anmeldebestätigung. Bei den Technik-Buchungen wird die Anmeldebestätigung sofort nach der Email-Verifikation gesendet, bei RFS muß sie händisch gesendet werden. Die Aktion ist inaktiv, wenn eine Notiz gesetzt ist oder schon eine Bestätigung gesendet wurde.
 
 ## Aktionen bei Kursen
 
@@ -84,15 +84,19 @@ Wenn bei einer Buchung die Email-Adresse schon in der Tabelle Email-Verifikation
 
 ## Filter und Suche, nach Spalten sortieren
 
-Ganz oben gibt es ein Suchfeld, was sich mir noch nicht so recht entschließt. Das Suchfeld über der Tabelle sucht in der Tabelle, probiert es aus. Wenn im Suchfeld was steht, erscheint auch ein Knopf "Search". Wenn Ihr auf den klickt, wird das Suchfeld gelöscht. Oder Ihr löscht das Suchfeld selber.
+Ganz oben gibt es ein Suchfeld, was sich mir nicht so recht erschließt. Das Suchfeld über der Tabelle sucht in der Tabelle, probiert es aus. Wenn im Suchfeld was steht, erscheint auch ein Knopf "Search". Wenn Ihr auf den klickt, wird das Suchfeld gelöscht. Oder Ihr löscht das Suchfeld selber.
 
 Über das Filter-Symbol lässt sich bei Buchungen nach Kurs oder Notiz oder beidem filtern. Wieder erscheinen Knöpfe, mit denen man die Filter einfach löschen kann.
 
-Wenn man nach einer Spalte sortieren kann, erscheint neben dem Spaltennamen ein Winkel nach oben oder unten für auf- und absteigende Sortierung. Vielleicht sollte ich auch die Spalten für Lehrer/Trainer sortierbar machen? Bei der Technik ist es so...
+Wenn man nach einer Spalte sortieren kann, erscheint neben dem Spaltennamen ein Winkel nach oben oder unten für auf- und absteigende Sortierung.
 
 ## Emails
 
 Im Testbetrieb lassen sich Emails nur an Adressen schicken, die auf @adfc-muenchen.de enden, am besten natürlich an Eure eigene Adresse, sonst seht Ihr sie ja nicht. Auf dem Server befindliche Anhänge werden mit der Anmeldebestätigung geschickt.
+
+## Anhänge
+
+Anhänge lassen sich (als Admin) über "Allgemein/Mail-Anhänge verwalten" hinzufügen oder löschen.
 
 ## Sourcecode
 

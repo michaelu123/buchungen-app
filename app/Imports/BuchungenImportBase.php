@@ -53,6 +53,7 @@ class BuchungenImportBase implements OnEachRow, SkipsEmptyRows, WithHeadingRow, 
     {
         $rowData = $row->toArray(null, false, false);
         $useTermin = str_contains($this->kursModelClass, "Termin");
+        $modelClass = $this->buchungModelClass;
 
         try {
             if (isset($rowData["email"])) {
@@ -104,7 +105,9 @@ class BuchungenImportBase implements OnEachRow, SkipsEmptyRows, WithHeadingRow, 
                 $buchungData["kurs_id"] = $this->kursIdFor($buchungData['kursnummer']);
             }
 
-            $modelClass = $this->buchungModelClass;
+            if (!filled($buchungData["mitteilung"])) {
+                unset($buchungData["mitteilung"]);
+            }
             if ($useTermin) {
                 if (
                     $modelClass::where('created_at', $createdAt)

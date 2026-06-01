@@ -29,11 +29,13 @@ new class extends Component implements HasSchemas {
     public function form(Schema $schema): Schema
     {
         $kurse = Kurs::whereNull("notiz")
+            ->orderBy("datum")
             // ->where("restplätze", ">", 0)
             ->get()
             ->mapWithKeys(function (Kurs $kurs): array {
-                $msg = $kurs->restplätze > 0 ? ", freie Plätze: " . $kurs->restplätze : ", ausgebucht";
-                return [$kurs->nummer => $kurs->kursDetails() . $msg];
+                $free = $kurs->restplätze > 0;
+                $msg = $free ? ", freie Plätze: " . $kurs->restplätze : ", ausgebucht";
+                return [($free ? $kurs->id : 0) => $kurs->kursDetails() . $msg];
             })->all();
         return $schema
             ->components([
@@ -44,12 +46,13 @@ new class extends Component implements HasSchemas {
                 TextInput::make('mitgliedsnummer')
                     ->belowLabel("Falls Sie ADFC-Mitglied sind, bitte hier die Mitgliedsnummer angeben, für den ermäßigten Preis. Sonst leer lassen.")
                     ->rules("digits:8"),
-                Radio::make("kursnummer")
+                Radio::make("kurs_id")
                     ->label("Kurs")
                     ->belowLabel("Ich möchte mich für folgenden Kurs anmelden:")
                     ->options(
                         $kurse,
                     )
+                    ->disableOptionWhen(fn(int $value): bool => $value == 0)
                     ->required(),
                 Select::make('anrede')
                     ->placeholder('Wählen Sie eine Anrede')

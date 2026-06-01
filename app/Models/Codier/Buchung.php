@@ -98,14 +98,11 @@ class Buchung extends BaseBuchung
 
         try {
             if ($url) {
-                Log::info("1get " . $url);
                 // If I decode the URL as a whole, and call Http::get(url), I get an error
                 $urlParts = parse_url($url);
                 $queryParams = self::decode($urlParts["query"]);
                 $resp = Http::retry(3, 1000)->get("https://fa-technik-adfc.de/ein", $queryParams);
-                Log::info("2get " . $url);
             } else {
-                Log::info("3get " . $url);
                 $resp = Http::retry(3, 1000)->get('https://fa-technik-adfc.de/ein', [
                     'name' => self::decode($this->ort),
                     'str' => self::decode($this->strasse),
@@ -113,11 +110,10 @@ class Buchung extends BaseBuchung
                     'n1' => self::decode($this->vorname),
                     'n2' => self::decode($this->nachname),
                 ]);
-                Log::info("4get " . $url);
             }
 
             if ($resp->failed()) {
-                Log::info("5get failed " . $url);
+                Log::info("get failed: " . $url);
                 return ['status' => 'error', 'message' => 'Website nicht erreichbar.'];
             }
 

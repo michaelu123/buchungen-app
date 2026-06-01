@@ -48,10 +48,13 @@ class KursTable
                         return $state;
                     }),
                 TextColumn::make('lehrer')->label('Lehrer:in')
+                    ->sortable()
                     ->searchable(),
                 TextColumn::make('co_lehrer')->label('Co-Lehrer:in')
+                    ->sortable()
                     ->searchable(),
                 TextColumn::make('co_lehrer2')->label('Co-Lehrer:in2')
+                    ->sortable()
                     ->searchable(),
                 TextColumn::make('hospitant')->label('Hospitant:in')
                     ->searchable(),

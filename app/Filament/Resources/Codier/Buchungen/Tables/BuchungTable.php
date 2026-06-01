@@ -63,13 +63,11 @@ class BuchungTable extends BuchungTableBase
                     }
 
                     if ($result['status'] === 'ambiguous') {
-                        Log::info("1result " . json_encode($result));
                         // selectOrt is looked after in ListBuchungen !?
                         $livewire->replaceMountedAction('selectOrt', [
                             'options' => $result['options'],
                             'record' => $record,
                         ]);
-                        Log::info("2result " . json_encode($result));
                         return;
                     }
 
