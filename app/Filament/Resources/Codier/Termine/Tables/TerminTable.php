@@ -7,6 +7,8 @@ use App\Exports\Codier\TermineExport;
 use App\Filament\Resources\KurseBase\KursTableActions;
 use App\Imports\Codier\TermineImport;
 use App\Models\Codier\Buchung;
+use Filament\Actions\Action;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Table;
@@ -26,6 +28,11 @@ class TerminTable
                 TextColumn::make('datum')
                     ->date('D, d.m')
                     ->sortable(),
+                TextColumn::make('ort')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('rvp')
+                    ->label("URL"),
                 TextColumn::make('beginn')
                     ->label('Beginn')
                     ->time('H:i')
@@ -62,7 +69,13 @@ class TerminTable
                 $terminTableActions->getRecordActions()
             )
             ->toolbarActions(
-                $terminTableActions->getToolbarActions()
+                [
+                    ...$terminTableActions->getToolbarActions(),
+                    Action::make('loadrvp')
+                        ->label('RVP laden')
+                        ->icon(Heroicon::OutlinedDocumentArrowUp)
+                        ->action(fn() => Buchung::loadRvp()),
+                ]
             );
     }
 }

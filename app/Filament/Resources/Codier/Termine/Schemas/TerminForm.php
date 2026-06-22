@@ -18,6 +18,10 @@ class TerminForm
                 DatePicker::make('datum')
                     ->required()
                     ->disabledOn("edit"),
+                TextInput::make('ort')
+                    ->required(),
+                TextInput::make('rvp')
+                    ->label("URL"),
                 TimePicker::make('beginn')
                     ->format('H:i')
                     ->seconds(false)

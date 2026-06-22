@@ -2,6 +2,7 @@
 
 namespace App\Imports;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
@@ -49,6 +50,15 @@ class BuchungenImportBase implements OnEachRow, SkipsEmptyRows, WithHeadingRow, 
         return $this->kursnummer2id[$kursnummer] ?? null;
     }
 
+    private array $terminDatum2id = [];
+    protected function terminIdFor(string $datum): int|null
+    {
+        if (empty($this->terminDatum2id)) {
+            $this->terminDatum2id = $this->kursModelClass::pluck("id", "datum")->toArray();
+        }
+        return $this->terminDatum2id[$datum] ?? null;
+    }
+
     public function onRow(Row $row): void
     {
         $rowData = $row->toArray(null, false, false);
@@ -59,8 +69,6 @@ class BuchungenImportBase implements OnEachRow, SkipsEmptyRows, WithHeadingRow, 
             if (isset($rowData["email"])) {
                 $buchungData = $rowData;
                 $createdAt = $buchungData['created_at'] = $buchungData['zeitstempel'];
-                $kurs = $this->kursModelClass::where("nummer", $buchungData['kursnummer'])->first();
-                $buchungData["kurs_id"] = $kurs->id;
             } else {
                 $rowData = $this->transformRow($rowData);
                 // Get the underlying PhpSpreadsheet Worksheet from the row delegate to access the cell and its comment
@@ -98,36 +106,43 @@ class BuchungenImportBase implements OnEachRow, SkipsEmptyRows, WithHeadingRow, 
                 if ($rowData["mitteilung"] ?? false) { // zur Zeit nur RFSA/F/FP
                     $buchungData['mitteilung'] = $rowData['mitteilung'];
                 }
-                $kurs_id = $this->kursIdFor($buchungData['kursnummer']);
-                if ($kurs_id == null) {
-                    return;
-                }
-                $buchungData["kurs_id"] = $this->kursIdFor($buchungData['kursnummer']);
             }
 
-            if (!filled($buchungData["mitteilung"])) {
+            if (!filled($buchungData["mitteilung"] ?? "")) {
                 unset($buchungData["mitteilung"]);
             }
             if ($useTermin) {
+                // $buchungData['datum'] = "Fr., 01.05.26"
+                $cdatum = Carbon::createFromFormat("d.m.y", substr($buchungData['datum'], 5));
+                $datum = $cdatum->format("Y-m-d");
+                $termin_id = $this->terminIdFor($datum);
+                if ($termin_id == null) {
+                    return;
+                }
                 if (
                     $modelClass::where('created_at', $createdAt)
                         ->where('email', $buchungData['email'])
-                        ->where('datum', $buchungData['datum'])
+                        ->where('termin_id', $termin_id)
                         ->first()
                 ) {
                     return;
                 }
-                $kurs = $this->kursModelClass::where('datum', $buchungData['datum'])->where('beginn', $buchungData['beginn'])->first();
-                $buchungData['termin_id'] = $kurs->id;
-            } elseif (
-                $modelClass::where('created_at', $createdAt)
-                    ->where('email', $buchungData['email'])
-                    ->where('kurs_id', $buchungData['kurs_id'])
-                    ->first()
-            ) {
-                return;
+                $buchungData['termin_id'] = $termin_id;
+            } else {
+                $kurs_id = $this->kursIdFor($buchungData['kursnummer']);
+                if ($kurs_id == null) {
+                    return;
+                }
+                if (
+                    $modelClass::where('created_at', $createdAt)
+                        ->where('email', $buchungData['email'])
+                        ->where('kurs_id', $kurs_id)
+                        ->first()
+                ) {
+                    return;
+                }
+                $buchungData["kurs_id"] = $kurs_id;
             }
-
             (new $modelClass($buchungData))->save();
         } catch (\Throwable $t) {
             Log::error("import failed:" . $t);

@@ -19,6 +19,8 @@ class TermineExport extends KurseExportBase
             $termin->datum,
             $termin->beginn,
             $termin->ende,
+            $termin->ort,
+            $termin->rvp,
             $termin->kommentar,
         ];
     }
@@ -30,6 +32,8 @@ class TermineExport extends KurseExportBase
             "Datum",
             "Beginn",
             "Ende",
+            "Ort",
+            "RVP",
             "Kommentar",
         ];
     }

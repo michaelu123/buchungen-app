@@ -223,7 +223,12 @@ class Buchung extends BaseBuchung
             return [];
         }
         $frei = $termine->filter(fn($t): bool => $t["id"] == $termin_id);
-        $res = $frei->first()["frei"];
+        $first = $frei->first();
+        if ($first == null) {
+            $res = [];
+        } else {
+            $res = $first["frei"];
+        }
         if ($uhrzeit != "") {
             $res[$uhrzeit] = $uhrzeit;
         }
@@ -235,6 +240,8 @@ class Buchung extends BaseBuchung
     {
         $termine = Termin::with("buchungen")
             ->whereNull("notiz")
+            ->where("datum", ">=", now()->format("Y-m-d"))
+            ->orderBy('datum', "asc")
             ->get()
             ->map(function (Termin $termin): array {
                 $reserviert = $termin->buchungen()->wherenull('notiz')->get()->map(fn($b): string => substr($b->uhrzeit, 0, 5))->toArray();
@@ -242,6 +249,8 @@ class Buchung extends BaseBuchung
                 return [
                     "id" => $termin->id,
                     "datum" => $termin->datum,
+                    "ort" => $termin->ort,
+                    "rvp" => $termin->rvp,
                     "beginn" => $termin->beginn,
                     "ende" => $termin->ende,
                     "reserviert" => $reserviert,
@@ -254,12 +263,52 @@ class Buchung extends BaseBuchung
 
     public static function getTermineOptions(Collection $termine): Collection
     {
-        $termineOptions = $termine->mapWithKeys(function (array $t): array {
-            return [$t["id"] => Carbon::parse($t["datum"])->translatedFormat('D, d.m.y') . " von " . $t["beginn"] . " bis " . $t["ende"]];
+        $neg = 0;
+        $termineOptions = $termine->mapWithKeys(function (array $t) use (&$neg): array {
+            $platen = str_contains($t["ort"], "Platenstr");
+            $label = Carbon::parse($t["datum"])->translatedFormat('D, d.m.y') . " von " . substr($t["beginn"], 0, 5) . " bis " . substr($t["ende"], 0, 5) .
+                ", Ort: " . $t["ort"] .
+                ($platen ? "." : ", keine Anmeldung erforderlich, einfach kommen bis 1h vor Ende. ") .
+                ($t["rvp"] ? ' <a href="' . $t["rvp"] . '" target="_blank" class="underline text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">Link zum RVP</a>' : "");
+
+            return [
+                ($platen ? $t["id"] : --$neg) => new \Illuminate\Support\HtmlString($label),
+            ];
         });
         return $termineOptions;
     }
 
+    public static function loadRvp()
+    {
+        $today = now()->format('Y-m-d');
+        $url = "https://api-touren-termine.adfc.de/api/eventItems/search?limit=10000&includedTags=6&eventType=Termin&unitKey=152059&includeSubsidiary=true&beginning=" . $today;
+        $resp = Http::get($url);
+        $res = $resp->json();
+        $items = $res["items"];
+        foreach ($items as $item) {
+            if ($item["cStatus"] != "Published") {
+                continue;
+            }
+            $terminData = [];
+            $beginning = $item["beginning"]; // unfortunately in UTC! 2026-06-27T09:30:00+00:00
+            $tsb1 = Carbon::parse($beginning, 'UTC');
+            $tsb2 = $tsb1->setTimezone("Europe/Berlin");
+            $tsb3 = $tsb2->translatedFormat("Y-m-d H:i");
+            $terminData["datum"] = substr($tsb3, 0, 10);
+            $terminData["beginn"] = substr($tsb3, 11);
+            $end = $item["end"];
+            $tse1 = Carbon::parse($end, 'UTC');
+            $tse2 = $tse1->setTimezone("Europe/Berlin");
+            $tse3 = $tse2->translatedFormat("Y-m-d H:i");
+            $terminData["ende"] = substr($tse3, 11);
+            $terminData["ort"] = $item["startLocation"];
+            $terminData["rvp"] = "https://touren-termine.adfc.de/radveranstaltung/" . $item["cSlug"];
 
+            if (Termin::where('rvp', $terminData["rvp"])->first()) {
+                continue;
+            }
+            (new Termin($terminData))->save();
 
+        }
+    }
 }

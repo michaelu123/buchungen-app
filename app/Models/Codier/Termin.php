@@ -14,6 +14,8 @@ class Termin extends Model
     protected $fillable = [
         'notiz',
         'datum',
+        'ort',
+        'rvp',
         'beginn',
         'ende',
         'kommentar',

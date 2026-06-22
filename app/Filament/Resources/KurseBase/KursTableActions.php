@@ -107,12 +107,13 @@ class KursTableActions
 
     public function getToolbarActions(): array
     {
+        $useTermin = str_contains($this->kurseExportClass, 'Termin');
         return [
             BulkActionGroup::make([
                 DeleteBulkAction::make(),
             ]),
             Action::make('update')
-                ->hidden(str_contains($this->kurseExportClass, 'Termin'))
+                ->hidden($useTermin)
                 ->label('Update Restplätze')
                 ->tableIcon(Heroicon::OutlinedArrowPath)
                 ->action(function (): void {
@@ -121,12 +122,15 @@ class KursTableActions
             Action::make('exportToolbar')
                 ->Label('Excel Export')
                 ->tableIcon(Heroicon::OutlinedDocumentArrowDown)
-                ->action(function (): BinaryFileResponse {
+                ->action(function () use ($useTermin): BinaryFileResponse {
                     $ns = (new \ReflectionClass($this->kurseExportClass))->getNamespaceName();
                     $parts = explode('\\', $ns);
                     $segment = end($parts);
 
-                    return Excel::download(new $this->kurseExportClass(null), $segment . '_' . 'Kurse.xlsx');
+                    return Excel::download(
+                        new $this->kurseExportClass(null),
+                        $segment . '_' . ($useTermin ? 'Termine.xlsx' : 'Kurse.xlsx')
+                    );
                 }),
 
             Action::make('import')

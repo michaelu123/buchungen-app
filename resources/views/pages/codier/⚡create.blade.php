@@ -39,6 +39,7 @@ new class extends Component implements HasSchemas {
                         ? "Leider gibt es aktuell keine freien Termine!"
                         : "Ich möchte mich für folgenden Termin anmelden:")
                     ->options($termineOptions)
+                    ->disableOptionWhen(fn(int $value): bool => $value < 0)
                     ->live()
                     ->partiallyRenderComponentsAfterStateUpdated(['uhrzeit'])
                     ->required(),
@@ -72,7 +73,8 @@ new class extends Component implements HasSchemas {
                     ->label('Straße')
                     ->required(),
                 TextInput::make('hsnr')
-                    ->label('Hausnummer'),
+                    ->label('Hausnummer')
+                    ->required(),
                 TextInput::make('telefonnr')
                     ->belowLabel("Bitte geben Sie eine Telefonnummer an, unter der wir Sie erreichen können, falls es Rückfragen zu Ihrer Anmeldung gibt.")
                     ->label('Telefon')
@@ -82,9 +84,9 @@ new class extends Component implements HasSchemas {
                     ->belowLabel("Bitte geben Sie Ihre E-Mail-Adresse an.")
                     ->email()
                     ->required(),
-                TextInput::make('mitgliedsnummer')
-                    ->belowLabel("Falls Sie ADFC-Mitglied sind, bitte hier die Mitgliedsnummer angeben, für den ermäßigten Preis. Sonst leer lassen.")
-                    ->rules("digits:8"),
+                // TextInput::make('mitgliedsnummer')
+                //     ->belowLabel("Falls Sie ADFC-Mitglied sind, bitte hier die Mitgliedsnummer angeben, für den ermäßigten Preis. Sonst leer lassen.")
+                //     ->rules("digits:8"),
                 Checkbox::make("datenschutzOk")
                     ->required()
                     ->default(true)
@@ -119,11 +121,9 @@ new class extends Component implements HasSchemas {
             Bitte beachten Sie, dass pro Termin nur ein Rad codiert werden kann. Bitte reservieren Sie für jedes von
             Ihnen zu codierende Rad daher einen eigenen Termin.<br><br>
 
-            Alle mit einem * gekennzeichneten Felder sind Pflichtfelder.<br><br>
+            Alle mit einem * gekennzeichneten Felder sind Pflichtfelder.
+            Ihre Daten dienen ausschließlich der Ermittlung Ihres persönlichen Codes.<br><br>
 
-            Diese Daten werden ausschließlich zur Generierung Ihres persönlichen Codier-Codes herangezogen, nur bis zum
-            ausgewählten
-            Codiertermin vom ADFC München gespeichert und danach umgehend gelöscht. <br><br>
             Sie finden die Termine auch in unserem
             <a class="underline text-blue-600 hover:text-blue-800 visited:text-purple-600" target="_blank"
                 href="https://touren-termine.adfc.de/suche?eventType=Termin&includeSubsidiary=true&includedTags=6&unitKey=152059">
@@ -134,6 +134,7 @@ new class extends Component implements HasSchemas {
             {{ $this->form }}
 
             <x-filament::button type="submit" class="mt-4">
+                <x-filament::loading-indicator wire:loading wire:target="create" class="h-10 w-10" />
                 Termin reservieren
             </x-filament::button>
         </form>

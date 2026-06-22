@@ -28,14 +28,15 @@ new class extends Component implements HasSchemas {
 
     public function form(Schema $schema): Schema
     {
+        $neg = 0;
         $kurse = Kurs::whereNull("notiz")
             ->orderBy("datum")
             //            ->where("restplätze", ">", 0)
             ->get()
-            ->mapWithKeys(function (Kurs $kurs): array {
+            ->mapWithKeys(function (Kurs $kurs) use (&$neg): array {
                 $free = $kurs->restplätze > 0;
                 $msg = $free ? ", freie Plätze: " . $kurs->restplätze : ", ausgebucht";
-                return [($free ? $kurs->id : 0) => $kurs->nummer . ": " . $kurs->titel . " am " . date("d.m.Y", strtotime($kurs->datum)) . $msg];
+                return [($free ? $kurs->id : --$neg) => $kurs->nummer . ": " . $kurs->titel . " am " . date("d.m.Y", strtotime($kurs->datum)) . $msg];
             })
             ->all();
         return $schema
@@ -53,7 +54,7 @@ new class extends Component implements HasSchemas {
                     ->options(
                         $kurse,
                     )
-                    ->disableOptionWhen(fn(int $value): bool => $value == 0)
+                    ->disableOptionWhen(fn(int $value): bool => $value < 0)
                     ->required(),
                 Select::make('anrede')
                     ->placeholder('Wählen Sie eine Anrede')
