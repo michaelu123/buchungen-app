@@ -97,7 +97,7 @@ class BuchungenImportBase implements OnEachRow, SkipsEmptyRows, WithHeadingRow, 
                     'verified' => $this->fromExcelDateTime($rowData['verifikation']),
                     'eingezogen' => $rowData['eingezogen'],
                     'betrag' => $rowData['zahlungsbetrag'],
-                    'anmeldebestätigung' => $rowData['anmeldebestatigung'],
+                    'anmeldebestätigung' => $this->fromExcelDateTime($rowData['anmeldebestatigung']),
                     'kommentar' => $rowData['bemerkung'],
                 ];
                 if ($rowData["ermassigung"] ?? false) { // zur Zeit nur RFSA

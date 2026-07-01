@@ -96,9 +96,6 @@ class BaseBuchung extends Model
         }
 
 
-        if (!str_ends_with($this->email, "@adfc-muenchen.de")) {
-            return;
-        } // TODO 
         $kurs = static::$kursClass::find($this->kurs_id);
         try {
             Mail::to($this->email)->send(new static::$bestätigungClass($kurs, $this));
@@ -156,9 +153,6 @@ class BaseBuchung extends Model
         // So we check it again here and if it's invalid, we send an email to the user and set a note in the database.
         if (!static::test_iban($this->iban)) {
             $this->update(['notiz' => 'Ungültige IBAN']);
-            if (!str_ends_with($this->email, "@adfc-muenchen.de")) {
-                return;
-            } // TODO 
             Mail::to($this->email)->send(new FalscheIban($this->iban, $this->getFrom()));
             static::notifyWarning('Ungültige IBAN');
         }
@@ -181,9 +175,6 @@ class BaseBuchung extends Model
             }
         }
         if (!$this->verified) {
-            if (!str_ends_with($this->email, "@adfc-muenchen.de")) {
-                return;
-            } // TODO 
             Mail::to($this->email)->send(new VerifyEmail($this->email, static::class, $this->getFrom()));
             static::notifyWarning('Email nicht bestätigt');
         }

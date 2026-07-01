@@ -1,15 +1,10 @@
-# Buchungen-App Beta (Stand 01.06.2026)
-
-Die Testphase der Buchungen-App läuft. Ziel ist es, ohne Google auszukommen. Einerseits aus den bekannten Gründen: Trump kill switch, Google kann uns jederzeit die Freundschaft kündigen, mancher mag vielleicht nicht persönliche Daten in ein Google-Formular eingeben. Aber auch, weil das Zusammenspiel von Google Forms, Sheets, AppsScript recht fragil ist. Außerdem braucht man noch ein zusätzliches Programm, um die Datei zu erzeugen, mit der Martin Stasnik die Abbuchungen durchführt.
-
-Was verloren geht, ist die Fähigkeit, leicht neue Spalten einzuführen. Was früher Spalten in Google Sheets waren, sind jetzt Datenbankfelder. Neue Felter bedeuten Datenbank-Änderungen und erhebliche Änderungen im Programmcode. Deshalb wäre es wünschenswert, wenn die Tester frühzeitig ihre Wünsche in Bezug auf zusätzliche Felder kundtun würden.
+# Buchungen-App (Stand 01.07.2026)
 
 ## URL, Login, Rollen
 
 Die URL ist https://buchungen.adfc-muenchen.de für eine Übersicht aller Anmeldeformulare,
-https://buchungen.adfc-muenchen.de/rfsabuchung (bzw. rfsf, rfsfp, tk, codier) für das jeweilige Formular für Anfänger, Fahrsicherheitstraining, Fahrpraxis der RFS, Technikkurse und Codiertermine. Diese URLS verlangen keine Anmeldung.
-Die Administration der Buchungen erfolgt über die URL https://buchungen.adfc-muenchen.de/admin. Hier wird eine Anmeldung verlangt. Für die Testphase habe ich die Benutzer admin@admin.com, rfs@admin.com, rfsa@admin.com, rfsf@admin.com, rfsfp@admin.com, tk@admin.com, codier@admin.com eingerichtet. Diese haben jeweils die Benutzerrollen ADMIN, RFS, RFSA, RFSF, RFSFP, TK, CODIER. Die Rolle ADMIN darf alles bearbeiten, RFSA, RFSF, RFSFP nur die jeweiligen Anmeldungen, und RFS alle 3. Im Regelbetrieb würdet Ihr Euch mit Eurer ADFC-Email-Adresse anmelden, und bekämt die passende Rolle zugewiesen.
-Das Passwort bei allen Benutzern ist xxxx1234. Probiert es aus, was sich ändert, wenn Ihr Euch mit unterschiedlichen Email-Adressen anmeldet.
+https://buchungen.adfc-muenchen.de/rfsabuchung (bzw. rfsfp, tk, codier) für das jeweilige Formular für Anfänger, Fahrpraxis der RFS, Technikkurse und Codiertermine. Diese URLS verlangen keine Anmeldung.
+Die Administration der Buchungen erfolgt über die URL https://buchungen.adfc-muenchen.de/admin. Hier wird eine Anmeldung verlangt. Benutzer werden von einem Admin angelegt. Dazu wird eine ADFC-Email-Adresse verlangt. Jedem Benutzer muß eine Benutzerrolle zugewiesen werden. Die Rollen sind ADMIN, RFS, RFSA, RFSFP, TK, CODIER. Die Rolle ADMIN darf alles bearbeiten, RFSA, RFSFP nur die jeweiligen Anmeldungen, und RFS RFSA und RFSFP. Beim Login kann man über "Forgot password?" ein neues Passwort verlangen.
 
 ## Notiz
 
@@ -21,7 +16,7 @@ Das Kommentarfeld kann auch für längere Kommentare genutzt werden. Die Suchfun
 
 ## Kurse, Buchungen
 
-Indem Ihr in Kurse verschiedene Kurse hinzufügt oder ändert, ändert sich das Buchungsformular. Indem Ihr Buchungen löscht oder eine Notiz hinzufügt, oder über das Formular neue Buchungen erstellt, ändern sich die Restplätze und damit auch das Buchungsformular. Der Knopf "Update Restplätze" ist i.a. nicht notwendig.
+Indem Ihr in Kurse verschiedene Kurse hinzufügt oder ändert, ändert sich das Buchungsformular. Indem Ihr Buchungen löscht oder eine Notiz hinzufügt, oder über das Formular neue Buchungen erstellt, ändern sich die Restplätze oder Resttermine und damit auch das Buchungsformular. Der Knopf "Update Restplätze" ist i.a. nicht notwendig.
 
 Zwischen Kursen und Buchungen ist in der Datenbank festgelegt, daß eine Buchung immer auf einen existierenden Kurs verweisen muß (referential integrity). Das hat mehrere Folgen:
 
@@ -35,7 +30,7 @@ Für die Codiertermine wird in Codierungs-Termine ein Datum, eine Beginn- und ei
 
 ## IBAN, Aktive/Aktiver
 
-Ein Anmelder muß im Formular eine IBAN eingeben. Danach lässt sich die IBAN auf Aktive/Aktiver ändern, was bewirkt, daß die Buchung gültig bleibt, aber nichts abgebucht wird.
+Ein Anmelder muß im Formular ggfs. eine IBAN eingeben. Danach lässt sich die IBAN auf Aktive/Aktiver ändern, was bewirkt, daß die Buchung gültig bleibt, aber nichts abgebucht wird.
 
 ## Excel-Exporte
 
@@ -44,11 +39,7 @@ Für Buchungen bedeutet "Excel Export" oberhalb der Tabelle den Export aller Buc
 
 ## Excel-Importe
 
-Man kann eine Google-Backend-Tabelle als Excel-Datei downloaden. Diese kann man hier importieren, erst die Kurse, dann die Buchungen, mit der gleichen Excel-Datei, in der die Tabellenblätter Buchungen und Kurse vorkommen müssen. Wenn Ihr das tut, solltet ihr die importierten Dateien aus Datenschutzgründen schnell wieder löschen. Während der Testphase kann sich ja jeder als admin einloggen und alle Daten sehen. Die Beispieldaten der Kurse und Buchungen enthalten jeweils 10 Kurse und 100 Buchungen mit Fake-Daten, die Ihr beliebig ändern und löschen könnt.
-
-Weiters lassen sich alle mit Excel Export exportierten Daten wieder importieren. Wenn die Import-Daten schon in der DB enthalten sind, werden sie übersprungen. Damit können Exporte auch als Backup-Daten benutzt werden.
-
-Für Termine gibt es keine Google-Importe. Man kann aber mit Excel Export exportierte Tabellen wieder mit Excel Import importieren. Erst die Termine, dann die Buchungen.
+Alle mit Excel Export exportierten Daten lassen sich mit Excel Import wieder importieren. Wenn die Import-Daten schon in der DB enthalten sind, werden sie übersprungen. Damit können Exporte auch als Backup-Daten benutzt werden.
 
 ## Aktionen bei Buchungen
 
@@ -90,10 +81,6 @@ Ganz oben gibt es ein Suchfeld, was sich mir nicht so recht erschließt. Das Suc
 
 Wenn man nach einer Spalte sortieren kann, erscheint neben dem Spaltennamen ein Winkel nach oben oder unten für auf- und absteigende Sortierung.
 
-## Emails
-
-Im Testbetrieb lassen sich Emails nur an Adressen schicken, die auf @adfc-muenchen.de enden, am besten natürlich an Eure eigene Adresse, sonst seht Ihr sie ja nicht. Auf dem Server befindliche Anhänge werden mit der Anmeldebestätigung geschickt.
-
 ## Anhänge
 
 Anhänge lassen sich (als Admin) über "Allgemein/Mail-Anhänge verwalten" hinzufügen oder löschen.
@@ -101,7 +88,3 @@ Anhänge lassen sich (als Admin) über "Allgemein/Mail-Anhänge verwalten" hinzu
 ## Sourcecode
 
 Derzeit auf https://github.com/michaelu123/buchungen-app .
-
-## Zukünftig
-
-In den Formularen müssen die Texte zu Teilnahmebedingungen und Datenschutz wahrscheinlich noch aktualisiert werden.

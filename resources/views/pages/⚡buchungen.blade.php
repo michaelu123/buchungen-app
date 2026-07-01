@@ -25,7 +25,7 @@ new class extends Component {
         <div>
             <div class="flex flex-col gap-4 text-2xl underline items-center justify-center">
                 <a href="{{  route('rfsabuchung') }}">Radfahrschule Anfänger-Kurse</a>
-                <a href="{{  route('rfsfbuchung')}}">Radfahrschule Fahrsicherheitstraining</a>
+                {{--  <a href="{{  route('rfsfbuchung')}}">Radfahrschule Fahrsicherheitstraining</a> --}}
                 <a href="{{  route('rfsfpbuchung')}}">Radfahrschule Fahrpraxis-Kurse</a>
                 <a href=" {{  route('tkbuchung')}}">Technik-Kurse</a>
                 <a href=" {{  route('codierbuchung')}}">Codierungs-Termine</a>
@@ -43,10 +43,12 @@ new class extends Component {
         </div>
     </x-filament::section>
 
+    {{--  
     <x-filament::section class="mt-10 max-w-7xl mx-auto items-center justify-center">
         <div class="fi-prose lg:prose-xl max-w-none dark:prose-invert">
             <h1>Dieser Text erscheint nur während der Testphase!</h1>
             {!! str($content)->markdown() !!}
         </div>
     </x-filament::section>
+    --}}
 </div>

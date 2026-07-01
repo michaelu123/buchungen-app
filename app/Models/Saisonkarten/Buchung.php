@@ -163,9 +163,6 @@ Ohne Mitgliedsausweis ist die Saisonkarte nicht gültig.'
 
             return;
         }
-        if (!str_ends_with($this->email, '@adfc-muenchen.de')) {
-            return;
-        } // TODO
 
         $basisdaten = BasisDaten::first();
         static::createSK($this, $basisdaten);

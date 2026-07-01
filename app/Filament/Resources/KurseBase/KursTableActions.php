@@ -150,7 +150,19 @@ class KursTableActions
                     /** @var TemporaryUploadedFile $tuf */
                     $tuf = $data['xlsx'];
                     $path = $tuf->getRealPath();
+
+                    // problems with "drawings" code in vendor\phpoffice\phpspreadsheet\src\PhpSpreadsheet\Reader\Xlsx.php 1369
+                    // where simplexml_load_string fails on production machine
+                    set_error_handler(function ($severity, $message, $file, $line) {
+                        if (strpos($message, 'simplexml_load_string') !== false) {
+                            return true; // Let PHP continue; PhpSpreadsheet will handle the fallback
+                        }
+                        return false; // Fall back to Laravel's handler for other errors/warnings
+                    });
+
                     $excel = Excel::import(new $this->importClass, $path);
+
+                    restore_error_handler();
                     $res = $tuf->delete();
 
                     return $excel;

@@ -181,9 +181,6 @@ class Buchung extends BaseBuchung
 
             return;
         }
-        if (!str_ends_with($this->email, '@adfc-muenchen.de')) {
-            return;
-        } // TODO
         $termin = Termin::find($this->termin_id);
         try {
             Mail::to($this->email)->send(new Bestaetigung($termin, $this));
@@ -269,7 +266,7 @@ class Buchung extends BaseBuchung
             $label = Carbon::parse($t["datum"])->translatedFormat('D, d.m.y') . " von " . substr($t["beginn"], 0, 5) . " bis " . substr($t["ende"], 0, 5) .
                 ", Ort: " . $t["ort"] .
                 ($platen ? "." : ", keine Anmeldung erforderlich, einfach kommen bis 1h vor Ende. ") .
-                ($t["rvp"] ? ' <a href="' . $t["rvp"] . '" target="_blank" class="underline text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">Link zum RVP</a>' : "");
+                ($t["rvp"] ? ' <a href="' . $t["rvp"] . '" target="_blank" class="underline text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">Mehr Infos</a>' : "");
 
             return [
                 ($platen ? $t["id"] : --$neg) => new \Illuminate\Support\HtmlString($label),

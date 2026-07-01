@@ -83,7 +83,6 @@ class BuchungTable extends BuchungTableBase
                     ->disabled(
                         fn($record): bool => filled($record['notiz'])
                         || Buchung::$requireEmailVerification && !filled($record['verified'])
-                        || !str_ends_with($record->email, "@adfc-muenchen.de") // TODO
                     )
                     ->icon(Heroicon::OutlinedEnvelope)
                     ->action(function ($record): void {

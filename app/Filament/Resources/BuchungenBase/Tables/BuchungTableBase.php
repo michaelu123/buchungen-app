@@ -255,7 +255,6 @@ abstract class BuchungTableBase
                             fn($record): bool => filled($record['notiz'])
                             || $buchungClass::$requireEmailVerification && !filled($record['verified'])
                             || filled($record['anmeldebestätigung'])
-                            || !str_ends_with($record->email, "@adfc-muenchen.de") // TODO
                         )
                         ->icon(Heroicon::OutlinedEnvelope)
                         ->action(function ($record): void {

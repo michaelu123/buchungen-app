@@ -111,12 +111,17 @@ new class extends Component implements HasSchemas {
 <x-filament::section class="max-w-7xl mx-auto items-center justify-center">
     <x-slot name="heading">
         <div class="flex flex-row justify-between items-center">
-            <p class="lg:text-5xl text-2xl">Buchung eines Termins für eine Fahrrad-Codierung</p>
+            <p class="lg:text-5xl text-2xl">Buchung eines Termins im Radlerhaus für eine Fahrrad-Codierung</p>
             <img src="/ADFC_MUENCHEN.PNG" alt="">
         </div>
     </x-slot>
     <div>
         <p class="mb-10">
+            Mit diesem Formular können Sie sich für Termine anmelden, die im Radlerhaus München, Platenstr. 4
+            stattfinden.<br>
+            Wenn Sie ein Datum selektieren, werden die noch offenen Termine angezeigt.<br>
+            Termine, die nicht im Radlerhaus stattfinden, werden der Vollständigkeit halber angezeigt, sind aber nicht
+            selektierbar<br><br>
             Bitte füllen Sie für die Anmeldung dieses Formular <strong>sorgfältig</strong> aus.<br>
             Bitte beachten Sie, dass pro Termin nur ein Rad codiert werden kann. Bitte reservieren Sie für jedes von
             Ihnen zu codierende Rad daher einen eigenen Termin.<br><br>
