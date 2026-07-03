@@ -78,7 +78,7 @@ class AdminPanelProvider extends PanelProvider
                 'Benutzer und Rollen',
                 'Allgemein',
                 'RFSA-Kurse',
-                'RFSF-Kurse',
+                // 'RFSF-Kurse',
                 'RFSFP-Kurse',
                 'Technik-Kurse',
                 'Codierungs-Termine',

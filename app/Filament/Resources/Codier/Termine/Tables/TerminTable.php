@@ -7,7 +7,9 @@ use App\Exports\Codier\TermineExport;
 use App\Filament\Resources\KurseBase\KursTableActions;
 use App\Imports\Codier\TermineImport;
 use App\Models\Codier\Buchung;
+use App\Models\Codier\Termin;
 use Filament\Actions\Action;
+use Filament\Forms\Components\FileUpload;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
@@ -83,6 +85,25 @@ class TerminTable
                         ->label('RVP laden')
                         ->icon(Heroicon::OutlinedDocumentArrowUp)
                         ->action(fn() => Buchung::loadRvp()),
+                    Action::make('importOld')
+                        ->label('Import CSV')
+                        ->icon(Heroicon::OutlinedDocumentArrowUp)
+                        ->schema([
+                            FileUpload::make('json')
+                                ->label('JSON Datei auswählen')
+                                ->required()
+                                ->storeFiles(false)
+                                ->acceptedFileTypes(['application/json']),
+                        ])
+                        ->action(function (array $data) {
+                            /** @var TemporaryUploadedFile $tuf */
+                            $tuf = $data['json'];
+                            $path = $tuf->getRealPath();
+                            Termin::importOldCodier($path);
+                            $res = $tuf->delete();
+                            return null;
+                        }),
+
                 ]
             );
     }

@@ -46,7 +46,7 @@ abstract class BuchungFormBase
             return [
                 Select::make('termin_id')
                     ->label('Termin')
-                    ->belowLabel(fn (): string => $termine->isEmpty()
+                    ->belowLabel(fn(): string => $termine->isEmpty()
                         ? 'Leider gibt es aktuell keine freien Termine!'
                         : 'Ich möchte mich für folgenden Termin anmelden:')
                     ->options($termineOptions)
@@ -62,7 +62,7 @@ abstract class BuchungFormBase
                     ->required(),
                 Select::make('uhrzeit')
                     ->required()
-                    ->options(fn (Get $get, Model $record): array => $buchungClass::uhrzeiten(
+                    ->options(fn(Get $get, Model $record): array => $buchungClass::uhrzeiten(
                         $get('termin_id'),
                         $record->termin_id == $get('termin_id') ? $get('uhrzeit') : '',
                         $termine
@@ -70,7 +70,7 @@ abstract class BuchungFormBase
                     ->unique(
                         $buchungClass,
                         'uhrzeit',
-                        modifyRuleUsing: fn (Unique $rule, Get $get): Unique => $rule->where('termin_id', $get('termin_id'))
+                        modifyRuleUsing: fn(Unique $rule, Get $get): Unique => $rule->where('termin_id', $get('termin_id'))
                     )
                     ->validationMessages([
                         'unique' => 'Die Uhrzeit wurde inzwischen vergeben, bitte wählen Sie eine andere.',
@@ -78,21 +78,20 @@ abstract class BuchungFormBase
                     ])
                     ->label('Uhrzeit'),
             ];
-
         } else {
-            $kurse = $kursClass::whereNull('notiz')
-                ->where('restplätze', '>', 0)
-                ->get()
-                ->mapWithKeys(function ($kurs): array {
-                    return [$kurs->id => $kurs->kursDetails()];
-                })
-                ->all();
-
             return [
                 Select::make('kurs_id')
                     ->label('Kursname')
                     ->placeholder('Wähle einen Kurs')
-                    ->options($kurse)
+                    ->options(function (Model $record) use ($kursClass): array {
+                        return $kursClass::where('id', $record->kurs_id)
+                            ->orWhere(function ($query) use ($record) {
+                                $query->where('restplätze', '>', 0)->whereNull('notiz');
+                            })
+                            ->get()
+                            ->mapWithKeys(fn($kurs): array => [$kurs->id => $kurs->kursDetails()])
+                            ->all();
+                    })
                     ->required(),
             ];
         }
@@ -101,7 +100,7 @@ abstract class BuchungFormBase
     protected static function abbuchungFelder(): array
     {
         $buchungClass = static::getBuchungModelClass();
-        if (! $buchungClass::$requireAbbuchung) {
+        if (!$buchungClass::$requireAbbuchung) {
             return [];
         }
 
@@ -111,8 +110,8 @@ abstract class BuchungFormBase
             TextInput::make('iban')
                 ->label('IBAN oder Aktive/er')
                 ->rules([
-                    fn (): Closure => function ($attribute, $value, Closure $fail) use ($buchungClass): void {
-                        if (! $buchungClass::test_iban($value)) {
+                    fn(): Closure => function ($attribute, $value, Closure $fail) use ($buchungClass): void {
+                        if (!$buchungClass::test_iban($value)) {
                             $fail('Die IBAN ist ungültig.');
                         }
                     },
@@ -131,7 +130,7 @@ abstract class BuchungFormBase
     protected static function verificationFelder(): array
     {
         $buchungClass = static::getBuchungModelClass();
-        if (! $buchungClass::$requireEmailVerification) {
+        if (!$buchungClass::$requireEmailVerification) {
             return [];
         }
 

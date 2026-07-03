@@ -30,6 +30,7 @@ new class extends Component implements HasSchemas {
     {
         $neg = 0;
         $kurse = Kurs::whereNull("notiz")
+            ->where("datum", ">", now()->format("Y-m-d"))
             ->orderBy("datum")
             // ->where("restplätze", ">", 0)
             ->get()
@@ -49,7 +50,10 @@ new class extends Component implements HasSchemas {
                     ->rules("digits:8"),
                 Radio::make("kurs_id")
                     ->label("Kurs")
-                    ->belowLabel("Ich möchte mich für folgenden Kurs anmelden:")
+                    ->belowLabel(fn(): string
+                        => $kurse
+                        ? "Ich möchte mich für folgenden Kurs anmelden:"
+                        : "Leider gibt es aktuell keine Kurse oder alle sind voll!")
                     ->options(
                         $kurse,
                     )
