@@ -27,6 +27,7 @@ return new class extends Migration {
             $table->date('ersatztermin2');
             $table->unsignedTinyInteger('kursplätze');
             $table->unsignedTinyInteger('restplätze');
+            $table->text('rvp')->nullable();
             $table->text('lehrer')->nullable();
             $table->text('co_lehrer')->nullable();
             $table->text('co_lehrer2')->nullable();

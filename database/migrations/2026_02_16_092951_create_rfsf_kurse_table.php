@@ -20,6 +20,7 @@ return new class extends Migration {
             $table->string('kursort');
             $table->unsignedTinyInteger('kursplätze');
             $table->unsignedTinyInteger('restplätze');
+            $table->text('rvp')->nullable();
             $table->text('trainer')->nullable();
             $table->text('co_trainer')->nullable();
             $table->text('hospitant')->nullable();

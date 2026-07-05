@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->text('notiz')->nullable();
             $table->date('datum');
             $table->text('ort');
-            $table->text('rvp');
+            $table->text('rvp')->nullable();
             $table->time('beginn');
             $table->time('ende');
             $table->text("kommentar")->nullable();

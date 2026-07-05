@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->date("datum");
             $table->unsignedTinyInteger('kursplätze');
             $table->unsignedTinyInteger('restplätze');
+            $table->text('rvp')->nullable();
             $table->text('leiter')->nullable();
             $table->text('leiter2')->nullable();
             $table->text("kommentar")->nullable();

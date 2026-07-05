@@ -117,7 +117,7 @@ class Termin extends Model
                 "telefonnr" => $buchung->phone,
                 "ein" => $buchung->code,
                 "email" => $buchung->mailadress,
-                "mitgliedsnummer" => "",
+                "mitgliedsnummer" => null,
             ];
 
             Buchung::create($b);
