@@ -7,6 +7,9 @@ use App\Exports\RFSF\KurseExport;
 use App\Filament\Resources\KurseBase\KursTableActions;
 use App\Imports\RFSF\KurseImport;
 use App\Models\RFSF\Buchung;
+use App\Models\RFSF\Kurs;
+use Filament\Actions\Action;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Table;
@@ -41,6 +44,16 @@ class KursTable
                     ->numeric(),
                 TextColumn::make('restplätze')
                     ->numeric(),
+                TextColumn::make('rvp')
+                    ->label("URL")
+                    ->limit(20)
+                    ->tooltip(function (TextColumn $column): ?string {
+                        $state = $column->getState();
+                        if (\strlen($state) <= $column->getCharacterLimit()) {
+                            return null;
+                        }
+                        return $state;
+                    }),
                 TextColumn::make('kommentar')
                     ->searchable()
                     ->limit(30)
@@ -88,7 +101,13 @@ class KursTable
                 $kursTableActions->getRecordActions()
             )
             ->toolbarActions(
-                $kursTableActions->getToolbarActions()
+                [
+                    ...$kursTableActions->getToolbarActions(),
+                    Action::make('loadrvp')
+                        ->label('RVP laden')
+                        ->icon(Heroicon::OutlinedDocumentArrowUp)
+                        ->action(fn() => Kurs::loadRvp("tag1", 13)),
+                ]
             );
     }
 }

@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->text('notiz')->nullable();
             $table->text('titel');
             $table->date("datum");
+            $table->string('uhrzeit');
             $table->unsignedTinyInteger('kursplätze');
             $table->unsignedTinyInteger('restplätze');
             $table->text('rvp')->nullable();

@@ -2,12 +2,12 @@
 
 namespace App\Models\RFSA;
 
+use App\Models\BaseKurs;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Model;
 
-class Kurs extends Model
+class Kurs extends BaseKurs
 {
     use HasFactory;
 
@@ -28,6 +28,7 @@ class Kurs extends Model
         'ersatztermin2',
         'kursplätze',
         'restplätze',
+        'rvp',
         'lehrer',
         'co_lehrer',
         'co_lehrer2',

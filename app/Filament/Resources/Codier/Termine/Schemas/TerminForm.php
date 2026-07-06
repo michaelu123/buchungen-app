@@ -16,8 +16,7 @@ class TerminForm
             ->components([
                 TextInput::make('notiz'),
                 DatePicker::make('datum')
-                    ->required()
-                    ->disabledOn("edit"),
+                    ->required(),
                 TextInput::make('ort')
                     ->required(),
                 TextInput::make('rvp')

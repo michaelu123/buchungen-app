@@ -16,8 +16,7 @@ class KursForm
                 TextInput::make('notiz'),
                 TextInput::make('nummer')
                     ->required()
-                    ->unique(ignoreRecord: true)
-                    ->disabledOn("edit"),
+                    ->unique(ignoreRecord: true),
                 TextInput::make("uhrzeit")
                     ->mask("99:99 - 99:99")
                     ->placeholder("hh:mm - hh:mm")
@@ -32,9 +31,6 @@ class KursForm
                 // TextInput::make('kursort')
                 //     ->required(),
                 TextInput::make('kursplätze')
-                    ->required()
-                    ->numeric(),
-                TextInput::make('restplätze')
                     ->required()
                     ->numeric(),
                 Textarea::make('kommentar'),

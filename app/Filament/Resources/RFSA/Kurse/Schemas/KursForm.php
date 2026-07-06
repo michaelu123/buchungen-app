@@ -17,8 +17,7 @@ class KursForm
                 TextInput::make('notiz'),
                 TextInput::make('nummer')
                     ->required()
-                    ->unique(ignoreRecord: true)
-                    ->disabledOn("edit"),
+                    ->unique(ignoreRecord: true),
                 TextInput::make("uhrzeit")
                     ->mask("99:99 - 99:99")
                     ->placeholder("hh:mm - hh:mm")
@@ -83,10 +82,9 @@ class KursForm
                         ->displayFormat("D, d.m")
                         ->required(),
                 ])->label("Ersatztermine")->columns(2),
+                TextInput::make('rvp')
+                    ->label("URL"),
                 TextInput::make('kursplätze')
-                    ->required()
-                    ->numeric(),
-                TextInput::make('restplätze')
                     ->required()
                     ->numeric(),
                 Textarea::make('kommentar'),

@@ -21,8 +21,8 @@ new class extends Component implements HasSchemas {
     protected static ?string $model = Buchung::class;
     public array $data = [];
 
-    public function mount(): void
-    {
+    public function mount(
+    ): void {
         $this->form->fill();
     }
 
@@ -36,7 +36,16 @@ new class extends Component implements HasSchemas {
             ->mapWithKeys(function (Kurs $kurs) use (&$neg): array {
                 $free = $kurs->restplätze > 0;
                 $msg = $free ? ", freie Plätze: " . $kurs->restplätze : ", ausgebucht";
-                return [($free ? $kurs->id : --$neg) => $kurs->nummer . ": " . $kurs->titel . " am " . date("d.m.Y", strtotime($kurs->datum)) . $msg];
+                $label = $kurs->kursDetails()
+                    . $msg
+                    . ($kurs->rvp
+                        ? '. <a href="' . $kurs->rvp . '" target="_blank" class="underline text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">Mehr Infos</a>'
+                        : ""
+                    );
+                return [
+                    ($free ? $kurs->id : --$neg) => new HtmlString($label)
+                ];
+
             })
             ->all();
         return $schema
@@ -50,7 +59,10 @@ new class extends Component implements HasSchemas {
                     ->rules("digits:8"),
                 Radio::make("kurs_id")
                     ->label("Kurs")
-                    ->belowLabel("Ich möchte mich für folgenden Kurs anmelden:")
+                    ->belowLabel(fn(): string
+                        => $kurse
+                        ? "Ich möchte mich für folgenden Kurs anmelden:"
+                        : "Leider gibt es aktuell keine Kurse oder alle sind voll!")
                     ->options(
                         $kurse,
                     )

@@ -16,16 +16,16 @@ class KursForm
                 TextInput::make('notiz'),
                 TextInput::make('nummer')
                     ->required()
-                    ->unique(ignoreRecord: true)
-                    ->disabledOn("edit"),
+                    ->unique(ignoreRecord: true),
                 TextInput::make('titel')
                     ->required(),
                 DatePicker::make('datum')
                     ->required(),
+                TextInput::make("uhrzeit")
+                    ->mask("99:99 - 99:99")
+                    ->placeholder("hh:mm - hh:mm")
+                    ->required(),
                 TextInput::make('kursplätze')
-                    ->required()
-                    ->numeric(),
-                TextInput::make('restplätze')
                     ->required()
                     ->numeric(),
                 TextInput::make('leiter')->label("Leiter:in"),

@@ -2,12 +2,12 @@
 
 namespace App\Models\Technik;
 
+use App\Models\BaseKurs;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Model;
 
-class Kurs extends Model
+class Kurs extends BaseKurs
 {
     use HasFactory;
 
@@ -18,8 +18,10 @@ class Kurs extends Model
         'notiz',
         'titel',
         "datum",
+        'uhrzeit',
         'kursplätze',
         'restplätze',
+        'rvp',
         'leiter',
         'leiter2',
         "kommentar",
@@ -36,7 +38,8 @@ class Kurs extends Model
     }
     public function kursDetails(): string
     {
-        return $this->nummer . ": " . $this->titel . " am " . Carbon::parse($this->datum)->translatedFormat('D, d.m');
+        $datum = Carbon::parse($this->datum)->translatedFormat('D, d.m');
+        return "{$this->nummer}: {$this->titel} am {$datum}, {$this->uhrzeit}";
     }
 
     public function ebicsData(Buchung $buchung): array

@@ -37,7 +37,15 @@ new class extends Component implements HasSchemas {
             ->mapWithKeys(function (Kurs $kurs) use (&$neg): array {
                 $free = $kurs->restplätze > 0;
                 $msg = $free ? ", freie Plätze: " . $kurs->restplätze : ", ausgebucht";
-                return [($free ? $kurs->id : --$neg) => $kurs->kursDetails() . $msg];
+                $label = $kurs->kursDetails()
+                    . $msg
+                    . ($kurs->rvp
+                        ? '. <a href="' . $kurs->rvp . '" target="_blank" class="underline text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">Mehr Infos</a>'
+                        : ""
+                    );
+                return [
+                    ($free ? $kurs->id : --$neg) => new HtmlString($label)
+                ];
             })->all();
         return $schema
             ->components([

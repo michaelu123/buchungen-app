@@ -13,6 +13,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\HtmlString;
 use Throwable;
 
 class Buchung extends BaseBuchung
@@ -269,43 +270,9 @@ class Buchung extends BaseBuchung
                 ($t["rvp"] ? ' <a href="' . $t["rvp"] . '" target="_blank" class="underline text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">Mehr Infos</a>' : "");
 
             return [
-                ($platen ? $t["id"] : --$neg) => new \Illuminate\Support\HtmlString($label),
+                ($platen ? $t["id"] : --$neg) => new HtmlString($label),
             ];
         });
         return $termineOptions;
-    }
-
-    public static function loadRvp()
-    {
-        $today = now()->format('Y-m-d');
-        $url = "https://api-touren-termine.adfc.de/api/eventItems/search?limit=10000&includedTags=6&eventType=Termin&unitKey=152059&includeSubsidiary=true&beginning=" . $today;
-        $resp = Http::get($url);
-        $res = $resp->json();
-        $items = $res["items"];
-        foreach ($items as $item) {
-            if ($item["cStatus"] != "Published") {
-                continue;
-            }
-            $terminData = [];
-            $beginning = $item["beginning"]; // unfortunately in UTC! 2026-06-27T09:30:00+00:00
-            $tsb1 = Carbon::parse($beginning, 'UTC');
-            $tsb2 = $tsb1->setTimezone("Europe/Berlin");
-            $tsb3 = $tsb2->translatedFormat("Y-m-d H:i");
-            $terminData["datum"] = substr($tsb3, 0, 10);
-            $terminData["beginn"] = substr($tsb3, 11);
-            $end = $item["end"];
-            $tse1 = Carbon::parse($end, 'UTC');
-            $tse2 = $tse1->setTimezone("Europe/Berlin");
-            $tse3 = $tse2->translatedFormat("Y-m-d H:i");
-            $terminData["ende"] = substr($tse3, 11);
-            $terminData["ort"] = $item["startLocation"];
-            $terminData["rvp"] = "https://touren-termine.adfc.de/radveranstaltung/" . $item["cSlug"];
-
-            if (Termin::where('rvp', $terminData["rvp"])->first()) {
-                continue;
-            }
-            (new Termin($terminData))->save();
-
-        }
     }
 }

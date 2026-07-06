@@ -7,6 +7,9 @@ use App\Exports\Technik\KurseExport;
 use App\Filament\Resources\KurseBase\KursTableActions;
 use App\Imports\Technik\KurseImport;
 use App\Models\Technik\Buchung;
+use App\Models\Technik\Kurs;
+use Filament\Actions\Action;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Table;
@@ -34,10 +37,21 @@ class KursTable
                 TextColumn::make('datum')
                     ->date('D, d.m')
                     ->sortable(),
+                TextColumn::make('uhrzeit'),
                 TextColumn::make('kursplätze')
                     ->numeric(),
                 TextColumn::make('restplätze')
                     ->numeric(),
+                TextColumn::make('rvp')
+                    ->label("URL")
+                    ->limit(20)
+                    ->tooltip(function (TextColumn $column): ?string {
+                        $state = $column->getState();
+                        if (\strlen($state) <= $column->getCharacterLimit()) {
+                            return null;
+                        }
+                        return $state;
+                    }),
                 TextColumn::make('leiter')->label("Leiter:in")
                     ->sortable(),
                 TextColumn::make('leiter2')->label("Leiter:in2")
@@ -68,7 +82,13 @@ class KursTable
                 $kursTableActions->getRecordActions()
             )
             ->toolbarActions(
-                $kursTableActions->getToolbarActions()
+                [
+                    ...$kursTableActions->getToolbarActions(),
+                    Action::make('loadrvp')
+                        ->label('RVP laden')
+                        ->icon(Heroicon::OutlinedDocumentArrowUp)
+                        ->action(fn() => Kurs::loadRvp("datum", 11)),
+                ]
             );
     }
 }

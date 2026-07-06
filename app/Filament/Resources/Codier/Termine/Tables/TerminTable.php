@@ -84,7 +84,7 @@ class TerminTable
                     Action::make('loadrvp')
                         ->label('RVP laden')
                         ->icon(Heroicon::OutlinedDocumentArrowUp)
-                        ->action(fn() => Buchung::loadRvp()),
+                        ->action(fn() => Termin::loadRvp()),
                     Action::make('importOld')
                         ->label('Import CSV')
                         ->icon(Heroicon::OutlinedDocumentArrowUp)
