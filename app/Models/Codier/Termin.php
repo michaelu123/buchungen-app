@@ -76,7 +76,7 @@ class Termin extends Model
                 continue;
             }
             $t = [
-                "ort" => "Stadtteilwoche - Berg am Laim ",
+                "ort" => $termin->ort,
                 "datum" => $termin->datum,
                 "beginn" => substr($termin->startzeit, 11, 5),
                 "ende" => substr($termin->endzeit, 11, 5),
