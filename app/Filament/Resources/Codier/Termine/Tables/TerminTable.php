@@ -14,6 +14,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class TerminTable
 {
@@ -53,6 +54,10 @@ class TerminTable
                     ->time('H:i')
                     ->searchable()
                     ->sortable(),
+                TextColumn::make('buchungen')
+                    ->state(function (Model $record): int {
+                        return Buchung::whereNull("notiz")->where("termin_id", $record->id)->count();
+                    }),
                 TextColumn::make('kommentar')
                     ->searchable()
                     ->limit(30)
