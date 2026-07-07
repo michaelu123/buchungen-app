@@ -19,6 +19,6 @@ class Buchung extends BaseBuchung
     protected $table = "technik_buchungen";
     public function getFrom(): string
     {
-        return "technik_anmeldungen@adfc-muenchen.de";
+        return "anmeldungen-technikkurse@adfc-muenchen.de";
     }
 }

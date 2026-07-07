@@ -87,6 +87,9 @@ class KursForm
                 TextInput::make('kursplätze')
                     ->required()
                     ->numeric(),
+                TextInput::make('restplätze')
+                    ->required()
+                    ->numeric(),
                 Textarea::make('kommentar'),
                 TextInput::make('lehrer')->label("Lehrer:in"),
                 TextInput::make('co_lehrer')->label("Co-Lehrer:in"),

@@ -29,6 +29,7 @@ class VerifyEmail extends Mailable
     {
         return new Envelope(
             from: new Address($this->sender),
+            bcc: [new Address($this->sender)],
             subject: 'Email-Adresse verifizieren',
         );
     }

@@ -35,7 +35,7 @@ class BaseKurs extends Model
       $exi = static::where($datumName, $datum)
         ->where("uhrzeit", "{$beginn} - {$ende}")
         ->first();
-      if ($exi && $exi->rvp != $rvp) {
+      if ($exi && !$exi->rvp) {
         $exi->update(["rvp" => $rvp]);
       }
     }

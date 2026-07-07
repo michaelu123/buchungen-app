@@ -27,6 +27,7 @@ class SKMail extends Mailable
     {
         return new Envelope(
             from: new Address($this->buchung->getFrom()),
+            bcc: [new Address($this->buchung->getFrom())],
             subject: 'Ihre Saisonkarte',
         );
     }

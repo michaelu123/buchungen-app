@@ -29,6 +29,7 @@ abstract class BestaetigungBase extends Mailable
   {
     return new Envelope(
       from: new Address($this->fromAddress()),
+      bcc: [new Address($this->fromAddress())],
       subject: 'Kursanmeldung bestätigt',
     );
   }

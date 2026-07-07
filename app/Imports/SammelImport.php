@@ -113,7 +113,7 @@ class SammelImport implements OnEachRow, SkipsEmptyRows, WithHeadingRow, WithMul
             $s[$i] = 'p';
             break;
           case 'Þ':
-            $s[$i] = 'p';
+            $s[$i] = 'P';
             break;
           case 'Ù':
           case 'Ú':

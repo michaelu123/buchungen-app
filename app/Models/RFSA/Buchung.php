@@ -19,6 +19,6 @@ class Buchung extends BaseBuchung
 
     public function getFrom(): string
     {
-        return "radfahrschule_anmeldungen@adfc-muenchen.de";
+        return "anmeldungen-radfahrschule@adfc-muenchen.de";
     }
 }
