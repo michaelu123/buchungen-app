@@ -16,6 +16,9 @@ class TerminForm
             ->components([
                 TextInput::make('notiz'),
                 DatePicker::make('datum')
+                    ->native(false)
+                    ->locale('de')
+                    ->displayFormat("D, d.m")
                     ->required(),
                 TextInput::make('ort')
                     ->required(),

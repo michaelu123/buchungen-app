@@ -6,6 +6,8 @@ use Filament\Schemas\Schema;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Hidden;
+use Filament\Schemas\Components\Utilities\Set;
 
 class KursForm
 {
@@ -25,17 +27,22 @@ class KursForm
                     ->required(),
                 DatePicker::make('datum')
                     ->native(false)
+                    ->locale('de')
                     ->displayFormat("D, d.m")
                     ->required(),
                 DatePicker::make('ersatztermin')
                     ->native(false)
+                    ->locale('de')
                     ->displayFormat("D, d.m")
                     ->required(),
                 TextInput::make('kursort')
                     ->required(),
                 TextInput::make('kursplätze')
                     ->required()
-                    ->numeric(),
+                    ->numeric()
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(fn(Set $set, ?string $state) => $set('restplätze', $state)),
+                Hidden::make('restplätze'),
                 Textarea::make('kommentar'),
                 TextInput::make('trainer')->label("Trainer:in"),
                 TextInput::make('co_trainer')->label("Co-Trainer:in"),
