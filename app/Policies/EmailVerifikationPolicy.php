@@ -4,21 +4,69 @@ namespace App\Policies;
 
 use App\Models\User;
 
-class EmailVerifikationPolicy extends BasePolicy
+class EmailVerifikationPolicy
 {
-
-  public function __construct()
-  {
-    parent::__construct("EMAILVERIFIKATION");
-  }
-
-
-  public function permits(User $user): bool
+  /**
+   * Determine whether the user can view any models.
+   */
+  public function viewAny(User $user): bool
   {
     $roles = $user->roles->map(fn($role) => $role["name"]);
-    if ($roles->contains("ADMIN")) {
-      return true;
-    }
-    return !$roles->contains("CODIER");
+    return !$roles->isEmpty();
   }
+
+  /**
+   * Determine whether the user can view the model.
+   */
+  public function view(User $user): bool
+  {
+    $roles = $user->roles->map(fn($role) => $role["name"]);
+    return !$roles->isEmpty();
+  }
+
+  /**
+   * Determine whether the user can create models.
+   */
+  public function create(User $user): bool
+  {
+    $roles = $user->roles->map(fn($role) => $role["name"]);
+    return !$roles->isEmpty();
+  }
+
+  /**
+   * Determine whether the user can update the model.
+   */
+  public function update(User $user): bool
+  {
+    $roles = $user->roles->map(fn($role) => $role["name"]);
+    return $roles->contains("ADMIN");
+  }
+
+  /**
+   * Determine whether the user can delete the model.
+   */
+  public function delete(User $user): bool
+  {
+    $roles = $user->roles->map(fn($role) => $role["name"]);
+    return $roles->contains("ADMIN");
+  }
+
+  /**
+   * Determine whether the user can restore the model.
+   */
+  public function restore(User $user): bool
+  {
+    $roles = $user->roles->map(fn($role) => $role["name"]);
+    return $roles->contains("ADMIN");
+  }
+
+  /**
+   * Determine whether the user can permanently delete the model.
+   */
+  public function forceDelete(User $user): bool
+  {
+    $roles = $user->roles->map(fn($role) => $role["name"]);
+    return $roles->contains("ADMIN");
+  }
+
 }
