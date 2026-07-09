@@ -51,6 +51,12 @@ class EmailVerifikationPolicy
     return $roles->contains("ADMIN");
   }
 
+  public function deleteAny(User $user): bool
+  {
+    $roles = $user->roles->map(fn($role) => $role["name"]);
+    return $roles->contains("ADMIN");
+  }
+
   /**
    * Determine whether the user can restore the model.
    */

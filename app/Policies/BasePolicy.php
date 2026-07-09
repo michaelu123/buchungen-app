@@ -65,6 +65,11 @@ class BasePolicy
     return $this->permits($user);
   }
 
+  public function deleteAny(User $user): bool
+  {
+    return $this->permits($user);
+  }
+
   /**
    * Determine whether the user can restore the model.
    */
