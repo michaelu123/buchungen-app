@@ -30,6 +30,8 @@ class KursForm
                     ->mask("99:99 - 99:99")
                     ->placeholder("hh:mm - hh:mm")
                     ->required(),
+                TextInput::make('rvp')
+                    ->label("URL"),
                 TextInput::make('kursplätze')
                     ->required()
                     ->numeric()
