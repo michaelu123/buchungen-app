@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Route;
 Route::redirect("/", "/buchungen");
 
 Route::livewire("buchung/ok", "pages::buchung.ok")->name("buchung.ok");
+Route::livewire("buchung/notok", "pages::buchung.notok")->name("buchung.notok");
 Route::livewire("emailverifikation/{param}", "pages::buchung.emailverifikation")->name("emailverifikation");
 
 Route::livewire("buchungen", "pages::buchungen")->name("buchungen");

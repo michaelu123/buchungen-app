@@ -62,9 +62,18 @@ new class extends Component implements HasSchemas {
                         => $kurse
                         ? "Ich möchte mich für folgenden Kurs anmelden:"
                         : "Leider gibt es aktuell keine Kurse oder alle sind voll!")
-                    ->options(
-                        $kurse,
-                    )
+                    ->options($kurse)
+                    ->rules([
+                        fn(): Closure => function (string $attribute, $value, Closure $fail) {
+                            $restPlätze = (int) Kurs::find((int) $value)->restplätze;
+                            if ($restPlätze <= 0) {
+                                $fail("full");
+                            }
+                        }
+                    ])
+                    ->validationMessages([
+                        'in' => 'Der gewählte Kurs ist (inzwischen) ausgebucht.',
+                    ])
                     ->disableOptionWhen(fn(int $value): bool => $value < 0)
                     ->required(),
                 Select::make('anrede')
@@ -228,8 +237,12 @@ EOD
 
     public function create(): void
     {
-        Buchung::createBuchung($this->form->getState());
-        redirect()->route('buchung.ok')->with('msg', "Sie erhalten in Kürze eine E-Mail.");
+        $buchung = Buchung::createBuchung($this->form->getState());
+        if ($buchung) {
+            redirect()->route('buchung.ok')->with('msg', "Sie erhalten in Kürze eine E-Mail.");
+        } else {
+            redirect()->route('buchung.notok')->with('msg', "");
+        }
     }
 }
 ?>

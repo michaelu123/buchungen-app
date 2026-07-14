@@ -57,26 +57,29 @@ class BaseBuchung extends Model
         return $this->belongsTo(static::$kursClass, 'kurs_id', 'id');
     }
 
-    public static function createBuchung(array $data): BaseBuchung
+    public static function createBuchung(array $data): BaseBuchung|null
     {
         $buchungClass = static::class;
-        $buchung = $buchungClass::create($data);
 
         $kurs_id = $data['kurs_id'];
-        DB::transaction(function () use ($buchungClass, $kurs_id): void {
+        $buchung = DB::transaction(function () use ($buchungClass, $kurs_id, $data): BaseBuchung|null {
             $buchungenCount = $buchungClass::where('kurs_id', $kurs_id)
                 ->whereNull('notiz')->sharedLock()->count();
             $kurs = static::$kursClass::find($kurs_id)->sharedLock()->first();
-            if ($kurs && $kurs->restplätze > 0) {
-                $kurs->restplätze = $kurs->kursplätze - $buchungenCount - 1;
+            $restplätze = $kurs->kursplätze - $buchungenCount;
+            if ($restplätze > 0) {
+                $buchung = $buchungClass::create($data);
+                $kurs->restplätze = $restplätze - 1;
+                $kurs->save();
+                return $buchung;
+            } else {
+                return null;
             }
-            if ($kurs->restplätze < 0) {
-                throw new \Exception('Keine verfügbaren Plätze für diesen Kurs.');
-            }
-            $kurs->save();
         });
-        $buchungClass::notifySuccess('Buchung erfolgreich angelegt');
-        $buchung->check();
+        if ($buchung) {
+            $buchungClass::notifySuccess('Buchung erfolgreich angelegt');
+            $buchung->check();
+        }
         return $buchung;
     }
 
