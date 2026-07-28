@@ -21,6 +21,7 @@ class BuchungenExport extends BuchungenExportBase implements WithStyles
     {
         return [
             Carbon::parse($buchung->termin->datum)->translatedFormat('D, d.m.y'),
+            $buchung->uhrzeit,
             substr($buchung->termin->beginn, 0, 5),
             $buchung->vorname,
             $buchung->nachname,
@@ -33,7 +34,6 @@ class BuchungenExport extends BuchungenExportBase implements WithStyles
             $buchung->email,
             $buchung->created_at,
             $buchung->notiz,
-            $buchung->uhrzeit,
             $buchung->mitgliedsnummer,
             $buchung->anrede,
             $buchung->anmeldebestätigung,
@@ -46,6 +46,7 @@ class BuchungenExport extends BuchungenExportBase implements WithStyles
         // Datum Beginn Vorname Nachname PLZ Ort Strasse Hsnr EIN Telefonnr Email
         return [
             'Datum',
+            'Uhrzeit',
             'Beginn',
             'Vorname',
             'Nachname',
@@ -58,7 +59,6 @@ class BuchungenExport extends BuchungenExportBase implements WithStyles
             'Email',
             'Zeitstempel',
             'Notiz',
-            'Uhrzeit',
             'Mitgliedsnummer',
             'Anrede',
             'Anmeldebestätigung',

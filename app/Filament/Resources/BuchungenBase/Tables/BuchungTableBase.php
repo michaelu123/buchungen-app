@@ -75,7 +75,7 @@ abstract class BuchungTableBase
                 Select::make('kurs_id')
                     ->label('Filtern nach Kurs')
                     ->placeholder('Wähle einen Kurs')
-                    ->options($kursClass::whereNull('notiz')->pluck('nummer', 'id')->toArray());
+                    ->options($kursClass::/*whereNull('notiz')->*/ pluck('nummer', 'id')->toArray());
         }
     }
 

@@ -121,7 +121,7 @@ class BaseBuchung extends Model
                 ->get()
                 ->toArray();
             $kursPlätze = static::$kursClass::select('id', 'nummer', 'kursplätze', 'restplätze')
-                ->whereNull('notiz')
+                // ->whereNull('notiz')
                 ->sharedLock()
                 ->get()
                 ->toArray();

@@ -91,7 +91,7 @@ class TerminTable
                         ->icon(Heroicon::OutlinedDocumentArrowUp)
                         ->action(fn() => Termin::loadRvp()),
                     Action::make('importOld')
-                        ->label('Import CSV')
+                        ->label('Import JSON')
                         ->icon(Heroicon::OutlinedDocumentArrowUp)
                         ->schema([
                             FileUpload::make('json')
