@@ -99,7 +99,7 @@ new class extends Component implements HasSchemas {
                     ->tel()
                     ->required(),
                 Radio::make("ermäßigung")
-                    ->belowLabel("Sind Sie arbeitslos, beziehen Sie Bürgergeld, studieren Sie oder gehen Sie noch zur Schule, und haben deshalb Anspruch auf die Ermäßigung?")
+                    ->belowLabel("Sind Sie arbeitslos oder geflüchtet, beziehen Sie Grundsicherung, studieren Sie oder gehen Sie noch zur Schule, und haben deshalb Anspruch auf die Ermäßigung?")
                     ->options(["Ja" => "Ja", "Nein" => "Nein"]),
                 TextInput::make('kontoinhaber')
                     ->belowLabel("Bitte geben Sie den Namen des Kontoinhabers an, von dem die Lastschrift erfolgen soll.")

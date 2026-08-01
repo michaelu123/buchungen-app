@@ -266,7 +266,7 @@ class Buchung extends BaseBuchung
             $platen = str_contains($t["ort"], "Platenstr");
             $label = Carbon::parse($t["datum"])->translatedFormat('D, d.m.y') . " von " . substr($t["beginn"], 0, 5) . " bis " . substr($t["ende"], 0, 5) .
                 ", Ort: " . $t["ort"] .
-                ($platen ? "." : ", keine Anmeldung erforderlich, einfach kommen bis 1h vor Ende. ") .
+                ($platen ? "." : ", keine Anmeldung erforderlich, einfach kommen bis 15m vor Ende. ") .
                 ($t["rvp"] ? ' <a href="' . $t["rvp"] . '" target="_blank" class="underline text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">Mehr Infos</a>' : "");
 
             return [
