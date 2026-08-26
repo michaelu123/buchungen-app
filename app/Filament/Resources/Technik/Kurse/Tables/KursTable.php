@@ -35,7 +35,7 @@ class KursTable
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('datum')
-                    ->date('D, d.m')
+                    ->date('D, d.m.y')
                     ->sortable(),
                 TextColumn::make('uhrzeit'),
                 TextColumn::make('kursplätze')

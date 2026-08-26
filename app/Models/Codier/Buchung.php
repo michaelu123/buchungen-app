@@ -255,7 +255,7 @@ class Buchung extends BaseBuchung
                     "frei" => $frei,
                 ];
             })
-            ->reject(fn($t): bool => empty($t["frei"]));
+        ; // ->reject(fn($t): bool => empty($t["frei"]));
         return $termine;
     }
 
@@ -264,13 +264,13 @@ class Buchung extends BaseBuchung
         $neg = 0;
         $termineOptions = $termine->mapWithKeys(function (array $t) use (&$neg): array {
             $platen = str_contains($t["ort"], "Platenstr");
+            $freiCnt = count($t["frei"]);
             $label = Carbon::parse($t["datum"])->translatedFormat('D, d.m.y') . " von " . substr($t["beginn"], 0, 5) . " bis " . substr($t["ende"], 0, 5) .
                 ", Ort: " . $t["ort"] .
-                ($platen ? "." : ", keine Anmeldung erforderlich, einfach kommen bis 15m vor Ende. ") .
+                ($platen ? ", freie Plätze: {$freiCnt}." : ", keine Anmeldung erforderlich, einfach kommen bis 15m vor Ende. ") .
                 ($t["rvp"] ? ' <a href="' . $t["rvp"] . '" target="_blank" class="underline text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">Mehr Infos</a>' : "");
-
             return [
-                ($platen ? $t["id"] : --$neg) => new HtmlString($label),
+                ($platen && $freiCnt > 0 ? $t["id"] : --$neg) => new HtmlString($label),
             ];
         });
         return $termineOptions;

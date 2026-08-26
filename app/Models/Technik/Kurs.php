@@ -38,7 +38,7 @@ class Kurs extends BaseKurs
     }
     public function kursDetails(): string
     {
-        $datum = Carbon::parse($this->datum)->translatedFormat('D, d.m');
+        $datum = Carbon::parse($this->datum)->translatedFormat('D, d.m.y');
         return "{$this->nummer}: {$this->titel} am {$datum}, {$this->uhrzeit}";
     }
 

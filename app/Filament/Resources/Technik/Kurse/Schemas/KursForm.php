@@ -24,7 +24,7 @@ class KursForm
                 DatePicker::make('datum')
                     ->native(false)
                     ->locale('de')
-                    ->displayFormat("D, d.m")
+                    ->displayFormat("D, d.m.y")
                     ->required(),
                 TextInput::make("uhrzeit")
                     ->mask("99:99 - 99:99")
