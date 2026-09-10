@@ -10,10 +10,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\HtmlString;
+use Illuminate\Validation\ValidationException;
 use Throwable;
 
 class Buchung extends BaseBuchung
@@ -165,14 +167,38 @@ class Buchung extends BaseBuchung
         }
     }
 
+    // public static function createBuchung(array $data): Buchung
+    // {
+    //     static::getEIN($data);
+    //     $buchung = Buchung::create($data);
+    //     Buchung::notifySuccess('Termin erfolgreich gebucht');
+    //     $buchung->check();
+
+    //     return $buchung;
+    // }
+
     public static function createBuchung(array $data): Buchung
     {
-        static::getEIN($data);
-        $buchung = Buchung::create($data);
-        Buchung::notifySuccess('Termin erfolgreich gebucht');
-        $buchung->check();
+        return DB::transaction(function () use ($data) {
+            $alreadyBooked = static::where('termin_id', $data['termin_id'])
+                ->where('uhrzeit', $data['uhrzeit'])
+                ->whereNull('notiz')
+                ->lockForUpdate()
+                ->exists();
 
-        return $buchung;
+            if ($alreadyBooked) {
+                throw ValidationException::withMessages([
+                    'uhrzeit' => 'Dieser Termin wurde gerade anderweitig vergeben.',
+                ]);
+            }
+
+            static::getEIN($data);
+            $buchung = static::create($data);
+            static::notifySuccess('Termin erfolgreich gebucht');
+            $buchung->check();
+
+            return $buchung;
+        });
     }
 
     public function confirm(): void

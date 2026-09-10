@@ -70,7 +70,7 @@ abstract class BuchungFormBase
                     ->unique(
                         $buchungClass,
                         'uhrzeit',
-                        modifyRuleUsing: fn(Unique $rule, Get $get): Unique => $rule->where('termin_id', $get('termin_id'))
+                        modifyRuleUsing: fn(Unique $rule, Get $get): Unique => $rule->where('termin_id', $get('termin_id'))->whereNull('notiz')
                     )
                     ->validationMessages([
                         'unique' => 'Die Uhrzeit wurde inzwischen vergeben, bitte wählen Sie eine andere.',
