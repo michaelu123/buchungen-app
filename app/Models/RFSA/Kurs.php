@@ -89,7 +89,7 @@ class Kurs extends BaseKurs
     public function ebicsData(Buchung $buchung): array
     {
         return [
-            $buchung->ermäßigung ? 40 : 120,
+            $buchung->ermäßigung == "Ja" ? 40 : 120,
             "M-RFSA-" . now()->year,
             "ADFC Radfahrschule",
         ];
