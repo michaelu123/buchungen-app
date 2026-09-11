@@ -133,6 +133,7 @@ abstract class BuchungTableBase
 
         return $table
             ->striped()
+            ->defaultSort("created_at", "desc")
             ->columns([
                 TextColumn::make('created_at')
                     ->label('Eingegangen am')
@@ -233,8 +234,8 @@ abstract class BuchungTableBase
                             )->when(
                                 $notiz,
                                 fn($query) => $notiz == 'leer' ?
-                                $query->whereNull('notiz') :
-                                $query->whereNotNull('notiz')
+                                    $query->whereNull('notiz') :
+                                    $query->whereNotNull('notiz')
                             );
                     }),
             ])
@@ -253,8 +254,8 @@ abstract class BuchungTableBase
                     Action::make('Bestätigung senden')
                         ->disabled(
                             fn($record): bool => filled($record['notiz'])
-                            || $buchungClass::$requireEmailVerification && !filled($record['verified'])
-                            || filled($record['anmeldebestätigung'])
+                                || $buchungClass::$requireEmailVerification && !filled($record['verified'])
+                                || filled($record['anmeldebestätigung'])
                         )
                         ->icon(Heroicon::OutlinedEnvelope)
                         ->action(function ($record): void {

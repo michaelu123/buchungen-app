@@ -44,6 +44,8 @@ class BuchungTable extends BuchungTableBase
         $tableActions = new KursTableActions("", "", "", Buchung::class);
         $basisdaten = BasisDaten::first();
         return $table
+            ->striped()
+            ->defaultSort("created_at", "desc")
             ->columns([
                 TextColumn::make('created_at')
                     ->label('Eingegangen am')
@@ -82,7 +84,7 @@ class BuchungTable extends BuchungTableBase
                     ->label("SK senden")
                     ->disabled(
                         fn($record): bool => filled($record['notiz'])
-                        || Buchung::$requireEmailVerification && !filled($record['verified'])
+                            || Buchung::$requireEmailVerification && !filled($record['verified'])
                     )
                     ->icon(Heroicon::OutlinedEnvelope)
                     ->action(function ($record): void {
