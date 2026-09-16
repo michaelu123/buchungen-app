@@ -151,10 +151,13 @@ class Termin extends Model
             $terminData["ort"] = $item["startLocation"];
             $terminData["rvp"] = "https://touren-termine.adfc.de/radveranstaltung/" . $item["cSlug"];
 
-            if (Termin::where('rvp', $terminData["rvp"])->first()) {
-                continue;
+            $exi = Termin::where("datum", $terminData["datum"])
+                ->where("beginn", $terminData["beginn"])->first();
+            if (!$exi) {
+                (new Termin($terminData))->save();
+            } else if (!$exi->rvp) {
+                $exi->update(["rvp" => $terminData["rvp"]]);
             }
-            (new Termin($terminData))->save();
         }
     }
 }
