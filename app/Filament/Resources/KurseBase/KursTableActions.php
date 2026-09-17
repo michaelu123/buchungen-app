@@ -196,8 +196,9 @@ class KursTableActions
             if (!$buchung->verified) {
                 $unverifiziert++;
             }
-            if (!$this->isLatin($buchung->kontoinhaber)) {
-                $zeichenSatz[] = $buchung->kontoinhaber;
+            $bad = static::notLatin($buchung->kontoinhaber);
+            if ($bad) {
+                $zeichenSatz[] = $buchung->kontoinhaber . " (" . $bad . ")";
             }
         }
 
@@ -234,7 +235,7 @@ class KursTableActions
 
     protected $charset = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
-    protected $latin = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz':?,-(+.)/ ÄÖÜäöüß&*$%";
+    protected static $latin = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz':?,-(+.)/ ÄÖÜäöüß&*$%";
 
     protected function randomId(int $length): string
     {
@@ -247,16 +248,15 @@ class KursTableActions
         return $r1 . $r2;
     }
 
-    protected function isLatin(string $s): bool
+    public static function notLatin(string $s): string
     {
-
+        $bad = "";
         for ($i = 0; $i < \strlen($s); $i++) {
-            if (strpos($this->latin, $s[$i]) == false) {
-                return false;
+            if (strpos(static::$latin, $s[$i]) == false) {
+                $bad = $bad . $s[$i];
             }
         }
-
-        return true;
+        return $bad;
     }
 
     protected function convertToIsoDate(string $ts): string // 06.03.2022 17:28:38 -> 2022-03-06
@@ -365,7 +365,7 @@ class KursTableActions
             $buchungenData[] = [
                 'datum' => $buchung->created_at->format('Y-m-d'),
                 'betrag' => $betrag,
-                'iban' => $buchung->iban,
+                'iban' => $normalizedIban,
                 'mandat' => $mandat,
                 'zweck' => $zweck,
                 'kontoinhaber' => $buchung->kontoinhaber,

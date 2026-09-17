@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\BuchungenBase\Schemas;
 
+use App\Filament\Resources\KurseBase\KursTableActions;
 use Carbon\Carbon;
 use Closure;
 use Filament\Forms\Components\Checkbox;
@@ -106,6 +107,18 @@ abstract class BuchungFormBase
 
         return [
             TextInput::make('kontoinhaber')
+                ->rules([
+                    fn(): \Closure => function ($attribute, $value, \Closure $fail): void {
+                        $bad = KursTableActions::notLatin($value);
+                        if ($bad) {
+                            if (\mb_strlen($bad) == 1) {
+                                $fail("Ungültiges Zeichen: " . $bad);
+                            } else {
+                                $fail("Ungültige Zeichen: " . $bad);
+                            }
+                        }
+                    },
+                ])
                 ->required(),
             TextInput::make('iban')
                 ->label('IBAN oder Aktive/er')

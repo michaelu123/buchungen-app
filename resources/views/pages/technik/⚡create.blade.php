@@ -1,5 +1,6 @@
 <?php
 
+use App\Filament\Resources\KurseBase\KursTableActions;
 use Livewire\Component;
 use Illuminate\Support\HtmlString;
 use Filament\Schemas\Schema;
@@ -100,6 +101,18 @@ new class extends Component implements HasSchemas {
                     ->required(),
                 TextInput::make('kontoinhaber')
                     ->belowLabel("Bitte geben Sie den Namen des Kontoinhabers an, von dem die Lastschrift erfolgen soll.")
+                    ->rules([
+                        fn(): \Closure => function ($attribute, $value, \Closure $fail): void {
+                            $bad = KursTableActions::notLatin($value);
+                            if ($bad) {
+                                if (\mb_strlen($bad) == 1) {
+                                    $fail("Ungültiges Zeichen: " . $bad);
+                                } else {
+                                    $fail("Ungültige Zeichen: " . $bad);
+                                }
+                            }
+                        },
+                    ])
                     ->required(),
                 TextInput::make('iban')
                     ->belowLabel("Bitte geben Sie die IBAN des Kontos an, von dem die Lastschrift erfolgen soll.")
