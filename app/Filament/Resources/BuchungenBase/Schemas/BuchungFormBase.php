@@ -42,7 +42,7 @@ abstract class BuchungFormBase
             //     ),
             // ];
             $termine = $buchungClass::getTermine();
-            $termineOptions = $buchungClass::getTermineOptions($termine);
+            // $termineOptions = $buchungClass::getTermineOptions($termine);
 
             return [
                 Select::make('termin_id')
@@ -50,7 +50,11 @@ abstract class BuchungFormBase
                     ->belowLabel(fn(): string => $termine->isEmpty()
                         ? 'Leider gibt es aktuell keine freien Termine!'
                         : 'Ich möchte mich für folgenden Termin anmelden:')
-                    ->options($termineOptions)
+                    // ->options($termineOptions)
+                    ->options(fn(Get $get, Model $record): array => $buchungClass::getTermineOptions(
+                        $record->termin_id == $get('termin_id') ? $get('termin_id') : null,
+                        $termine
+                    )->toArray())
                     ->live()
                     ->afterStateUpdated(function (Get $get, Set $set, ?Model $record) {
                         if ($get('termin_id') == $record->termin_id) {
@@ -175,7 +179,6 @@ abstract class BuchungFormBase
                 ->label('Hausnummer'),
             TextInput::make('telefonnr')
                 ->label('Telefon')
-                ->tel()
                 ->required(),
         ];
     }

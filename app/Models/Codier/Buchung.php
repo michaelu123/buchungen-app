@@ -121,11 +121,24 @@ class Buchung extends BaseBuchung
             }
 
             $body = $resp->body();
-            $pos = strpos($body, '<big><big>');
-            if ($pos !== false) {
-                $ein = substr($body, $pos + 25, 16);
 
-                return ['status' => 'success', 'ein' => trim($ein)];
+            /* inside body: 
+                <big><big>
+                    &nbsp;ND15811860001LH26&nbsp;
+                </big></big>
+            */
+
+            $pos1 = strpos($body, '<big><big>');
+            if ($pos1 !== false) {
+                $pos1 = strpos($body, '&nbsp;', $pos1);
+                if ($pos1 !== false) {
+                    $pos1 += 6;
+                    $pos2 = strpos($body, '&nbsp;', $pos1);
+                    if ($pos2 !== false) {
+                        $ein = substr($body, $pos1, $pos2 - $pos1);
+                        return ['status' => 'success', 'ein' => trim($ein)];
+                    }
+                }
             }
 
             // Parse alternatives if present
@@ -285,10 +298,10 @@ class Buchung extends BaseBuchung
         return $termine;
     }
 
-    public static function getTermineOptions(Collection $termine): Collection
+    public static function getTermineOptions(int|null $termin_id, Collection $termine): Collection
     {
         $neg = 0;
-        $termineOptions = $termine->mapWithKeys(function (array $t) use (&$neg): array {
+        $termineOptions = $termine->mapWithKeys(function (array $t) use ($termin_id, &$neg): array {
             $platen = str_contains($t["ort"], "Platenstr");
             $freiCnt = count($t["frei"]);
             $label = Carbon::parse($t["datum"])->translatedFormat('D, d.m.y') . " von " . substr($t["beginn"], 0, 5) . " bis " . substr($t["ende"], 0, 5) .
@@ -296,7 +309,7 @@ class Buchung extends BaseBuchung
                 ($platen ? ", freie Plätze: {$freiCnt}." : ", keine Anmeldung erforderlich, einfach kommen bis 15m vor Ende. ") .
                 ($t["rvp"] ? ' <a href="' . $t["rvp"] . '" target="_blank" class="underline text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">Mehr Infos</a>' : "");
             return [
-                ($platen && $freiCnt > 0 ? $t["id"] : --$neg) => new HtmlString($label),
+                (($termin_id == $t["id"] || $platen && $freiCnt > 0) ? $t["id"] : --$neg) => new HtmlString($label),
             ];
         });
         return $termineOptions;

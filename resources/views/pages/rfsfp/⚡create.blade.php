@@ -98,7 +98,6 @@ new class extends Component implements HasSchemas {
                 TextInput::make('telefonnr')
                     ->belowLabel("Bitte geben Sie eine Telefonnummer an, unter der wir Sie erreichen können, falls es Rückfragen zu Ihrer Anmeldung gibt.")
                     ->label('Telefon')
-                    ->tel()
                     ->required(),
                 TextInput::make('kontoinhaber')
                     ->belowLabel("Bitte geben Sie den Namen des Kontoinhabers an, von dem die Lastschrift erfolgen soll.")

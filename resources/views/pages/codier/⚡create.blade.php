@@ -29,7 +29,7 @@ new class extends Component implements HasSchemas {
     public function form(Schema $schema): Schema
     {
         $termine = Buchung::getTermine();
-        $termineOptions = Buchung::getTermineOptions($termine);
+        $termineOptions = Buchung::getTermineOptions(null, $termine);
         return $schema
             ->components([
                 Radio::make("termin_id")
@@ -78,7 +78,6 @@ new class extends Component implements HasSchemas {
                 TextInput::make('telefonnr')
                     ->belowLabel("Bitte geben Sie eine Telefonnummer an, unter der wir Sie erreichen können, falls es Rückfragen zu Ihrer Anmeldung gibt.")
                     ->label('Telefon')
-                    ->tel()
                     ->required(),
                 TextInput::make('email')
                     ->belowLabel("Bitte geben Sie Ihre E-Mail-Adresse an.")

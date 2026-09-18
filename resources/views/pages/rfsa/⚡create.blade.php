@@ -98,7 +98,6 @@ new class extends Component implements HasSchemas {
                 TextInput::make('telefonnr')
                     ->belowLabel("Bitte geben Sie eine Telefonnummer an, unter der wir Sie erreichen können, falls es Rückfragen zu Ihrer Anmeldung gibt.")
                     ->label('Telefon')
-                    ->tel()
                     ->required(),
                 Radio::make("ermäßigung")
                     ->belowLabel("Sind Sie arbeitslos oder geflüchtet, beziehen Sie Grundsicherung, studieren Sie oder gehen Sie noch zur Schule, und haben deshalb Anspruch auf die Ermäßigung?")
