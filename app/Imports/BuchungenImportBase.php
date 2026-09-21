@@ -128,6 +128,11 @@ class BuchungenImportBase implements OnEachRow, SkipsEmptyRows, WithHeadingRow, 
                     return;
                 }
                 $buchungData['termin_id'] = $termin_id;
+                if (!$buchungData["telefonnr"]) {
+                    // db field is notnull, but some old data were null
+                    $buchungData['telefonnr'] = "";
+
+                }
             } else {
                 $kurs_id = $this->kursIdFor($buchungData['kursnummer']);
                 if ($kurs_id == null) {

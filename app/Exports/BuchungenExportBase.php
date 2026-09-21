@@ -39,7 +39,11 @@ class BuchungenExportBase implements FromCollection, WithMapping, WithHeadings, 
   public function collection()
   {
     if ($this->kurs) {
-      return $this->kurs->buchungen()->get();
+      if ($this->useTermin) {
+        return $this->kurs->buchungen()->with("termin")->whereNull("notiz")->orderBy("uhrzeit")->get();
+      } else {
+        return $this->kurs->buchungen()->get();
+      }
     }
 
     $buchungClass = $this->buchungClass;
