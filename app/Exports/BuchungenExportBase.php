@@ -42,7 +42,7 @@ class BuchungenExportBase implements FromCollection, WithMapping, WithHeadings, 
       if ($this->useTermin) {
         return $this->kurs->buchungen()->with("termin")->whereNull("notiz")->orderBy("uhrzeit")->get();
       } else {
-        return $this->kurs->buchungen()->get();
+        return $this->kurs->buchungen()->whereNull("notiz")->get();
       }
     }
 
