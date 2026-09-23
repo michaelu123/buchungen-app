@@ -21,7 +21,7 @@ class BuchungenExport extends BuchungenExportBase implements WithStyles
     {
         if ($this->kurs) {
             return [
-                Carbon::parse($buchung->termin->datum)->translatedFormat('D, d.m.y'),
+                Carbon::parse($buchung->termin->datum)->translatedFormat('d.m.'),
                 substr($buchung->uhrzeit, 0, 5),
                 $buchung->vorname,
                 $buchung->nachname,
@@ -61,7 +61,7 @@ class BuchungenExport extends BuchungenExportBase implements WithStyles
         if ($this->kurs) {
             return [
                 'Datum',
-                'Uhrzeit',
+                'Zeit',
                 'Vorname',
                 'Nachname',
                 'PLZ',
@@ -111,7 +111,12 @@ class BuchungenExport extends BuchungenExportBase implements WithStyles
                     'horizontal' => Alignment::HORIZONTAL_CENTER,
                     'vertical' => Alignment::VERTICAL_CENTER,
                 ],
-            ]
+            ],
+            ($this->kurs ? "H" : "I") => [ // hsnr
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_LEFT,
+                ],
+            ],
         ];
     }
 }
