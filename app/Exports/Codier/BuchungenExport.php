@@ -19,51 +19,79 @@ class BuchungenExport extends BuchungenExportBase implements WithStyles
 
     public function map($buchung): array
     {
-        return [
-            Carbon::parse($buchung->termin->datum)->translatedFormat('D, d.m.y'),
-            $buchung->uhrzeit,
-            substr($buchung->termin->beginn, 0, 5),
-            $buchung->vorname,
-            $buchung->nachname,
-            $buchung->postleitzahl,
-            $buchung->ort,
-            $buchung->strasse,
-            $buchung->hsnr,
-            $buchung->ein,
-            $buchung->telefonnr,
-            $buchung->email,
-            $buchung->created_at,
-            $buchung->notiz,
-            $buchung->mitgliedsnummer,
-            $buchung->anrede,
-            $buchung->anmeldebestätigung,
-            $buchung->kommentar,
-        ];
+        if ($this->kurs) {
+            return [
+                Carbon::parse($buchung->termin->datum)->translatedFormat('D, d.m.y'),
+                substr($buchung->uhrzeit, 0, 5),
+                $buchung->vorname,
+                $buchung->nachname,
+                $buchung->postleitzahl,
+                $buchung->ort,
+                $buchung->strasse,
+                $buchung->hsnr,
+                $buchung->ein,
+            ];
+        } else {
+            return [
+                Carbon::parse($buchung->termin->datum)->translatedFormat('D, d.m.y'),
+                substr($buchung->uhrzeit, 0, 5),
+                substr($buchung->termin->beginn, 0, 5),
+                $buchung->vorname,
+                $buchung->nachname,
+                $buchung->postleitzahl,
+                $buchung->ort,
+                $buchung->strasse,
+                $buchung->hsnr,
+                $buchung->ein,
+                " " . $buchung->telefonnr,
+                $buchung->email,
+                $buchung->created_at,
+                $buchung->notiz,
+                $buchung->mitgliedsnummer,
+                $buchung->anrede,
+                $buchung->anmeldebestätigung,
+                $buchung->kommentar,
+            ];
+        }
     }
 
     public function headings(): array
     {
         // Datum Beginn Vorname Nachname PLZ Ort Strasse Hsnr EIN Telefonnr Email
-        return [
-            'Datum',
-            'Uhrzeit',
-            'Beginn',
-            'Vorname',
-            'Nachname',
-            'Postleitzahl',
-            'Ort',
-            'Strasse',
-            'Hsnr',
-            'EIN',
-            'Telefonnr',
-            'Email',
-            'Zeitstempel',
-            'Notiz',
-            'Mitgliedsnummer',
-            'Anrede',
-            'Anmeldebestätigung',
-            'Kommentar',
-        ];
+        if ($this->kurs) {
+            return [
+                'Datum',
+                'Uhrzeit',
+                'Vorname',
+                'Nachname',
+                'PLZ',
+                'Ort',
+                'Strasse',
+                'Hsnr',
+                'EIN',
+            ];
+        } else {
+            return [
+                'Datum',
+                'Uhrzeit',
+                'Beginn',
+                'Vorname',
+                'Nachname',
+                'Postleitzahl',
+                'Ort',
+                'Strasse',
+                'Hsnr',
+                'EIN',
+                'Telefonnr',
+                'Email',
+                'Zeitstempel',
+                'Notiz',
+                'Mitgliedsnummer',
+                'Anrede',
+                'Anmeldebestätigung',
+                'Kommentar',
+            ];
+        }
     }
 
 
