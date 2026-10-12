@@ -40,14 +40,35 @@ class BaseKurs extends Model
       }
     }
   }
-}
-/*
 
-select * from "rfsa_kurse" where "tag1" = '2026-08-03' and "uhrzeit" = '17:00 - 19:00' limit 1
-select * from "rfsa_kurse" where "tag1" = '2026-08-21' and "uhrzeit" = '14:00 - 17:00' limit 1
-select * from "rfsa_kurse" where "tag1" = '2026-09-16' and "uhrzeit" = '17:30 - 19:30' limit 1
-select * from "rfsa_kurse" where "tag1" = '2026-09-18' and "uhrzeit" = '13:00 - 16:00' limit 1
-select * from "rfsa_kurse" where "tag1" = '2026-09-27' and "uhrzeit" = '13:00 - 16:00' limit 1
-​select * from "rfsa_kurse" where "tag1" = '2026-10-17' and "uhrzeit" = '09:00 - 12:00' limit 1
-​select * from "rfsa_kurse" where "tag1" = '2026-10-17' and "uhrzeit" = '13:00 - 16:00' limit 1
-*/
+
+
+  // Eloquent Accessor
+  public function getAbgebuchtAttribute(): string
+  {
+    $buchungen = $this->buchungen;
+    $abgebucht = 0;
+    $total = 0;
+    foreach ($buchungen as $b) {
+      if ($b->notiz) {
+        continue;
+      }
+      $total++;
+      if ($b->eingezogen) {
+        $abgebucht++;
+      }
+    }
+    $color = " ";
+    if ($total == 0) {
+      return "0WKeine Buchungen";
+    }
+    if ($abgebucht == $total) {
+      $color = "1G";
+    } else if ($abgebucht == 0) {
+      $color = "3R";
+    } else {
+      $color = "2Y";
+    }
+    return $color . $abgebucht . "/" . $total . " (" . (int) ($abgebucht * 100 / $total) . "%)";
+  }
+}

@@ -5,6 +5,7 @@ namespace App\Filament\Resources\RFSA\Kurse\Tables;
 use App\Exports\RFSA\BuchungenExport;
 use App\Exports\RFSA\KurseExport;
 use App\Filament\Resources\KurseBase\KursTableActions;
+use App\Filament\Resources\KurseBase\KursTableColumns;
 use App\Imports\RFSA\KurseImport;
 use App\Models\RFSA\Buchung;
 use App\Models\RFSA\Kurs;
@@ -38,6 +39,7 @@ class KursTable
                     ->numeric(),
                 TextColumn::make('restplätze')
                     ->numeric(),
+                KursTableColumns::getAbgebuchtColumn(),
                 TextColumn::make('rvp')
                     ->label("URL")
                     ->limit(20)
