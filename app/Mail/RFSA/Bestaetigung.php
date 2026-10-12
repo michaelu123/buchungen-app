@@ -13,7 +13,11 @@ class Bestaetigung extends BestaetigungBase
     public function __construct(Kurs $kurs, Buchung $buchung)
     {
         parent::__construct($kurs, $buchung);
-        $this->zahlungsText = 'Wir ziehen die Teilnahmegebühr von '.($buchung->ermäßigung == 'Ja' ? 40 : 120).'€ in den nächsten Tagen ein.';
+        if ($buchung->gutscheincode && $buchung->validGutscheinCode()) {
+            $this->zahlungsText = 'Da Sie bei der Buchung einen gültigen Gutscheincode angegeben haben, müssen Sie nichts zahlen.';
+        } else {
+            $this->zahlungsText = 'Wir ziehen die Teilnahmegebühr von ' . ($buchung->ermäßigung == 'Ja' ? 40 : 120) . '€ in den nächsten Tagen ein.';
+        }
     }
 
     protected function viewName(): string

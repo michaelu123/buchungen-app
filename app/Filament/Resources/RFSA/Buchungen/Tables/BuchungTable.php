@@ -35,6 +35,7 @@ class BuchungTable extends BuchungTableBase
     {
         return [
             TextColumn::make('ermäßigung'),
+            TextColumn::make('gutscheincode'),
             TextColumn::make('mitteilung')
                 ->searchable()
                 ->limit(30)

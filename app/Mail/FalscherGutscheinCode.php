@@ -1,0 +1,55 @@
+<?php
+
+namespace App\Mail;
+
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Address;
+use Illuminate\Mail\Mailable;
+use Illuminate\Bus\Queueable;
+
+class FalscherGutscheinCode extends Mailable
+{
+    use Queueable, SerializesModels;
+
+
+    /**
+     * Create a new message instance.
+     */
+    public function __construct(public string $gutscheincode, public string $sender)
+    {
+    }
+
+    /**
+     * Get the message envelope.
+     */
+    public function envelope(): Envelope
+    {
+        return new Envelope(
+            from: new Address($this->sender),
+            bcc: [new Address($this->sender)],
+            subject: 'Ungültiger Gutscheincode',
+        );
+    }
+
+    /**
+     * Get the message content definition.
+     */
+    public function content(): Content
+    {
+        return new Content(
+            view: 'mail.falschergutscheincode',
+        );
+    }
+
+    /**
+     * Get the attachments for the message.
+     *
+     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
+     */
+    public function attachments(): array
+    {
+        return [];
+    }
+}

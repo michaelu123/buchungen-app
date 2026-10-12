@@ -102,6 +102,9 @@ new class extends Component implements HasSchemas {
                 Radio::make("ermäßigung")
                     ->belowLabel("Sind Sie arbeitslos oder geflüchtet, beziehen Sie Grundsicherung, studieren Sie oder gehen Sie noch zur Schule, und haben deshalb Anspruch auf die Ermäßigung?")
                     ->options(["Ja" => "Ja", "Nein" => "Nein"]),
+                TextInput::make('gutscheincode')
+                    ->belowLabel("Falls Sie einen Gutschein-Code haben, bitte hier eingeben.")
+                    ->label('Gutschein-Code'),
                 TextInput::make('kontoinhaber')
                     ->belowLabel("Bitte geben Sie den Namen des Kontoinhabers an, von dem die Lastschrift erfolgen soll.")
                     ->rules([

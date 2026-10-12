@@ -353,7 +353,13 @@ class KursTableActions
         $buchungenData = [];
         $sum = 0.0;
         $cnt = 0;
-        $buchungen = $kurs->buchungen()->whereNull('notiz')->whereNotNull('lastschriftok')->whereNotNull('verified')->whereNull('eingezogen')->get();
+        $buchungen = $kurs->buchungen()
+            ->whereNull('notiz')
+            ->whereNotNull('lastschriftok')
+            ->whereNotNull('verified')
+            ->whereNull('eingezogen')
+            ->whereNull('gutscheincode')
+            ->get();
         foreach ($buchungen as $buchung) {
             $normalizedIban = strtoupper(str_replace(' ', '', $buchung->iban));
             if (str_starts_with($normalizedIban, 'AKTIV')) {

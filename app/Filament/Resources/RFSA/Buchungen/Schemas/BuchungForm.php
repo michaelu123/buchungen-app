@@ -24,6 +24,7 @@ class BuchungForm extends BuchungFormBase
     {
         return [
             TextInput::make('ermäßigung'),
+            TextInput::make('gutscheincode'),
             Textarea::make('mitteilung'),
         ];
     }

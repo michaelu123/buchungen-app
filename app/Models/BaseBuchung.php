@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Mail\FalscheIban;
+use App\Mail\FalscherGutscheinCode;
 use App\Mail\VerifyEmail;
 use Carbon\CarbonInterface;
 use Filament\Notifications\Events\DatabaseNotificationsSent;
@@ -37,6 +38,7 @@ class BaseBuchung extends Model
         'iban',
         'lastschriftok',
         'ermäßigung',
+        'gutscheincode',
         'verified',
         'anmeldebestätigung',
         'eingezogen',
@@ -61,6 +63,9 @@ class BaseBuchung extends Model
     {
         $buchungClass = static::class;
 
+        if (trim($data["gutscheincode"]) == "") {
+            $data["gutscheincode"] = null;
+        }
         $kurs_id = $data['kurs_id'];
         $buchung = DB::transaction(function () use ($buchungClass, $kurs_id, $data): BaseBuchung|null {
             $buchungenCount = $buchungClass::where('kurs_id', $kurs_id)
@@ -169,6 +174,15 @@ class BaseBuchung extends Model
         }
     }
 
+    public function checkGutscheinOk(): void
+    {
+        if ($this->gutscheincode && !$this->validGutscheinCode()) {
+            $this->update(['notiz' => 'Falscher Gutscheincode']);
+            Mail::to($this->email)->send(new FalscherGutscheinCode($this->gutscheincode, $this->getFrom()));
+            static::notifyWarning('Falscher Gutscheincode');
+        }
+    }
+
     public function checkVerified(): void
     {
         if (!$this->verified) {
@@ -224,6 +238,7 @@ class BaseBuchung extends Model
         if (static::$requireAbbuchung) {
             $this->checkIban();
             $this->checkLastschriftOk();
+            $this->checkGutscheinOk();
         }
         if (static::$requireEmailVerification) {
             $this->checkVerified();
@@ -381,4 +396,10 @@ class BaseBuchung extends Model
 
         return $remainder === 1;
     }
+
+    public function validGutscheinCode(): bool
+    {
+        return \strlen($this->gutscheincode) == 10; // could be improved
+    }
 }
+
