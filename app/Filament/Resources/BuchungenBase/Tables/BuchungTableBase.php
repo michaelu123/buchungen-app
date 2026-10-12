@@ -239,6 +239,7 @@ abstract class BuchungTableBase
                             );
                     }),
             ])
+            ->persistFiltersInSession() // funktioniert nicht!
             ->recordActions([
                 ActionGroup::make([
                     EditAction::make(),
