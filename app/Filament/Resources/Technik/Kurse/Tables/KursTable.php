@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Technik\Kurse\Tables;
 use App\Exports\Technik\BuchungenExport;
 use App\Exports\Technik\KurseExport;
 use App\Filament\Resources\KurseBase\KursTableActions;
+use App\Filament\Resources\KurseBase\KursTableColumns;
 use App\Imports\Technik\KurseImport;
 use App\Models\Technik\Buchung;
 use App\Models\Technik\Kurs;
@@ -42,6 +43,7 @@ class KursTable
                     ->numeric(),
                 TextColumn::make('restplätze')
                     ->numeric(),
+                KursTableColumns::getAbgebuchtColumn(),
                 TextColumn::make('rvp')
                     ->label("URL")
                     ->limit(20)
