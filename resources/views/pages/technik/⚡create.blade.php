@@ -30,6 +30,7 @@ new class extends Component implements HasSchemas {
     {
         $neg = 0;
         $kurse = Kurs::whereNull("notiz")
+            ->where("datum", ">=", now()->format("Y-m-d"))
             ->orderBy("datum")
             //            ->where("restplätze", ">", 0)
             ->get()
