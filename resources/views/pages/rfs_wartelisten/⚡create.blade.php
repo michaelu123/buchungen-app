@@ -36,23 +36,23 @@ new class extends Component implements HasSchemas {
         match ($routeName) {
             'warteliste_rfsa' => [
                 $this->kursart = 'Anfängerkurse',
-                $this->text = $this->BasisDaten->text_rfsa,
+                $this->text = $this->basisDaten->text_rfsa,
             ],
             'warteliste_rfsfg' => [
                 $this->kursart = 'Fahrsicherheitstraining-Grundkurse',
-                $this->text = $this->BasisDaten->text_rfsfg,
+                $this->text = $this->basisDaten->text_rfsfg,
             ],
             'warteliste_rfsfa' => [
                 $this->kursart = 'Fahrsicherheitstraining-Aufbaukurse',
-                $this->text = $this->BasisDaten->text_rfsfa,
+                $this->text = $this->basisDaten->text_rfsfa,
             ],
             'warteliste_rfsfs' => [
                 $this->kursart = 'Fahrsicherheitstraining-Senior:innenkurse',
-                $this->text = $this->BasisDaten->text_rfsfs,
+                $this->text = $this->basisDaten->text_rfsfs,
             ],
             'warteliste_rfsfp' => [
                 $this->kursart = 'Fahrpraxiskurse',
-                $this->text = $this->BasisDaten->text_rfsfp,
+                $this->text = $this->basisDaten->text_rfsfp,
             ],
             default => null,
         };

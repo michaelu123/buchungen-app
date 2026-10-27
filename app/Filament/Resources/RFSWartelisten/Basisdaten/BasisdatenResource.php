@@ -23,7 +23,7 @@ class BasisDatenResource extends Resource
     protected static ?string $recordTitleAttribute = 'RFS-Basisdaten';
     protected static string|UnitEnum|null $navigationGroup = 'RFS-Wartelisten';
     protected static ?string $pluralModelLabel = 'RFS-Basisdaten';
-    protected static ?string $slug = 'rfsBasisdaten';
+    protected static ?string $slug = 'rfsbasisdaten';
 
     public static function form(Schema $schema): Schema
     {
