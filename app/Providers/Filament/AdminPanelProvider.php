@@ -80,6 +80,7 @@ class AdminPanelProvider extends PanelProvider
                 'RFSA-Kurse',
                 // 'RFSF-Kurse',
                 'RFSFP-Kurse',
+                'RFS-Wartelisten',
                 'Technik-Kurse',
                 'Codierungs-Termine',
                 'Saisonkarten',

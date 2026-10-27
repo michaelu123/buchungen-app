@@ -24,6 +24,14 @@ Route::livewire("codierabmeldung/{encid}", "pages::codier.abmelden")->name("codi
 Route::livewire("skbuchung", "pages::saisonkarten.create")->name("skbuchung");
 Route::get("skdownload/{encNr}/{type}", [SkDownloadController::class, "download"])->name("skdownload");
 
+Route::livewire("warteliste_rfsa", "pages::rfs_wartelisten.create")->name("warteliste_rfsa");
+Route::livewire("warteliste_rfsfg", "pages::rfs_wartelisten.create")->name("warteliste_rfsfg");
+Route::livewire("warteliste_rfsfa", "pages::rfs_wartelisten.create")->name("warteliste_rfsfa");
+Route::livewire("warteliste_rfsfs", "pages::rfs_wartelisten.create")->name("warteliste_rfsfs");
+Route::livewire("warteliste_rfsfp", "pages::rfs_wartelisten.create")->name("warteliste_rfsfp");
+Route::livewire("warteliste_rfsf", "pages::rfsf.wartelisten")->name("wartelisten_rfsf");
+Route::livewire("warteliste_ok", "pages::rfs_wartelisten.ok")->name("warteliste.ok");
+
 Route::livewire("phpinfo", "pages::phpinfo")->name("phpinfo");
 
 require __DIR__ . '/settings.php';

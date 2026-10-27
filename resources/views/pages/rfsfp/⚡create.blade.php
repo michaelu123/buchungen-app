@@ -1,6 +1,7 @@
 <?php
 
 use App\Filament\Resources\KurseBase\KursTableActions;
+use App\Models\RFSWartelisten\BasisDaten;
 use Livewire\Component;
 use Illuminate\Support\HtmlString;
 use Filament\Schemas\Schema;
@@ -20,15 +21,21 @@ new class extends Component implements HasSchemas {
     protected const _TRAITS = [\Filament\Schemas\Concerns\InteractsWithSchemas::class];
 
     protected static ?string $model = Buchung::class;
+    public bool $useWarteliste = false;
     public array $data = [];
 
     public function mount(): void
     {
+        $basisDaten = BasisDaten::first();
+        $this->useWarteliste = $basisDaten->rfsa_warteliste;
         $this->form->fill();
     }
 
     public function form(Schema $schema): Schema
     {
+        if ($this->useWarteliste) {
+            redirect()->route("warteliste_rfsfp");
+        }
         $neg = 0;
         $kurse = Kurs::whereNull("notiz")
             ->where("datum", ">", now()->format("Y-m-d"))
