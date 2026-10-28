@@ -53,7 +53,7 @@ class Kurs extends BaseKurs
         return $this->hasMany(Buchung::class, "kurs_id", "id");
     }
 
-    public function termine($tage): string
+    public function termine(bool $tage, string $lang = "de"): string
     {
 
         $tags = array_filter($tage ? [
@@ -70,9 +70,13 @@ class Kurs extends BaseKurs
             $this->ersatztermin2 ?? null,
         ], fn($v): bool => !empty($v));
 
-        $formatted = array_map(function (\DateTimeInterface|\Carbon\WeekDay|\Carbon\Month|string|int|float|null $t): string {
+        $formatted = array_map(function (\DateTimeInterface|\Carbon\WeekDay|\Carbon\Month|string|int|float|null $t) use ($lang): string {
             try {
-                return Carbon::parse($t)->translatedFormat('D, d.m');
+                if ($lang == "de") {
+                    return Carbon::parse($t)->translatedFormat('D d.m');
+                } else {
+                    return Carbon::parse($t)->format('D M d');
+                }
             } catch (\Throwable $e) {
                 return (string) $t;
             }
@@ -84,6 +88,11 @@ class Kurs extends BaseKurs
     public function kursDetails(): string
     {
         return $this->nummer . ": " . $this->uhrzeit . ", " . $this->termine(true) . ", Ersatztermine: " . $this->termine(false);
+    }
+
+    public function kursDetails_en(): string
+    {
+        return $this->nummer . ": " . $this->uhrzeit . ", " . $this->termine(true, "en") . ", Replacement days: " . $this->termine(false, "en");
     }
 
     public function ebicsData(Buchung $buchung): array

@@ -7,6 +7,8 @@ use App\Exports\RFSA\KurseExport;
 use App\Filament\Resources\KurseBase\KursTableActions;
 use App\Filament\Resources\KurseBase\KursTableColumns;
 use App\Imports\RFSA\KurseImport;
+use App\Mail\RFSA\KurzVorher;
+use App\Models\BaseBuchung;
 use App\Models\RFSA\Buchung;
 use App\Models\RFSA\Kurs;
 use Filament\Actions\Action;
@@ -14,12 +16,29 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Throwable;
 
 class KursTable
 {
     public static function configure(Table $table): Table
     {
         $kursTableActions = new KursTableActions(BuchungenExport::class, KurseExport::class, KurseImport::class, Buchung::class);
+        $kursTableActions->addRecordAction(
+            Action::make('Kurzvorher')
+                ->icon(Heroicon::OutlinedEnvelope)
+                ->action(function ($record): void {
+                    $kurs = Kurs::find($record["id"]);
+                    try {
+                        Mail::to("asja.basko@adfc-muenchen.de")->send(new KurzVorher($kurs));
+                    } catch (Throwable $t) {
+                        Log::error("error " . $t->getMessage());
+                        Log::error("error " . $t);
+                    }
+                    BaseBuchung::notifySuccess('Kurz vorher email versendet');
+                })
+        );
 
         return $table
             ->striped()

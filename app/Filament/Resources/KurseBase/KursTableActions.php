@@ -28,6 +28,7 @@ class KursTableActions
     public bool $sammel = false;
 
     protected array $fillFormCache = [];
+    protected array $zusatzAktionen = [];
 
     public function __construct(
         public string $buchungenExportClass,
@@ -61,6 +62,11 @@ class KursTableActions
                     echo $this->createEbics($model, $data['einzug']);
                 }, 'saisonkarten_ebics.xml', ['Content-type' => 'application/xml']);
             });
+    }
+
+    public function addRecordAction(Action $action)
+    {
+        $this->zusatzAktionen[] = $action;
     }
 
     public function getRecordActions(): array
@@ -99,7 +105,7 @@ class KursTableActions
                             echo $this->createEbics($kurs, $data['einzug']);
                         }, $kurs->nummer . '_ebics.xml', ['Content-type' => 'application/xml']);
                     }),
-
+                ...$this->zusatzAktionen,
             ])->label('Aktionen')->button()->color('primary'),
             //
         ];

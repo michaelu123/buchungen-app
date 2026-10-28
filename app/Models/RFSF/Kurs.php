@@ -55,7 +55,7 @@ class Kurs extends BaseKurs
 
         $formatted = array_map(function (\DateTimeInterface|\Carbon\WeekDay|\Carbon\Month|string|int|float|null $t): string {
             try {
-                return Carbon::parse($t)->translatedFormat('D, d.m');
+                return Carbon::parse($t)->translatedFormat('D d.m');
             } catch (\Throwable $e) {
                 return (string) $t;
             }
