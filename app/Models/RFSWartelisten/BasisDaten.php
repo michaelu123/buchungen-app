@@ -13,11 +13,11 @@ class BasisDaten extends Model
         "text_rfsa",
         "rfsfg_warteliste", // Fahrsicherheit Grundkurs
         "text_rfsfg",
-        "rfsfa_Warteliste", // Fahrsicherheit Aufbaukurs
+        "rfsfa_warteliste", // Fahrsicherheit Aufbaukurs
         "text_rfsfa",
-        "rfsfs_Warteliste", // Fahrsicherheit Seniorkurs
+        "rfsfs_warteliste", // Fahrsicherheit Seniorkurs
         "text_rfsfs",
-        "rfsfp_Warteliste", // Fahrpraxis 
+        "rfsfp_warteliste", // Fahrpraxis 
         "text_rfsfp",
     ];
 }

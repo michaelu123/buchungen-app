@@ -122,7 +122,21 @@ new class extends Component implements HasSchemas {
                 Eintragen
             </x-filament::button>
         </form>
+        <p>
+            <br><strong>Datenschutzerklärung gemäß Art. 13 Datenschutz-Grundverordnung (DSGVO):</strong><br>
 
+            Der „Allgemeine Deutsche Fahrrad-Club München e.V.“ speichert die Anmeldedaten nur zur Erfüllung des
+            vereinbarten Schulungsverhältnisses.
+            Verantwortliche Stelle ist der Verein „Allgemeiner Deutscher Fahrrad-Club München e.V., Platenstraße 4,
+            80336 München.
+            Die in diesem Formular erhobenen personenbezogenen Daten Name, E-Mail-Adresse, Telefonnummer werden
+            ausschließlich genutzt, um Sie über neue Kurse zu informieren. Danach werden sie gelöscht.
+
+            Die Daten werden an Dritte nur bei Vorliegen einer rechtlichen Verpflichtung übermittelt. Die Nutzung zu
+            Werbezwecken findet nicht statt. Eine ausführliche Erklärung des Vereins finden Sie unter:
+            <a href="https://muenchen.adfc.de/datenschutz"
+                style="text-decoration: underline;">https://muenchen.adfc.de/datenschutz</a>
+        </p>
         <x-filament-actions::modals />
     </div>
 </x-filament::section>

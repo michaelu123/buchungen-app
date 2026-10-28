@@ -27,7 +27,7 @@ new class extends Component implements HasSchemas {
     public function mount(): void
     {
         $basisDaten = BasisDaten::first();
-        $this->useWarteliste = $basisDaten->rfsa_warteliste;
+        $this->useWarteliste = $basisDaten->rfsfp_warteliste;
         $this->form->fill();
     }
 
@@ -239,8 +239,8 @@ Vorgaben länger aufbewahrt werden müssen (SEPA-Lastschriftverfahren).
 Jede Kursteilnehmerin bzw. jeder Kursteilnehmer hat im Rahmen der gesetzlichen Vorgaben das Recht auf Auskunft über 
 die personenbezogenen Daten, die zu seiner Person bei der hier genannten verantwortlichen Stelle gespeichert sind, s
 owie das Recht auf Korrektur fehlerhafter Daten und ein Beschwerderecht beim Bayerischen Landesamt für Datenschutzaufsicht. 
-(Eine ausführliche Erklärung des Vereins unter:<br>
-https://muenchen.adfc.de/datenschutz)
+(Eine ausführliche Erklärung des Vereins unter:
+<a href="https://muenchen.adfc.de/datenschutz" style="text-decoration: underline;">https://muenchen.adfc.de/datenschutz</a>)
 EOD
                     ))
                     ->label('Lastschrift genehmigt')
