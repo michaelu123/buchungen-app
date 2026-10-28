@@ -56,56 +56,76 @@ class BuchungenExportBase implements FromCollection, WithMapping, WithHeadings, 
 
   public function map($buchung): array
   {
-    $kursnummer = $this->kursClass::find($buchung->kurs_id)->nummer;
-    return [
-      $buchung->created_at,
-      $buchung->notiz,
-      $kursnummer,
-      $buchung->email,
-      $buchung->mitgliedsnummer,
-      $buchung->anrede,
-      $buchung->vorname,
-      $buchung->nachname,
-      $buchung->postleitzahl,
-      $buchung->ort,
-      $buchung->strasse,
-      $buchung->hsnr,
-      $buchung->telefonnr,
-      $buchung->kontoinhaber,
-      $buchung->iban,
-      $buchung->lastschriftok,
-      $buchung->verified,
-      $buchung->eingezogen,
-      $buchung->betrag,
-      $buchung->mitteilung,
-      $buchung->kommentar,
-    ];
+    if ($this->kurs) {
+      return [
+        $buchung->anrede,
+        $buchung->vorname,
+        $buchung->nachname,
+        $buchung->email,
+        $buchung->telefonnr,
+      ];
+    } else {
+      $kursnummer = $this->kursClass::find($buchung->kurs_id)->nummer;
+      return [
+        $buchung->created_at,
+        $buchung->notiz,
+        $kursnummer,
+        $buchung->email,
+        $buchung->mitgliedsnummer,
+        $buchung->anrede,
+        $buchung->vorname,
+        $buchung->nachname,
+        $buchung->postleitzahl,
+        $buchung->ort,
+        $buchung->strasse,
+        $buchung->hsnr,
+        $buchung->telefonnr,
+        $buchung->kontoinhaber,
+        $buchung->iban,
+        $buchung->lastschriftok,
+        $buchung->verified,
+        $buchung->eingezogen,
+        $buchung->betrag,
+        $buchung->mitteilung,
+        $buchung->kommentar,
+      ];
+    }
   }
 
   public function headings(): array
   {
-    return [
-      'Zeitstempel',
-      'Notiz',
-      'Kursnummer',
-      'Email',
-      'Mitgliedsnummer',
-      'Anrede',
-      'Vorname',
-      'Nachname',
-      'Postleitzahl',
-      'Ort',
-      'Strasse',
-      "Hsnr",
-      'Telefonnr',
-      'Kontoinhaber',
-      'IBAN',
-      'Lastschriftok',
-      'Verified',
-      'Eingezogen',
-      'Betrag',
-      'Mitteilung',
-      'Kommentar',
-    ];
+    if ($this->kurs) {
+      return [
+        'Anrede',
+        'Vorname',
+        'Nachname',
+        'Email',
+        'Telefonnr',
+      ];
+    } else {
+      return [
+        'Zeitstempel',
+        'Notiz',
+        'Kursnummer',
+        'Email',
+        'Mitgliedsnummer',
+        'Anrede',
+        'Vorname',
+        'Nachname',
+        'Postleitzahl',
+        'Ort',
+        'Strasse',
+        "Hsnr",
+        'Telefonnr',
+        'Kontoinhaber',
+        'IBAN',
+        'Lastschriftok',
+        'Verified',
+        'Eingezogen',
+        'Betrag',
+        'Mitteilung',
+        'Kommentar',
+      ];
+    }
   }
 }

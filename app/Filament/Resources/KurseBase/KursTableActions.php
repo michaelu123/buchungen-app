@@ -358,11 +358,14 @@ class KursTableActions
             ->whereNotNull('lastschriftok')
             ->whereNotNull('verified')
             ->whereNull('eingezogen')
-            ->whereNull('gutscheincode')
+            // ->whereNull('gutscheincode') // no gutscheincode in e.g. TK
             ->get();
         foreach ($buchungen as $buchung) {
             $normalizedIban = strtoupper(str_replace(' ', '', $buchung->iban));
             if (str_starts_with($normalizedIban, 'AKTIV')) {
+                continue;
+            }
+            if ($buchung->gutscheincode) {
                 continue;
             }
             [$betrag, $mandat, $zweck] = $kurs->ebicsData($buchung);

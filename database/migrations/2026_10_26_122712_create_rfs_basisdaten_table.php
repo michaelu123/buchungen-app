@@ -16,11 +16,11 @@ return new class extends Migration {
             $table->string("text_rfsa")->nonnull();
             $table->boolean("rfsfg_warteliste")->nonnull(); // Fahrsicherheit Grundkurs
             $table->string("text_rfsfg")->nonnull();
-            $table->boolean("rfsfa_Warteliste")->nonnull(); // Fahrsicherheit Aufbaukurs
+            $table->boolean("rfsfa_warteliste")->nonnull(); // Fahrsicherheit Aufbaukurs
             $table->string("text_rfsfa")->nonnull();
-            $table->boolean("rfsfs_Warteliste")->nonnull(); // Fahrsicherheit Seniorkurs
+            $table->boolean("rfsfs_warteliste")->nonnull(); // Fahrsicherheit Seniorkurs
             $table->string("text_rfsfs")->nonnull();
-            $table->boolean("rfsfp_Warteliste")->nonnull(); // Fahrpraxis 
+            $table->boolean("rfsfp_warteliste")->nonnull(); // Fahrpraxis 
             $table->string("text_rfsfp")->nonnull();
             $table->timestamps();
         });

@@ -63,8 +63,8 @@ class BaseBuchung extends Model
     {
         $buchungClass = static::class;
 
-        if (trim($data["gutscheincode"]) == "") {
-            $data["gutscheincode"] = null;
+        if (trim($data["gutscheincode"] ?? "") == "") {
+            unset($data["gutscheincode"]);
         }
         $kurs_id = $data['kurs_id'];
         $buchung = DB::transaction(function () use ($buchungClass, $kurs_id, $data): BaseBuchung|null {
