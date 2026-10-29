@@ -16,6 +16,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Throwable;
@@ -31,7 +32,7 @@ class KursTable
                 ->action(function ($record): void {
                     $kurs = Kurs::find($record["id"]);
                     try {
-                        Mail::to("asja.basko@adfc-muenchen.de")->send(new KurzVorher($kurs));
+                        Mail::to(Auth::user()->email)->send(new KurzVorher($kurs));
                     } catch (Throwable $t) {
                         Log::error("error " . $t->getMessage());
                         Log::error("error " . $t);

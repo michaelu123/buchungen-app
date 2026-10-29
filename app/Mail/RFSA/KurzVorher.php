@@ -37,7 +37,7 @@ class KurzVorher extends BestaetigungBase
         return new Envelope(
             from: new Address($this->fromAddress()),
             bcc: [new Address($this->fromAddress())],
-            subject: 'Kurs beginnt bald!',
+            subject: 'Kurs ' . $this->kurs->nummer . ' beginnt bald!',
         );
     }
 

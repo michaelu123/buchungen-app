@@ -2,6 +2,7 @@
 
 use App\Models\RFSWartelisten\BasisDaten;
 use App\Models\RFSWartelisten\Warteliste;
+use Filament\Forms\Components\Checkbox;
 use Livewire\Component;
 use Illuminate\Support\HtmlString;
 use Filament\Schemas\Schema;
@@ -78,11 +79,20 @@ new class extends Component implements HasSchemas {
                     ->belowLabel("Bitte geben Sie eine Telefonnummer an, unter der wir Sie erreichen können, falls es Rückfragen zu Ihrer Anmeldung gibt.")
                     ->label('Telefon')
                     ->required(),
+                Checkbox::make('datenschutzok')
+                    ->belowContent(new HtmlString(<<<EOD
+                    Ich habe die  <a href="https://muenchen.adfc.de/artikel/rfs-datenschutz" style="text-decoration: underline;">Datenschutzbestimmungen</a> zur Kenntnis genommen und akzeptiere sie.
+EOD))
+                    ->label('Zustimmung')
+                    ->default(false)
+                    ->accepted()
+                    ->required(),
                 Textarea::make("mitteilung")
                     ->belowLabel("Falls Sie uns noch etwas mitteilen möchten:")
                     ->rows(2)
                     ->autosize()
                     ->maxLength(2000),
+
             ])->statePath('data');
     }
 
