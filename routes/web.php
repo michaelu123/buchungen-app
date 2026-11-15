@@ -6,9 +6,10 @@ use Illuminate\Support\Facades\Route;
 // Route::get('/', function (): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View {
 //     return view('welcome');
 // })->name('home');
-// Route::view('dashboard', 'dashboard')->name('dashboard')->middleware(['auth', 'verified']);
 
-Route::redirect("/", "/buchungen");
+Route::view('dashboard', 'dashboard')->name('dashboard')->middleware(['auth', 'verified']);
+
+Route::redirect("/", "/buchungen")->name("home");
 
 Route::livewire("buchung/ok", "pages::buchung.ok")->name("buchung.ok");
 Route::livewire("buchung/notok", "pages::buchung.notok")->name("buchung.notok");

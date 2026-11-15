@@ -13,7 +13,9 @@
 
 pest()->extend(Tests\TestCase::class)
     ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
-    ->in('Feature');
+    ->in('Feature', 'Browser');
+
+pest()->tia()->defaultBranch('master');
 
 /*
 |--------------------------------------------------------------------------
@@ -43,5 +45,4 @@ expect()->extend('toBeOne', function () {
 
 function something()
 {
-    // ..
 }
