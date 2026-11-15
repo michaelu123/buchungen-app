@@ -55,8 +55,10 @@ class KursTable
                         return $state;
                     }),
                 TextColumn::make('leiter')->label("Leiter:in")
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
                 TextColumn::make('leiter2')->label("Leiter:in2")
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
                 TextColumn::make('kommentar')
                     ->searchable()

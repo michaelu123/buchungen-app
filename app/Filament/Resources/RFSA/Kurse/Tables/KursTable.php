@@ -82,27 +82,36 @@ class KursTable
                         return $state;
                     }),
                 TextColumn::make('lehrer')->label('Lehrer:in')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('co_lehrer')->label('Co-Lehrer:in')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('co_lehrer2')->label('Co-Lehrer:in2')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('hospitant')->label('Hospitant:in')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 TextColumn::make('hospitant2')->label('Hospitant:in2')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 TextColumn::make('liste_verschicken')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 TextColumn::make('abgesagt_am')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->label('Abgesagt am')
                     ->searchable(),
                 TextColumn::make('abgesagt_wg')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->label('Abgesagt wegen')
                     ->searchable(),
                 TextColumn::make('status')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('created_at')
