@@ -26,35 +26,62 @@ test('admin creates a course, guest books it, and admin verifies reduced places'
     // b) As admin, create a new course
     // -------------------------------------------------------------
     // You can create it via the Filament UI:
-    //   MUH: this does not work for datum and ersatztermin. We would have to click on the field with
-    //   $page->click('button[aria-label="Tag 1"]');
-    //   and then click around in the popped up calendar for the next days, perhaps changing
-    //   even the month or year for the next few days. Too complicated.
-    // $page = visit('/admin/rfsfpkurse/create')
-    //   ->type('#form\\.nummer', 'RFSFP-TEST-01')
-    //   ->type('#form\\.uhrzeit', '14:00 - 17:00')
-    //   ->type('#form\\.datum', now()->addDays(2)->format('Y-m-d'))
-    //   ->type('#form\\.ersatztermin', now()->addDays(6)->format('Y-m-d'))
-    //   ->type('#form\\.kursplätze', '1')
-    //   ->submit()
-    //   ->assertSee('Edit RFSFP-TEST-01');
+    $page = visit('/admin/rfsfpkurse/create')
+        ->type('#form\\.nummer', 'RFSFP-TEST-01')
+        ->type('#form\\.uhrzeit', '14:00 - 17:00')
+        ->type('#form\\.kursplätze', '1');
 
-    $datum = now()->addDays(1);
-    $eday = now()->addDays(2);
-    $kurs = Kurs::create([
-        'nummer' => 'RFSFP-TEST-01',
-        'uhrzeit' => '14:00 - 17:00',
-        'datum' => $datum,
-        'ersatztermin' => $eday,
-        'kursplätze' => 1,
-        'restplätze' => 1,
-        'rvp' => 'RVP',
-        'trainer' => 'Trainer1',
-        'co_trainer' => 'Trainer2',
-        'kommentar' => 'Kommentar',
-    ]);
+    $datum = now()->addDays(2)->format('Y-m-d');
+    $stateValue = $page->script(<<<JS
+    (() => {
+        const displayInput = document.getElementById('form.datum');
+        if (!displayInput) return 'INPUT_NOT_FOUND';
+        const wrapper = displayInput.closest('[x-data]');
+        const alpineData = Alpine.\$data(wrapper);
+        alpineData.state = '{$datum}';
+        return alpineData.state;
+    })()    
+    JS);
+    expect($stateValue)->toBe($datum);
+
+    $eday = now()->addDays(3)->format('Y-m-d');
+    $stateValue = $page->script(<<<JS
+    (() => {
+        const displayInput = document.getElementById('form.ersatztermin');
+        if (!displayInput) return 'INPUT_NOT_FOUND';
+        const wrapper = displayInput.closest('[x-data]');
+        const alpineData = Alpine.\$data(wrapper);
+        alpineData.state = '{$eday}';
+        return alpineData.state;
+    })()    
+    JS);
+    expect($stateValue)->toBe($eday);
+
+    $page->click('button[wire\:target="create"]')
+        ->assertSee('Edit RFSFP-TEST-01');
+    $kurs = Kurs::where("nummer", "RFSFP-TEST-01")->first();
     $kursId = $kurs->id;
-    $initialRestplaetze = Kurs::where('nummer', 'RFSFP-TEST-01')->value('restplätze'); // 1
+    $initialRestplaetze = $kurs->restplätze;
+    expect($initialRestplaetze)->toBe(1);
+
+    // could create kurs also like this:
+    // $datum = now()->addDays(1);
+    // $eday = now()->addDays(2);
+    // $kurs = Kurs::create([
+    //     'nummer' => 'RFSFP-TEST-01',
+    //     'uhrzeit' => '14:00 - 17:00',
+    //     'datum' => $datum,
+    //     'ersatztermin' => $eday,
+    //     'kursplätze' => 1,
+    //     'restplätze' => 1,
+    //     'rvp' => 'RVP',
+    //     'trainer' => 'Trainer1',
+    //     'co_trainer' => 'Trainer2',
+    //     'kommentar' => 'Kommentar',
+    // ]);
+    // $kursId = $kurs->id;
+    // $initialRestplaetze = Kurs::where('nummer', 'RFSFP-TEST-01')->value('restplätze'); // 1
+    // expect($initialRestplaetze)->toBe(1);
 
     // -------------------------------------------------------------
     // c) As a not logged-in user, view the booking page and book
@@ -65,7 +92,7 @@ test('admin creates a course, guest books it, and admin verifies reduced places'
         ->assertSee('RFSFP-TEST-01: 14:00 - 17:00')
         ->assertSee('freie Plätze: 1')
         ->type('#form\\.email', 'max@example.com')
-        ->click('#form\\.kurs_id-'.$kursId) // Select the created course
+        ->click('#form\\.kurs_id-' . $kursId) // Select the created course
         ->select('#form\\.anrede', 'Herr')
         ->type('#form\\.vorname', 'Max')
         ->type('#form\\.nachname', 'Mustermann')
@@ -93,7 +120,7 @@ test('admin creates a course, guest books it, and admin verifies reduced places'
     $buchungId = $buchung->id;
 
     // 2. Verify in Filament Admin UI:
-    visit('/admin/rfsfpbuchungen/'.$buchungId.'/edit')
+    visit('/admin/rfsfpbuchungen/' . $buchungId . '/edit')
         ->assertSee('Edit max@example.com');
     visit('/admin/rfsfpkurse/RFSFP-TEST-01/edit')
         ->assertSee('Edit RFSFP-TEST-01');
