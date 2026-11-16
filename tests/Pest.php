@@ -43,6 +43,61 @@ expect()->extend('toBeOne', function () {
 |
 */
 
+function copyTestDatabaseOnce(): void
+{
+    static $copied = false;
+
+    if ($copied) {
+        return;
+    }
+
+    $sourcePath = database_path('database.test.sqlite');
+
+    if (! file_exists($sourcePath)) {
+        return;
+    }
+
+    $pdo = Illuminate\Support\Facades\DB::connection()->getPdo();
+
+    // If data was already committed to memory, skip copying
+    try {
+        if ((int) $pdo->query('SELECT COUNT(*) FROM main.rfs_basisdaten')->fetchColumn() > 0) {
+            $copied = true;
+
+            return;
+        }
+    } catch (Throwable) {
+        // Table doesn't exist yet
+    }
+
+    try {
+        $pdo->exec('ATTACH DATABASE '.$pdo->quote($sourcePath).' AS disk_db');
+    } catch (Throwable) {
+        // Already attached
+    }
+
+    $stmt = $pdo->query("SELECT name FROM disk_db.sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'");
+    $tables = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    $stmt->closeCursor();
+
+    $pdo->exec('PRAGMA foreign_keys = OFF');
+    foreach ($tables as $table) {
+        try {
+            $pdo->exec("INSERT OR REPLACE INTO main.{$table} SELECT * FROM disk_db.{$table}");
+        } catch (Throwable) {
+            //
+        }
+    }
+    $pdo->exec('PRAGMA foreign_keys = ON');
+
+    if (Illuminate\Support\Facades\DB::transactionLevel() > 0) {
+        Illuminate\Support\Facades\DB::commit();
+        Illuminate\Support\Facades\DB::beginTransaction();
+    }
+
+    $copied = true;
+}
+
 function something()
 {
 }
