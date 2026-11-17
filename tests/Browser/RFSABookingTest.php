@@ -3,6 +3,8 @@
 use App\Models\RFSA\Buchung;
 use App\Models\RFSA\Kurs;
 use App\Models\RFSWartelisten\BasisDaten;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 beforeEach(function () {
     copyTestDatabaseOnce();
@@ -14,13 +16,9 @@ test('admin creates a course, guest books it, and admin verifies reduced places'
     // -------------------------------------------------------------
     // a) Login as admin
     // -------------------------------------------------------------
-    $page = visit('/admin/login');
-    $page->assertSee('Sign in');
-    $page
-        ->type('#form\\.email', 'admin@admin.com')
-        ->type('#form\\.password', 'xxxx1234')
-        ->submit()
-        ->assertSee('Dashboard');
+    login();
+    $admin = User::where("email", "admin@admin.com")->first();
+    $this->assertAuthenticatedAs($admin);
 
     // -------------------------------------------------------------
     // b) As admin, create a new course
@@ -148,6 +146,9 @@ test('admin creates a course, guest books it, and admin verifies reduced places'
     // c) As a not logged-in user, view the booking page and book
     // -------------------------------------------------------------
     // Log out or navigate as a guest
+    Auth::logout();
+    $this->assertGuest();
+
     $guestPage = visit('/rfsabuchung')
         ->assertSee('Anmeldung zu einem Kurs für Anfänger:innen')
         ->assertSee('RFSA-TEST-01: 14:00 - 17:00')
@@ -180,14 +181,20 @@ test('admin creates a course, guest books it, and admin verifies reduced places'
     expect($buchung)->toBeTruthy();
     $buchungId = $buchung->id;
 
-    // 2. Verify in Filament Admin UI:
-    visit('/admin/rfsabuchungen/' . $buchungId . '/edit')
-        ->assertSee('Edit max@example.com');
-    visit('/admin/rfsakurse/RFSA-TEST-01/edit')
-        ->assertSee('Edit RFSA-TEST-01');
-
+    // 2. Check that frontend shows course as booked out
     $guestPage = visit('/rfsabuchung')
         ->assertSee('Anmeldung zu einem Kurs für Anfänger:innen')
         ->assertSee('RFSA-TEST-01')
         ->assertSee('ausgebucht');
+
+    // 3. Verify in Filament Admin UI:
+    login();
+    $page = visit('/admin/rfsabuchungen/' . $buchungId . '/edit')
+        ->assertSee('Edit max@example.com');
+    $kursIdInForm = (int) $page->value("#form\\.kurs_id");
+    expect($kursIdInForm)->toBe($kursId);
+    $kursName = $page->text('select[id="form.kurs_id"] option:checked');
+    expect($kursName)->toContain('RFSA-TEST-01');
+    visit('/admin/rfsakurse/RFSA-TEST-01/edit')
+        ->assertSee('Edit RFSA-TEST-01');
 });

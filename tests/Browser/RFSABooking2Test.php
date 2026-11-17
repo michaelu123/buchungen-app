@@ -3,6 +3,8 @@
 use App\Models\RFSA\Buchung;
 use App\Models\RFSA\Kurs;
 use App\Models\RFSWartelisten\BasisDaten;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 beforeEach(function () {
     copyTestDatabaseOnce();
@@ -14,13 +16,9 @@ test('admin creates a course, guest books it, and admin verifies reduced places'
     // -------------------------------------------------------------
     // a) Login as admin
     // -------------------------------------------------------------
-    $page = visit('/admin/login');
-    $page->assertSee('Sign in');
-    $page
-        ->type('#form\\.email', 'admin@admin.com')
-        ->type('#form\\.password', 'xxxx1234')
-        ->submit()
-        ->assertSee('Dashboard');
+    login();
+    $admin = User::where("email", "admin@admin.com")->first();
+    $this->assertAuthenticatedAs($admin);
 
     // -------------------------------------------------------------
     // b) As admin, create a new course
@@ -148,9 +146,12 @@ test('admin creates a course, guest books it, and admin verifies reduced places'
     // c) As a not logged-in user, view the booking page and book
     // -------------------------------------------------------------
     // Log out or navigate as a guest
-    [$page1, $page2] = visit(['/rfsabuchung', '/rfsabuchung']);
+    Auth::logout();
+    $this->assertGuest();
 
-    $page1->assertSee('Anmeldung zu einem Kurs für Anfänger:innen')
+    [$guestPage1, $guestPage2] = visit(['/rfsabuchung', '/rfsabuchung']);
+
+    $guestPage1->assertSee('Anmeldung zu einem Kurs für Anfänger:innen')
         ->assertSee('RFSA-TEST-02: 14:00 - 17:00')
         ->assertSee('freie Plätze: 1')
         ->type('#form\\.email', 'max1@example.com')
@@ -168,7 +169,7 @@ test('admin creates a course, guest books it, and admin verifies reduced places'
         ->check('#form\\.lastschriftok')
         ->type('#form\\.mitteilung', 'Test Mitteilung');
 
-    $page2->assertSee('Anmeldung zu einem Kurs für Anfänger:innen')
+    $guestPage2->assertSee('Anmeldung zu einem Kurs für Anfänger:innen')
         ->assertSee('RFSA-TEST-02: 14:00 - 17:00')
         ->assertSee('freie Plätze: 1')
         ->type('#form\\.email', 'max2@example.com')
@@ -186,8 +187,8 @@ test('admin creates a course, guest books it, and admin verifies reduced places'
         ->check('#form\\.lastschriftok')
         ->type('#form\\.mitteilung', 'Test Mitteilung');
 
-    foreach ([$page1, $page2] as $page) {
-        $page->script(<<<'JS'
+    foreach ([$guestPage1, $guestPage2] as $guestPage) {
+        $guestPage->script(<<<'JS'
     (() => {
         const form = document.querySelector('form');
         const button = form?.querySelector('button[type="submit"]');
@@ -202,22 +203,28 @@ test('admin creates a course, guest books it, and admin verifies reduced places'
     }
 
     // wait for requests to return, are there other methods?
-    $page1->assertSee("Buchung");
-    $page2->assertSee("Buchung");
+    $guestPage1->assertSee("Buchung");
+    $guestPage2->assertSee("Buchung");
 
-    $path1 = parse_url($page1->url(), PHP_URL_PATH);
-    $path2 = parse_url($page2->url(), PHP_URL_PATH);
+    $path1 = parse_url($guestPage1->url(), PHP_URL_PATH);
+    $path2 = parse_url($guestPage2->url(), PHP_URL_PATH);
     // dump("paths=" . $path1 . "," . $path2);
 
     if ($path1 == "/rfsabuchung") {
         expect($path2)->toBe("/buchung/ok");
-        $page1->assertSee("ist (inzwischen) ausgebucht");
+        $guestPage1->assertSee("ist (inzwischen) ausgebucht");
     } else {
         expect($path1)->toBe("/buchung/ok");
         expect($path2)->toBe("/rfsabuchung");
-        $page2->assertSee("ist (inzwischen) ausgebucht");
+        $guestPage2->assertSee("ist (inzwischen) ausgebucht");
     }
 
+    $guestPage = visit('/rfsabuchung')
+        ->assertSee('Anmeldung zu einem Kurs für Anfänger:innen')
+        ->assertSee('RFSA-TEST-02')
+        ->assertSee('ausgebucht');
+
+    login();
     // -------------------------------------------------------------
     // d) As admin, verify booking arrived and free places decreased by 1
     // -------------------------------------------------------------
@@ -230,21 +237,20 @@ test('admin creates a course, guest books it, and admin verifies reduced places'
     if ($path1 == "/rfsabuchung") {
         expect($buchung2)->toBeTruthy();
         $buchungId = $buchung2->id;
-        visit('/admin/rfsabuchungen/' . $buchungId . '/edit')
+        $page = visit('/admin/rfsabuchungen/' . $buchungId . '/edit')
             ->assertSee('Edit max2@example.com');
     } else {
         expect($buchung1)->toBeTruthy();
         $buchungId = $buchung1->id;
-        visit('/admin/rfsabuchungen/' . $buchungId . '/edit')
+        $page = visit('/admin/rfsabuchungen/' . $buchungId . '/edit')
             ->assertSee('Edit max1@example.com');
     }
+    $kursIdInForm = (int) $page->value("#form\\.kurs_id");
+    expect($kursIdInForm)->toBe($kursId);
+    $kursName = $page->text('select[id="form.kurs_id"] option:checked');
+    expect($kursName)->toContain('RFSA-TEST-02');
 
     // 2. Verify in Filament Admin UI:
     visit('/admin/rfsakurse/RFSA-TEST-02/edit')
         ->assertSee('Edit RFSA-TEST-02');
-
-    $guestPage = visit('/rfsabuchung')
-        ->assertSee('Anmeldung zu einem Kurs für Anfänger:innen')
-        ->assertSee('RFSA-TEST-02')
-        ->assertSee('ausgebucht');
 });

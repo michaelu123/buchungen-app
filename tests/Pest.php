@@ -53,7 +53,7 @@ function copyTestDatabaseOnce(): void
 
     $sourcePath = database_path('database.test.sqlite');
 
-    if (! file_exists($sourcePath)) {
+    if (!file_exists($sourcePath)) {
         return;
     }
 
@@ -71,7 +71,7 @@ function copyTestDatabaseOnce(): void
     }
 
     try {
-        $pdo->exec('ATTACH DATABASE '.$pdo->quote($sourcePath).' AS disk_db');
+        $pdo->exec('ATTACH DATABASE ' . $pdo->quote($sourcePath) . ' AS disk_db');
     } catch (Throwable) {
         // Already attached
     }
@@ -96,6 +96,17 @@ function copyTestDatabaseOnce(): void
     }
 
     $copied = true;
+}
+
+function login()
+{
+    $page = visit('/admin/login');
+    $page->assertSee('Sign in');
+    $page
+        ->type('#form\\.email', 'admin@admin.com')
+        ->type('#form\\.password', 'xxxx1234')
+        ->submit()
+        ->assertSee('Dashboard');
 }
 
 function something()
