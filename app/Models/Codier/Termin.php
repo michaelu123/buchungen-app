@@ -87,7 +87,8 @@ class Termin extends Model
         foreach ($buchungen as $buchung) {
             $t = $exiTermineMap[substr($buchung->date, 0, 10)] ?? null;
             if (!$t) {
-                dd($buchung->date);
+                // dd($buchung->date);
+                continue;
             }
             $b = $exiBuchungenMap[$buchung->date] ?? null;
             $notiz = null;

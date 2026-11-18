@@ -23,7 +23,7 @@ Route::livewire("rfsfpbuchung", "pages::rfsfp.create")->name("rfsfpbuchung");
 Route::livewire("codierbuchung", "pages::codier.create")->name("codierbuchung");
 Route::livewire("codierabmeldung/{encid}", "pages::codier.abmelden")->name("codier.abmelden");
 Route::livewire("skbuchung", "pages::saisonkarten.create")->name("skbuchung");
-Route::get("skdownload/{encNr}/{type}", [SkDownloadController::class, "download"])->name("skdownload");
+Route::get("skdownload/{encNr}/{type}", [SkDownloadController::class, "show"])->name("skdownload");
 
 Route::livewire("warteliste_rfsa", "pages::rfs_wartelisten.create")->name("warteliste_rfsa");
 Route::livewire("warteliste_rfsfg", "pages::rfs_wartelisten.create")->name("warteliste_rfsfg");

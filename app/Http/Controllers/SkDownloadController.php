@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Storage;
 
 class SkDownloadController extends Controller
 {
-    public function download($encNr, $type)
+    public function show($encNr, $type)
     {
         [$sknummer, $jahr] = explode(",", Crypt::decryptString($encNr));
         $skPath = Storage::disk('local')->path('SK/' . $jahr);

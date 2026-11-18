@@ -3,8 +3,7 @@
 
 arch()
   ->expect(['die', 'dd', 'dump'])
-  ->not->toBeUsed()
-  ->ignoring(['App\Models\Codier\Termin']);
+  ->not->toBeUsed();
 
 
 arch()
@@ -22,4 +21,6 @@ arch()
 //   ->toBeTraits();
 
 arch()->preset()->php();
+// App\Mail wants Mails to implement ShouldQueue, which we do not want
+arch()->preset()->laravel()->ignoring(['App\Providers', 'App\Mail']);
 arch()->preset()->security()->ignoring('unserialize');
